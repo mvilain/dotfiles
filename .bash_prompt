@@ -1,0 +1,58 @@
+# @gf3’s Sexy Bash Prompt, inspired by “Extravagant Zsh Prompt”
+# Shamelessly copied from https://github.com/gf3/dotfiles
+# Screenshot: http://i.imgur.com/s0Blh.png
+
+if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+  export TERM=gnome-256color
+elif infocmp xterm-256color >/dev/null 2>&1; then
+  export TERM=xterm-256color
+fi
+
+function parse_git_dirty() {
+	[[ $(git status 2> /dev/null | tail -n1) != *"working directory clean"* ]] && echo "*"
+}
+
+function parse_git_branch() {
+	git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
+}
+
+if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+  export TERM=gnome-256color
+elif infocmp xterm-256color >/dev/null 2>&1; then
+  export TERM=xterm-256color
+fi
+
+#export GIT_PS1_SHOWDIRTYSTATE=true
+#export GIT_PS1_SHOWUNTRACKEDFILES=true
+#export GIT_PS1_SHOWSTASHSTATE=true
+
+export PROMPT_DIRTRIM=3
+
+# NORMAL colors
+BLA="\[\033[0;30m\]"
+RED="\[\033[0;31m\]"
+GRE="\[\033[0;32m\]"
+YEL="\[\033[0;33m\]"
+BLU="\[\033[0;34m\]"
+MAG="\[\033[0;35m\]"
+CYA="\[\033[0;36m\]"
+WHI="\[\033[0;37m\]"
+# BOLD colors
+bBLA="\[\033[1;30m\]"
+bRED="\[\033[1;31m\]"
+bGRE="\[\033[1;32m\]"
+bYEL="\[\033[1;33m\]"
+bBLU="\[\033[1;34m\]"
+bMAG="\[\033[1;35m\]"
+bCYA="\[\033[1;36m\]"
+bWHI="\[\033[1;37m\]"
+OFF="\[\033[0m\]"
+
+# original used gray text plus cyan letters 
+if [[ ${EUID} == 0 ]] ; then
+  PS1='${RED}\t \# ${bRED}\h ${RED}\w \033[0;31m\[${RED}\]# \[${RESET}\]'
+  PS1="${RED}\t ${CYA}[\h \# \w]${RED}$ ${OFF}"
+else
+  PS1='\[\033[0;32m\][\t-\#\[\033[0;32m\]]\[\033[0;32m\][\[\033[0;34m\]\h \[\033[0;32m\]\w\[\033[0;32m\]]\[\033[0;32m\]\[\033[0;32m\]\\$ \[\033[00m\]'
+  PS1="${GRE}\t ${CYA}[\h \# \w]${GRE}$ ${OFF}"
+fi
