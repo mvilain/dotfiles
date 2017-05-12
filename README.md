@@ -1,6 +1,6 @@
 # dotfiles
 
-Michael Vilain's Linux Dotfiles
+mvilain's Linux Dotfiles
 
 ## files
 
