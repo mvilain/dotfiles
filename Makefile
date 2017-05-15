@@ -59,7 +59,7 @@ ifeq ($(OS),"centos")
 	-yum install -y wget vim lsof bash-completion epel-release bind-utils gvim net-tools
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
-	-grub2-mkconfig -o /boot/grub2/grub.cnf 
+	-grub2-mkconfig -o /boot/grub2/grub.cfg 
 else ifeq ($(OS),"ubuntu")
 	-apt-get install -y curl vim lsof bash-completion dnsutils vim-gnome
 endif
