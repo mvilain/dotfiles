@@ -1,17 +1,20 @@
 # Makefile for dotfiles environment
-# Maintainer Michael Vilain <michael@vilain.com> [201705.12]
+# Maintainer Michael Vilain <michael@vilain.com> [201705.15]
 
 .PHONY : build clean install
 
-DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/1.13.1/docker-compose-`uname -s`-`uname -m`
+DOCKER_COMPOSE_URL=https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m`
 
-IP:=$(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
+IP=$(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
 ifeq ($(IP),)
-	IP:=$(shell ifconfig -a | grep "inet " | grep "broadcast" | grep -Ev "172|127.0.0.1" | awk '{print $2}')
-	AWS:=n
+IP=$(shell ifconfig -a | grep "inet " | grep "broadcast" | grep -Ev "172|127.0.0.1" | awk '{print $2}')
+AWS=n
 else
-	AZ:=$(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/placement/availability-zone)
+AZ=$(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/placement/availability-zone)
 endif
+
+# centos or ubuntu (no others tested)
+OS=$(shell grep '^ID=' /etc/os-release | sed -e 's/ID=//')
 
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward .functions .inputrc .screenrc
 
@@ -20,17 +23,23 @@ TARGETS := install
 all: $(TARGETS)
 
 build: 
+	echo $(OS)
 	echo $(IP)
 
 clean: 
 
-install : git yum ntp files
+install : ntp files
 
 files: $(DOTFILES)
 	/bin/cp -v $(DOTFILES) ${HOME}/
 
-git: yum-ius 
+git:
+ifeq ($(OS),centos)
+	-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
 	-yum install -y git2u
+else ifeq ($(OS),ubuntu)
+	-apt-get install -y git
+endif
 
 git-config: git
 	git config --global user.name "Michael Vilain"
@@ -45,22 +54,35 @@ git-config: git
 	git config --global alias.mylog "log --pretty=format:'%h %s [%an]' --graph" 
 	git config --global alias.lol "log --graph --decorate --pretty=oneline --abbrev-commit --all"
 
-yum:
-	-yum install -y wget vim lsof bash-completion epel-release time bind-utils
+packages:
+ifeq ($(OS),centos)
+	-yum install -y wget vim lsof bash-completion epel-release bind-utils
+else ifeq ($(OS),ubuntu)
+	-apt-get install -y curl vim lsof bash-completion dnsutils
+endif
 
-yum-ius: 
-	-yum install https://centos7.iuscommunity.org/ius-release.rpm
+ntp: ntp-install ntp-config
+ntp-install:
+ifeq ($(OS),"centos")
+	-yum install -y ntp
+else ifeq ($(OS),"ubuntu")
+	apt-get install -y ntp ntpdate ntp-doc
+endif
 
-
-ntp:
-	yum install -y ntp
+ntp-config: ntp-install
 ifneq ($(AWS),n)
 	sed -i.orig -e "s/centos.pool/amazon.pool/g" /etc/ntp.conf # only if on AWS
 endif
+ifeq ($(OS),"centos")
 	systemctl enable ntpd
 	systemctl start ntpd
+else ifeq ($(OS),ubuntu)
+	systemctl enable ntp
+	systemctl start ntp
+endif
 	timedatectl set-timezone America/Los_Angeles
 
+# must be run as root or it won't install
 docker:
 	if [ ! -e /bin/docker ]; then \
 		curl -fsSL https://get.docker.com/ | sh; \
@@ -72,4 +94,3 @@ docker:
 		systemctl start docker; \
 		usermod -aG docker mivilain; \
 	fi
-	/bin/cp docker.sh /etc/profile.d/
