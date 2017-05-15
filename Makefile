@@ -56,20 +56,19 @@ git-config: git
 
 packages:
 ifeq ($(OS),centos)
-	-yum install -y wget vim lsof bash-completion epel-release bind-utils
+	-yum install -y wget vim lsof bash-completion epel-release bind-utils gvim
 else ifeq ($(OS),ubuntu)
-	-apt-get install -y curl vim lsof bash-completion dnsutils
+	-apt-get install -y curl vim lsof bash-completion dnsutils vim-gnome
 endif
 
-ntp: ntp-install ntp-config
-ntp-install:
+ntp:
 ifeq ($(OS),"centos")
 	-yum install -y ntp
 else ifeq ($(OS),"ubuntu")
-	apt-get install -y ntp ntpdate ntp-doc
+	-apt-get install -y ntp ntpdate ntp-doc
 endif
 
-ntp-config: ntp-install
+ntp-config: ntp
 ifneq ($(AWS),n)
 	sed -i.orig -e "s/centos.pool/amazon.pool/g" /etc/ntp.conf # only if on AWS
 endif
