@@ -61,6 +61,17 @@ else ifeq ($(OS),"ubuntu")
 	-apt-get install -y curl vim lsof bash-completion dnsutils vim-gnome
 endif
 
+vbox:
+ifeq ($(OS),"centos")
+	-yum update kernel*
+	-yum install -y gcc kernel-devel kernel-headers dkms make bzip2 perl
+else ifeq ($(OS),"ubuntu")
+	-apt-get update && apt-get -y upgrade
+	-apt-get install -y build-essential module-assistant
+endif
+	-mount /dev/sr0 /mnt
+	-cd /mnt && ./VBoxLinuxAdditions.run
+
 ntp:
 ifeq ($(OS),"centos")
 	-yum install -y ntp
