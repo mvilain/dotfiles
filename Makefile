@@ -64,13 +64,14 @@ endif
 vbox:
 ifeq ($(OS),"centos")
 	-yum update kernel*
-	-yum install -y gcc kernel-devel kernel-headers dkms make bzip2 perl
+	-yum install -y dkms gcc make kernel-devel bzip2 binutils patch libgomp glibc-headers glibc-devel kernel-headers
 else ifeq ($(OS),"ubuntu")
 	-apt-get update && apt-get -y upgrade
 	-apt-get install -y build-essential module-assistant
 endif
 	-mount /dev/sr0 /mnt
 	-cd /mnt && ./VBoxLinuxAdditions.run
+	-echo "You can now reboot the system"
 
 ntp:
 ifeq ($(OS),"centos")
