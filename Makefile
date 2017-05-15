@@ -28,16 +28,16 @@ build:
 
 clean: 
 
-install : ntp files
+install : ntp files pkgs
 
 files: $(DOTFILES)
 	/bin/cp -v $(DOTFILES) ${HOME}/
 
 git:
-ifeq ($(OS),centos)
+ifeq ($(OS),"centos")
 	-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
 	-yum install -y git2u
-else ifeq ($(OS),ubuntu)
+else ifeq ($(OS),"ubuntu")
 	-apt-get install -y git
 endif
 
@@ -54,10 +54,10 @@ git-config: git
 	git config --global alias.mylog "log --pretty=format:'%h %s [%an]' --graph" 
 	git config --global alias.lol "log --graph --decorate --pretty=oneline --abbrev-commit --all"
 
-packages:
-ifeq ($(OS),centos)
-	-yum install -y wget vim lsof bash-completion epel-release bind-utils gvim
-else ifeq ($(OS),ubuntu)
+pkgs:
+ifeq ($(OS),"centos")
+	-yum install -y wget vim lsof bash-completion epel-release bind-utils gvim net-tools
+else ifeq ($(OS),"ubuntu")
 	-apt-get install -y curl vim lsof bash-completion dnsutils vim-gnome
 endif
 
@@ -69,13 +69,13 @@ else ifeq ($(OS),"ubuntu")
 endif
 
 ntp-config: ntp
-ifneq ($(AWS),n)
+ifneq ($(AWS),"n")
 	sed -i.orig -e "s/centos.pool/amazon.pool/g" /etc/ntp.conf # only if on AWS
 endif
 ifeq ($(OS),"centos")
 	systemctl enable ntpd
 	systemctl start ntpd
-else ifeq ($(OS),ubuntu)
+else ifeq ($(OS),"ubuntu")
 	systemctl enable ntp
 	systemctl start ntp
 endif
