@@ -85,14 +85,15 @@ endif
 	-cd /mnt && ./VBoxLinuxAdditions.run
 	-echo "You can now reboot the system"
 
-ntp:
+ntp: ntp-install ntp-config
+ntp-install:
 ifeq ($(OS),"centos")
 	-yum install -y ntp
 else ifeq ($(OS),"ubuntu")
 	-apt-get install -y ntp ntpdate ntp-doc
 endif
 
-ntp-config: ntp
+ntp-config:
 ifneq ($(AWS),"n")
 	sed -i.orig -e "s/centos.pool/amazon.pool/g" /etc/ntp.conf # only if on AWS
 endif
