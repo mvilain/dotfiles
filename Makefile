@@ -25,6 +25,7 @@ all: $(TARGETS)
 build: 
 	echo $(OS)
 	echo $(IP)
+	@echo "logname=" $(LOGNAME) " sudo_user="$(SUDO_USER)
 
 clean: 
 
@@ -32,6 +33,11 @@ install : ntp files pkgs
 
 files: $(DOTFILES)
 	/bin/cp -v $(DOTFILES) ${HOME}/
+ifneq ($(SUDO_USER),)
+	echo "$(SUDO_USER) ALL=NOPASSWD: ALL" > /etc/sudoers.d/$(SUDO_USER)
+else
+	echo "$(LOGNAME) ALL=NOPASSWD: ALL" > /etc/sudoers.d/$(LOGNAME)
+endif
 
 git:
 ifeq ($(OS),"centos")
@@ -116,17 +122,21 @@ docker:
 		systemctl enable docker; \
 		systemctl daemon-reload; \
 		systemctl start docker; \
-		usermod -aG docker mivilain; \
 	fi
+ifneq ($(SUDO_USER),)
+	usermod -aG docker $(SUDO_USER)
+endif
 
+
+# centos Mate and Gnome wont' resize with extentions installed
+# http://jensd.be/125/linux/rel/install-mate-or-xfce-on-centos-7
 gui:
 ifeq ($(OS),"centos")
 	yum groupinstall "X Window system"
 	yum groupinstall "Xfce"
-	yum groupinstall "MATE Desktop"
 else ifeq ($(OS),"ubuntu")
 	apt-get update
-	apt-get install mate xfce4
+	apt-get install xfce4
 endif
 	systemctl set-default graphical.target
 	echo "reboot to start with GUI"
