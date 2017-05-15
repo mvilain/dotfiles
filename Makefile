@@ -124,13 +124,13 @@ ifeq ($(OS),"centos")
 	yum groupinstall "X Window system"
 	yum groupinstall "Xfce"
 	yum groupinstall "MATE Desktop"
-	systemctl set-default graphical.target
 else ifeq ($(OS),"ubuntu")
+	apt-get update
+	apt-get install mate xfce4
 endif
+	systemctl set-default graphical.target
+	echo "reboot to start with GUI"
 
 no-gui:
-ifeq ($(OS),"centos")
 	systemctl set-default multi-user.target
-	systemctl isolate graphical.target
-else ifeq ($(OS),"ubuntu")
-endif
+	echo "reboot to start with without GUI"
