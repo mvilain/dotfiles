@@ -124,5 +124,13 @@ ifeq ($(OS),"centos")
 	yum groupinstall "X Window system"
 	yum groupinstall "Xfce"
 	yum groupinstall "MATE Desktop"
+	systemctl set-default graphical.target
+else ifeq ($(OS),"ubuntu")
+endif
+
+no-gui:
+ifeq ($(OS),"centos")
+	systemctl set-default multi-user.target
+	systemctl isolate graphical.target
 else ifeq ($(OS),"ubuntu")
 endif
