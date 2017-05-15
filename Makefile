@@ -118,3 +118,11 @@ docker:
 		systemctl start docker; \
 		usermod -aG docker mivilain; \
 	fi
+
+gui:
+ifeq ($(OS),"centos")
+	yum groupinstall "X Window system"
+	yum groupinstall "Xfce"
+	yum groupinstall "MATE Desktop"
+else ifeq ($(OS),"ubuntu")
+endif
