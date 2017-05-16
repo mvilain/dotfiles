@@ -46,29 +46,6 @@ else
 	echo "$(LOGNAME) ALL = NOPASSWD: ALL" > /etc/sudoers.d/$(LOGNAME)
 endif
 
-git: git-install git-config
-git-install:
-ifeq ($(OS),"centos")
-	-[ -e /bin/git ] && yum remove -y git
-	-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
-	-yum install -y git2u
-else ifeq ($(OS),ubuntu)
-	-apt-get install -y git
-endif
-
-git-config: git
-	git config --global user.name "Michael Vilain"
-	git config --global user.email "michael@vilain.com"
-	git config --global color.ui true
-	git config --global push.default simple
-	git config --global alias.st status 
-	git config --global alias.co checkout 
-	git config --global alias.br branch 
-	git config --global alias.cl commit 
-	git config --global alias.origin "remote show origin"
-	git config --global alias.mylog "log --pretty = format:'%h %s [%an]' --graph" 
-	git config --global alias.lol "log --graph --decorate --pretty=oneline --abbrev-commit --all"
-
 pkgs:
 ifeq ($(OS),"centos")
 	-yum install -y wget vim lsof bash-completion epel-release bind-utils gvim net-tools
@@ -85,6 +62,31 @@ ifeq ($(OS),"centos")
 else ifeq ($(OS),ubuntu)
 	-apt-get update && apt-get upgrade -y
 endif
+
+
+git: git-install git-config
+
+git-install:
+ifeq ($(OS),"centos")
+	-[ -e /bin/git ] && yum remove -y git
+	-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+	-yum install -y git2u
+else ifeq ($(OS),ubuntu)
+	-apt-get install -y git
+endif
+
+git-config:
+	git config --global user.name "Michael Vilain"
+	git config --global user.email "michael@vilain.com"
+	git config --global color.ui true
+	git config --global push.default simple
+	git config --global alias.st status 
+	git config --global alias.co checkout 
+	git config --global alias.br branch 
+	git config --global alias.cl commit 
+	git config --global alias.origin "remote show origin"
+	git config --global alias.mylog "log --pretty = format:'%h %s [%an]' --graph" 
+	git config --global alias.lol "log --graph --decorate --pretty=oneline --abbrev-commit --all"
 
 
 # must be run as root or it won't install
