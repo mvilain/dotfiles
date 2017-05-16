@@ -17,7 +17,8 @@ endif
 # centos or ubuntu (no others tested)
 OS = $(shell grep '^ID=' /etc/os-release | sed -e 's/ID=//')
 
-DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward .functions .inputrc .screenrc
+DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
+	.functions .inputrc .screenrc .vimrc
 
 TARGETS :=  install
 
