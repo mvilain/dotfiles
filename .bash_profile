@@ -2,7 +2,7 @@
 # ~/.extra can be used for settings you don’t want to commit
 # Add `~/bin` to the `$PATH`
 # global changes to all accounts should be put in /etc/paths.d/<file>
-export PATH="$HOME/bin:$PATH"
+export PATH="/usr/local/bin:$HOME/bin:$PATH"
 
 for file in ~/.{path,bash_prompt,exports,aliases,functions,extra}; do
 	[ -r "$file" ] && source "$file"
