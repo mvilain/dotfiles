@@ -1,5 +1,5 @@
 # Makefile for dotfiles environment
-# Maintainer Michael Vilain <michael@vilain.com> [201705.15]
+# Maintainer Michael Vilain <michael@vilain.com> [201705.16]
 # for some reason, conditional executes don't work on Ubuntu's make
 
 .PHONY : build clean install
@@ -131,8 +131,9 @@ endif
 # http://jensd.be/125/linux/rel/install-mate-or-xfce-on-centos-7
 gui:
 ifeq ($(OS),"centos")
-	yum groupinstall "X Window system"
-	yum groupinstall "Xfce"
+	yum groupinstall -y "X Window system"
+	yum groupinstall -y "Xfce"
+	yum install -y firefox
 else ifeq ($(OS),ubuntu)
 	apt-get update
 	apt-get install xfce4
