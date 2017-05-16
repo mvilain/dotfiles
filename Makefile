@@ -87,17 +87,20 @@ else ifeq ($(OS),ubuntu)
 endif
 
 
-vbox:
-ifeq ($(OS),"centos")
-	-yum update kernel*
-	-yum install -y dkms gcc make kernel-devel bzip2 binutils patch libgomp glibc-headers glibc-devel kernel-headers
-else ifeq ($(OS),ubuntu)
-	-apt-get update && apt-get -y upgrade
-	-apt-get install -y build-essential module-assistant
+# must be run as root or it won't install
+docker:
+	if [ ! -e /bin/docker ]; then \
+		curl -fsSL https://get.docker.com/ | sh; \
+		curl -L $(DOCKER_COMPOSE_URL) > /usr/local/bin/docker-compose; \
+		chmod +x /usr/local/bin/docker-compose; \
+		sed -i -e "/^MountFlags/d" /lib/systemd/system/docker.service; \
+		systemctl enable docker; \
+		systemctl daemon-reload; \
+		systemctl start docker; \
+	fi
+ifneq ($(SUDO_USER),)
+	usermod -aG docker $(SUDO_USER)
 endif
-	-mount /dev/sr0 /mnt
-	-cd /mnt && ./VBoxLinuxAdditions.run
-	-echo "You can now reboot the system"
 
 ntp: ntp-install ntp-config
 ntp-install:
@@ -120,21 +123,6 @@ else ifeq ($(OS),ubuntu)
 endif
 	timedatectl set-timezone America/Los_Angeles
 
-# must be run as root or it won't install
-docker:
-	if [ ! -e /bin/docker ]; then \
-		curl -fsSL https://get.docker.com/ | sh; \
-		curl -L $(DOCKER_COMPOSE_URL) > /usr/local/bin/docker-compose; \
-		chmod +x /usr/local/bin/docker-compose; \
-		sed -i -e "/^MountFlags/d" /lib/systemd/system/docker.service; \
-		systemctl enable docker; \
-		systemctl daemon-reload; \
-		systemctl start docker; \
-	fi
-ifneq ($(SUDO_USER),)
-	usermod -aG docker $(SUDO_USER)
-endif
-
 
 # centos Mate and Gnome wont' resize with extentions installed
 # http://jensd.be/125/linux/rel/install-mate-or-xfce-on-centos-7
@@ -152,3 +140,19 @@ endif
 no-gui:
 	systemctl set-default multi-user.target
 	echo "reboot to start with without GUI"
+
+# Centos assumes installed w/o GUI at command line
+# ubunut assumes installed on top of GUI with mount point
+vbox:
+ifeq ($(OS),"centos")
+	-yum update kernel*
+	-yum install -y dkms gcc make kernel-devel bzip2 binutils patch libgomp glibc-headers glibc-devel kernel-headers
+	-mount /dev/sr0 /mnt
+	-cd /mnt && ./VBoxLinuxAdditions.run
+else ifeq ($(OS),ubuntu)
+	-apt-get update && apt-get -y upgrade
+	-apt-get install -y build-essential module-assistant
+	-cd /media/mivilain/VBOXADDITIONS_5.1.22_115126 && ./VBoxLinuxAdditions.run
+endif
+	@echo "You can now reboot the system"
+
