@@ -48,7 +48,8 @@ endif
 
 pkgs:
 ifeq ($(OS),"centos")
-	-yum install -y wget vim lsof bash-completion epel-release bind-utils gvim net-tools
+	-yum install -y wget vim lsof bash-completion epel-release \
+		bind-utils gvim net-tools yum-utils
 else ifeq ($(OS),ubuntu)
 	apt-get install -y curl vim lsof bash-completion dnsutils vim-gnome
 endif
@@ -129,17 +130,19 @@ endif
 
 # centos Mate and Gnome wont' resize with extentions installed
 # http://jensd.be/125/linux/rel/install-mate-or-xfce-on-centos-7
+# 5/16/17 epel's xfce seems to be broken requiring wrong version
+# skip-broken fixes this temporarily
 gui:
 ifeq ($(OS),"centos")
 	yum groupinstall -y "X Window system"
-	yum groupinstall -y "Xfce"
+	yum groupinstall -y "Xfce" --skip-broken
 	yum install -y firefox
 else ifeq ($(OS),ubuntu)
 	apt-get update
 	apt-get install xfce4
 endif
 	systemctl set-default graphical.target
-	echo "reboot to start with GUI"
+	@echo "reboot to start with GUI"
 
 no-gui:
 	systemctl set-default multi-user.target
