@@ -1,6 +1,5 @@
 # Makefile for dotfiles environment
 # Maintainer Michael Vilain <michael@vilain.com> [201705.16]
-# for some reason, conditional executes don't work on Ubuntu's make
 
 .PHONY : build clean install
 
@@ -69,9 +68,10 @@ git: git-install git-config
 
 git-install:
 ifeq ($(OS),"centos")
-	-[ -e /bin/git ] && yum remove -y git
-	-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
-	-yum install -y git2u
+	#-[ -e /bin/git ] && yum remove -y git
+	#-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+	#-yum install -y git2u
+	-yum install -y git
 else ifeq ($(OS),ubuntu)
 	-apt-get install -y git
 endif
