@@ -50,8 +50,6 @@ pkgs:
 ifeq ($(OS),"centos")
 	-yum install -y wget vim lsof bash-completion epel-release \
 		bind-utils gvim net-tools yum-utils
-	-yum install -y python2-pip
-	-easy_install pip
 else ifeq ($(OS),ubuntu)
 	apt-get install -y curl vim lsof bash-completion dnsutils vim-gnome
 endif
@@ -165,3 +163,16 @@ else ifeq ($(OS),ubuntu)
 endif
 	@echo "You can now reboot the system"
 
+
+python3: 
+ifeq ($(OS),"centos")
+	-yum install -y python2-pip
+	-easy_install pip
+	-yum install -y gcc openssl-devel zlib-devel bzip2-devel sqlite sqlite-devel openssl-devel
+else ifeq ($(OS),ubuntu)
+	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
+endif
+	-wget https://www.python.org/ftp/python/3.5.2/Python-3.5.2.tgz
+	-tar -xzf Python-3.5.2.tgz
+	-cd Python-3.5.2 && ./configure && make altinstall
+	#-rm Python-3.5.2.tgz

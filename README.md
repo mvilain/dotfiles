@@ -24,5 +24,7 @@ mvilain's Linux Dotfiles
 
 Makefile -- targets to install git 2.8, ntp, dot files, and various yum packages
 
+## python3.5 on CentOS 7
 
-
+[https://tecadmin.net/install-python-3-5-on-centos/]
+[http://stackoverflow.com/questions/37723236/pip-error-while-installing-python-ignoring-ensurepip-failure-pip-8-1-1-requir/37723517]
