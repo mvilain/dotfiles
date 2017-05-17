@@ -50,6 +50,8 @@ pkgs:
 ifeq ($(OS),"centos")
 	-yum install -y wget vim lsof bash-completion epel-release \
 		bind-utils gvim net-tools yum-utils
+	-yum install -y python2-pip
+	-easy_install pip
 else ifeq ($(OS),ubuntu)
 	apt-get install -y curl vim lsof bash-completion dnsutils vim-gnome
 endif
