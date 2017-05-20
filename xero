@@ -1,0 +1,87 @@
+#!/usr/bin/perl
+#
+# Usage: zerofile -hs [files]
+
+use File::Basename;
+use Getopt::Std;
+
+#-----------------------------------------------------------------------
+# initialize global variables
+#
+$VERSION = "V1.0.1 [2010.10.04MeV]";
+$PROC = &basename($0);
+
+#-------------------------------------------------------------------
+# get and parse options
+#
+&getopts('hs', \%opts);
+
+&HELP_MESSAGE() if ($opts{'h'} or $#ARGV < 0);
+
+#
+# walk through files passed by argument, open them trucated, and close them
+#
+$error_found = 0;		# false or normal exit status, 1=error
+for (@ARGV)
+{
+	$file = $_;
+	if (! -e $file)
+	{
+		printf '%s: file "%s" does not exist'."\n", $PROC, $file;
+		$error_found = 1;
+		next;
+	}
+	if (! -f $file)
+	{
+		printf '%s: "%s" not a plain file'."\n", $PROC, $file;
+		$error_found = 1;
+		next;
+	}
+
+	open(FH, ">", $file) || warn "$PROC: can't write \"".$file."\" - $!";
+	close $fh;
+	printf '  >>%s: zeroed %s'."\n", $PROC, $file unless ($opts{'s'});
+}
+exit $error_found;
+
+#=======================================================================
+# SUBROUTINES 
+#=======================================================================
+#----------------------------------------------------------------------
+sub HELP_MESSAGE {
+#----------------------------------------------------------------------
+# global parameter: $PROC, the filename of the script
+#
+# reports help message in either command-line, then quits
+# part of Getopt::Std(getops) and called if --help in argument list
+#
+	local ($f) = @_;
+    printf "Usage: %s [-hs] <FILES>\n",$PROC;
+    print <<_USE_;
+    
+<FILES> is the list of at least 1 plain file (not a directory, link, pipe,
+socket, or special file).  It is set to zero length.
+
+where
+
+  -s	don't file info on truncation
+  -h	this message
+
+$VERSION
+_USE_
+    exit 2;
+}
+
+#----------------------------------------------------------------------
+sub VERSION_MESSAGE {
+#----------------------------------------------------------------------
+# uses global variables
+# $PROC - filename of calling program
+# $VERSION - version string to display
+#
+# reports version message in either command-line, then quits
+# part of Getopt::Std(getops) and called if --version in argument list
+#
+	printf "%s %s\n",$PROC,$VERSION;
+	exit;
+}
