@@ -1,9 +1,9 @@
 # Makefile for dotfiles environment
-# Maintainer Michael Vilain <michael@vilain.com> [201705.16]
+# Maintainer Michael Vilain <michael@vilain.com> [201710.10]
 
 .PHONY : build clean install
 
-DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m`"
+DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m`"
 
 IP = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
 ifeq ($(IP),)
