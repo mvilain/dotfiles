@@ -1,5 +1,6 @@
 # Makefile for dotfiles environment
 # Maintainer Michael Vilain <michael@vilain.com> [201710.10]
+# 201712.12 added support for CentOS 6.9
 
 .PHONY : build clean install
 
@@ -14,7 +15,14 @@ AZ = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/placement/a
 endif
 
 # centos or ubuntu (no others tested)
-OS = $(shell grep '^ID=' /etc/os-release | sed -e 's/ID=//')
+# /etc/os-release doesn't exist on CentOS 6 but does on Ubuntu
+# make 3.81 only tests for empty/non-empty string
+REL = $(shell test -e /etc/os-release && echo "")
+ifeq ($(REL),)
+OS = "centos"
+else ifeq ($(REL),)
+OS = $(shell test -e /etc/os-release && grep '^ID=' /etc/os-release | sed -e 's/ID=//')
+endif
 
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
 	.functions .inputrc .screenrc .vimrc
@@ -24,13 +32,16 @@ TARGETS :=  install
 all: $(TARGETS)
 
 build: 
-ifeq ($(OS),"centos")
-	@echo -n "!!"
-else ifeq ($(OS),ubuntu)
-	@echo -n "!"
-endif
-	@echo $(OS)
-	@echo $(IP)
+#ifeq ($(OS),"centos6")
+#	@echo "!!"
+#else ifeq ($(OS),"centos")
+#	@echo "!!!"
+#else ifeq ($(OS),ubuntu)
+#	@echo "!"
+#endif
+	@echo "/etc/os-release exists? " $(REL)
+	@echo "OS = " $(OS)
+	@echo "IP = " $(IP)
 	@echo "docker-compose = " $(DOCKER_COMPOSE_URL)
 	@echo "logname =" $(LOGNAME) " sudo_user=" $(SUDO_USER)
 
