@@ -19,13 +19,18 @@ endif
 # make 3.81 only tests for empty/non-empty string
 REL = $(shell test -e /etc/os-release && echo "")
 ifeq ($(REL),)
-OS = "centos"
+OS = "centos6"
 else ifeq ($(REL),)
 OS = $(shell test -e /etc/os-release && grep '^ID=' /etc/os-release | sed -e 's/ID=//')
 endif
 
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
 	.functions .inputrc .screenrc .vimrc
+
+C7_PKGS := wget vim lsof bash-completion epel-release bind-utils gvim net-tools yum-utils
+C6_PKGS := $(C7_PKGS) sudo
+U_PKGS := curl vim lsof bash-completion dnsutils vim-gnome
+
 
 TARGETS :=  install
 
@@ -59,10 +64,11 @@ endif
 
 pkgs:
 ifeq ($(OS),"centos")
-	-yum install -y wget vim lsof bash-completion epel-release \
-		bind-utils gvim net-tools yum-utils
+	-yum install -y $(C7_PKGS)
+else ifeq ($(OS),"centos6")
+	-yum install -y $(C6_PKGS)
 else ifeq ($(OS),ubuntu)
-	apt-get install -y curl vim lsof bash-completion dnsutils vim-gnome
+	apt-get install -y $(U_PKGS)
 endif
 
 update:
@@ -70,7 +76,11 @@ ifeq ($(OS),"centos")
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
-	-grub2-mkconfig -o /boot/grub2/grub.cfg 
+	-grub2-mkconfig -o /boot/grub2/grub.cfg
+else ifeq ($(OS),"centos6")
+	-yum update -y
+	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
+	-sed -i -e 's/ rhgb quiet//' /boot/grub/grub.cfg
 else ifeq ($(OS),ubuntu)
 	-apt-get update && apt-get upgrade -y
 endif
