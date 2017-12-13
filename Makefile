@@ -84,7 +84,7 @@ ifeq ($(OS),"centos")
 else ifeq ($(OS),"centos6")
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
-	-sed -i -e 's/ rhgb quiet//' /boot/grub/grub.cfg
+	-sed -i -e 's/ rhgb quiet//' /boot/grub/grub.conf
 else ifeq ($(OS),ubuntu)
 	-apt-get update && apt-get upgrade -y
 endif
