@@ -147,6 +147,8 @@ ntp: ntp-install ntp-config
 ntp-install:
 ifeq ($(OS),"centos")
 	-yum install -y ntp
+else ifeq ($(OS),"centos6")
+	-yum install -y ntp
 else ifeq ($(OS),ubuntu)
 	-apt-get install -y ntp ntpdate ntp-doc
 endif
