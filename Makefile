@@ -20,7 +20,7 @@ endif
 REL = $(shell test -e /etc/os-release && echo "Y")
 ifeq ($(REL),)
 OS =  $(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
-else ifeq ($(REL),"Y")
+else ifeq ($(REL),Y)
 OS = $(shell test -e /etc/os-release && grep '^ID=' /etc/os-release | sed -e 's/ID=//')
 endif
 
