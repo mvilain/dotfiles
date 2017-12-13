@@ -27,6 +27,7 @@ endif
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
 	.functions .inputrc .screenrc .vimrc
 
+# requires https://centos[67].iuscommunity.org/ius-release.rpm
 C7_PKGS := wget vim lsof bash-completion epel-release bind-utils gvim net-tools yum-utils
 C6_PKGS := $(C7_PKGS) sudo
 U_PKGS := curl vim lsof bash-completion dnsutils vim-gnome
@@ -62,11 +63,14 @@ else
 	echo "$(LOGNAME) ALL = NOPASSWD: ALL" > /etc/sudoers.d/$(LOGNAME)
 endif
 
+# prerequisite for git2u and python36u
 pkgs:
-ifeq ($(OS),"centos")
+ifeq ($(OS),"centos6")
 	-yum install -y $(C7_PKGS)
-else ifeq ($(OS),"centos6")
+	-yum install -y https://centos6.iuscommunity.org/ius-release.rpm
+else ifeq ($(OS),"centos")
 	-yum install -y $(C6_PKGS)
+	-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
 else ifeq ($(OS),ubuntu)
 	apt-get install -y $(U_PKGS)
 endif
@@ -94,9 +98,21 @@ ifeq ($(OS),"centos")
 	#-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
 	#-yum install -y git2u
 	-yum install -y git
+else ifeq ($(OS),"centos6")
+	-yum install  -y git
 else ifeq ($(OS),ubuntu)
 	-apt-get install -y git
 endif
+
+git2-install: pkgs
+ifeq ($(OS),"centos")
+	-[ -e /bin/git ] && yum remove -y git
+	-yum install -y git2u
+else ifeq ($(OS),"centos6")
+	-[ -e /bin/git ] && yum remove -y git
+	-yum install  -y git2u
+endif
+
 
 git-config:
 	git config --global user.name "Michael Vilain"
@@ -139,17 +155,23 @@ ntp-config:
 ifneq ($(AWS),"n")
 	sed -i.orig -e "s/centos.pool/amazon.pool/g" /etc/ntp.conf # only if on AWS
 endif
-ifeq ($(OS),"centos")
+ifeq ($(OS),"centos6")
+	chkconfig --level 2 --level 3 ntpd on
+	service ntpd start
+	#[ ! -e /etc/localtime.orig ] && mv /etc/localtime /etc/localtime.orig
+	# ln -s /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
+else ifeq ($(OS),"centos")
 	systemctl enable ntpd
 	systemctl start ntpd
+	timedatectl set-timezone America/Los_Angeles
 else ifeq ($(OS),ubuntu)
 	systemctl enable ntp
 	systemctl start ntp
-endif
 	timedatectl set-timezone America/Los_Angeles
+endif
 
 
-# centos Mate and Gnome wont' resize with extentions installed
+# centos7 Mate and Gnome won't resize with extensions installed
 # http://jensd.be/125/linux/rel/install-mate-or-xfce-on-centos-7
 # 5/16/17 epel's xfce seems to be broken requiring wrong version
 # skip-broken fixes this temporarily
@@ -158,16 +180,26 @@ ifeq ($(OS),"centos")
 	yum groupinstall -y "X Window system"
 	yum groupinstall -y "Xfce" --skip-broken
 	yum install -y firefox
+	systemctl set-default graphical.target
+else ifeq ($(OS),"centos6")
+	yum groupinstall -y "X Window system"
+	yum groupinstall -y "Xfce" --skip-broken
+	yum install -y firefox
 else ifeq ($(OS),ubuntu)
 	apt-get update
 	apt-get install xfce4
-endif
 	systemctl set-default graphical.target
+endif
 	@echo "reboot to start with GUI"
 
 no-gui:
+ifeq ($(OS),"centos")
 	systemctl set-default multi-user.target
 	echo "reboot to start with without GUI"
+else ifeq ($(OS),ubuntu)
+	systemctl set-default multi-user.target
+	echo "reboot to start with without GUI"
+endif
 
 # Centos assumes installed w/o GUI at command line
 # ubunut assumes installed on top of GUI with mount point
@@ -185,15 +217,22 @@ endif
 	@echo "You can now reboot the system"
 
 
-python3: 
+python3u: pkgs
 ifeq ($(OS),"centos")
 	-yum install -y python2-pip
 	-easy_install pip
-	-yum install -y gcc openssl-devel zlib-devel bzip2-devel sqlite sqlite-devel openssl-devel
-else ifeq ($(OS),ubuntu)
-	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
+	-yum install -y python36u python36u-setuptools python36u-pip
+else ifeq ($(OS),"centos6")
+	-yum install -y python2-pip
+	-easy_install pip
+	-yum install -y python36u python36u-setuptools python36u-pip
 endif
+
+python3:
+ifeq ($(OS),ubuntu)
+	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
 	-wget https://www.python.org/ftp/python/3.5.2/Python-3.5.2.tgz
 	-tar -xzf Python-3.5.2.tgz
 	-cd Python-3.5.2 && ./configure && make altinstall
 	#-rm Python-3.5.2.tgz
+endif
