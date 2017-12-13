@@ -94,9 +94,6 @@ git: git-install git-config
 
 git-install:
 ifeq ($(OS),"centos")
-	#-[ -e /bin/git ] && yum remove -y git
-	#-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
-	#-yum install -y git2u
 	-yum install -y git
 else ifeq ($(OS),"centos6")
 	-yum install  -y git
@@ -225,8 +222,7 @@ ifeq ($(OS),"centos")
 	-easy_install pip
 	-yum install -y python36u python36u-setuptools python36u-pip
 else ifeq ($(OS),"centos6")
-	-yum install -y python2-pip
-	-easy_install pip
+	-yum install pythone27 python27-pip python27-setuptools
 	-yum install -y python36u python36u-setuptools python36u-pip
 endif
 
