@@ -19,7 +19,7 @@ endif
 # make 3.81 only tests for empty/non-empty string
 REL = $(shell test -e /etc/os-release && echo "")
 ifeq ($(REL),)
-OS = "centos6"
+OS =  $(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6"
 else ifeq ($(REL),)
 OS = $(shell test -e /etc/os-release && grep '^ID=' /etc/os-release | sed -e 's/ID=//')
 endif
@@ -31,7 +31,7 @@ DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward 
 C7_PKGS := wget vim lsof bash-completion epel-release bind-utils gvim net-tools yum-utils
 C6_PKGS := $(C7_PKGS) sudo
 U_PKGS := curl vim lsof bash-completion dnsutils vim-gnome
-
+PY_VER = 3.6.3
 
 TARGETS :=  install
 
@@ -216,21 +216,22 @@ endif
 	@echo "You can now reboot the system"
 
 
-python3u: pkgs
+python3: pkgs
 ifeq ($(OS),"centos")
 	-yum install -y python2-pip
 	-easy_install pip
 	-yum install -y python36u python36u-setuptools python36u-pip
 else ifeq ($(OS),"centos6")
-	-yum install pythone27 python27-pip python27-setuptools
+	-yum install python27 python27-pip python27-setuptools
 	-yum install -y python36u python36u-setuptools python36u-pip
 endif
 
-python3:
+
+python3u:
 ifeq ($(OS),ubuntu)
 	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
-	-wget https://www.python.org/ftp/python/3.5.2/Python-3.5.2.tgz
-	-tar -xzf Python-3.5.2.tgz
-	-cd Python-3.5.2 && ./configure && make altinstall
-	#-rm Python-3.5.2.tgz
+	-wget https://www.python.org/ftp/python/$(PY_VER)/Python-$(PY_VER).tgz
+	-tar -xzf Python-$(PY_VER).tgz
+	-cd Python-$(PY_VER) && ./configure && make altinstall
+	-rm Python-$(PY_VER).tgz
 endif
