@@ -17,10 +17,10 @@ endif
 # centos or ubuntu (no others tested)
 # /etc/os-release doesn't exist on CentOS 6 but does on Ubuntu
 # make 3.81 only tests for empty/non-empty string
-REL = $(shell test -e /etc/os-release && echo "")
+REL = $(shell test -e /etc/os-release && echo "Y")
 ifeq ($(REL),)
-OS =  $(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6"
-else ifeq ($(REL),)
+OS =  $(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
+else ifeq ($(REL),"Y")
 OS = $(shell test -e /etc/os-release && grep '^ID=' /etc/os-release | sed -e 's/ID=//')
 endif
 
