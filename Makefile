@@ -106,10 +106,10 @@ endif
 
 git2-install: pkgs
 ifeq ($(OS),"centos")
-	-[ -e /bin/git ] && yum remove -y git
+	-yum remove -y git
 	-yum install -y git2u
 else ifeq ($(OS),"centos6")
-	-[ -e /bin/git ] && yum remove -y git
+	-yum remove -y git
 	-yum install  -y git2u
 endif
 
