@@ -28,9 +28,9 @@ DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward 
 	.functions .inputrc .screenrc .vimrc
 
 # requires https://centos[67].iuscommunity.org/ius-release.rpm
-C7_PKGS := wget vim lsof bash-completion epel-release bind-utils gvim net-tools yum-utils
+C7_PKGS := wget vim lsof bash-completion epel-release bind-utils net-tools yum-utils
 C6_PKGS := $(C7_PKGS) sudo
-U_PKGS := curl vim lsof bash-completion dnsutils vim-gnome
+U_PKGS := curl vim lsof bash-completion dnsutils
 PY_VER = 3.6.3
 
 TARGETS :=  install
@@ -178,15 +178,15 @@ gui:
 ifeq ($(OS),centos)
 	yum groupinstall -y "X Window system"
 	yum groupinstall -y "Xfce" --skip-broken
-	yum install -y firefox
+	yum install -y firefox gvim
 	systemctl set-default graphical.target
 else ifeq ($(OS),centos6)
 	yum groupinstall -y "X Window system"
 	yum groupinstall -y "Xfce" --skip-broken
-	yum install -y firefox
+	yum install -y firefox gvim
 else ifeq ($(OS),ubuntu)
 	apt-get update
-	apt-get install xfce4
+	apt-get install xfce4 vim-gnome
 	systemctl set-default graphical.target
 endif
 	@echo "reboot to start with GUI"
