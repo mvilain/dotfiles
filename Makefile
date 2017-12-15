@@ -65,10 +65,10 @@ endif
 
 # prerequisite for git2u and python36u
 pkgs:
-ifeq ($(OS),"centos6")
+ifeq ($(OS),centos6)
 	-yum install -y $(C7_PKGS)
 	-yum install -y https://centos6.iuscommunity.org/ius-release.rpm
-else ifeq ($(OS),"centos")
+else ifeq ($(OS),centos)
 	-yum install -y $(C6_PKGS)
 	-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
 else ifeq ($(OS),ubuntu)
@@ -76,12 +76,12 @@ else ifeq ($(OS),ubuntu)
 endif
 
 update:
-ifeq ($(OS),"centos")
+ifeq ($(OS)"centos)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
-else ifeq ($(OS),"centos6")
+else ifeq ($(OS),centos6)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /boot/grub/grub.conf
@@ -93,19 +93,19 @@ endif
 git: git-install git-config
 
 git-install:
-ifeq ($(OS),"centos")
+ifeq ($(OS),centos)
 	-yum install -y git
-else ifeq ($(OS),"centos6")
+else ifeq ($(OS),centos6)
 	-yum install  -y git
 else ifeq ($(OS),ubuntu)
 	-apt-get install -y git
 endif
 
 git2-install: pkgs
-ifeq ($(OS),"centos")
+ifeq ($(OS),centos)
 	-yum remove -y git
 	-yum install -y git2u
-else ifeq ($(OS),"centos6")
+else ifeq ($(OS),centos6)
 	-yum remove -y git
 	-yum install  -y git2u
 endif
@@ -142,9 +142,9 @@ endif
 
 ntp: ntp-install ntp-config
 ntp-install:
-ifeq ($(OS),"centos")
+ifeq ($(OS),centos)
 	-yum install -y ntp
-else ifeq ($(OS),"centos6")
+else ifeq ($(OS),centos6)
 	-yum install -y ntp
 else ifeq ($(OS),ubuntu)
 	-apt-get install -y ntp ntpdate ntp-doc
@@ -154,12 +154,12 @@ ntp-config:
 ifneq ($(AWS),"n")
 	sed -i.orig -e "s/centos.pool/amazon.pool/g" /etc/ntp.conf # only if on AWS
 endif
-ifeq ($(OS),"centos6")
+ifeq ($(OS),centos6)
 	chkconfig --level 2 --level 3 ntpd on
 	service ntpd start
 	#[ ! -e /etc/localtime.orig ] && mv /etc/localtime /etc/localtime.orig
 	# ln -s /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
-else ifeq ($(OS),"centos")
+else ifeq ($(OS),centos)
 	systemctl enable ntpd
 	systemctl start ntpd
 	timedatectl set-timezone America/Los_Angeles
@@ -175,12 +175,12 @@ endif
 # 5/16/17 epel's xfce seems to be broken requiring wrong version
 # skip-broken fixes this temporarily
 gui:
-ifeq ($(OS),"centos")
+ifeq ($(OS),centos)
 	yum groupinstall -y "X Window system"
 	yum groupinstall -y "Xfce" --skip-broken
 	yum install -y firefox
 	systemctl set-default graphical.target
-else ifeq ($(OS),"centos6")
+else ifeq ($(OS),centos6)
 	yum groupinstall -y "X Window system"
 	yum groupinstall -y "Xfce" --skip-broken
 	yum install -y firefox
@@ -192,7 +192,7 @@ endif
 	@echo "reboot to start with GUI"
 
 no-gui:
-ifeq ($(OS),"centos")
+ifeq ($(OS),centos)
 	systemctl set-default multi-user.target
 	echo "reboot to start with without GUI"
 else ifeq ($(OS),ubuntu)
@@ -203,7 +203,7 @@ endif
 # Centos assumes installed w/o GUI at command line
 # ubunut assumes installed on top of GUI with mount point
 vbox:
-ifeq ($(OS),"centos")
+ifeq ($(OS),centos)
 	-yum update kernel*
 	-yum install -y dkms gcc make kernel-devel bzip2 binutils patch libgomp glibc-headers glibc-devel kernel-headers
 	-mount /dev/sr0 /mnt
@@ -217,11 +217,11 @@ endif
 
 
 python3: pkgs
-ifeq ($(OS),"centos")
+ifeq ($(OS),centos)
 	-yum install -y python2-pip
 	-easy_install pip
 	-yum install -y python36u python36u-setuptools python36u-pip
-else ifeq ($(OS),"centos6")
+else ifeq ($(OS),centos6)
 	-yum install python27 python27-pip python27-setuptools
 	-yum install -y python36u python36u-setuptools python36u-pip
 endif
