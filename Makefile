@@ -1,6 +1,6 @@
 # Makefile for dotfiles environment
 # Maintainer Michael Vilain <michael@vilain.com> [201710.10]
-# 201712.12 added support for CentOS 6.9
+# 201712.14 added support for CentOS 6.9 + make 3.8.1
 
 .PHONY : build clean install
 
@@ -76,7 +76,7 @@ else ifeq ($(OS),ubuntu)
 endif
 
 update:
-ifeq ($(OS)"centos)
+ifeq ($(OS),centos)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
@@ -101,7 +101,7 @@ else ifeq ($(OS),ubuntu)
 	-apt-get install -y git
 endif
 
-git2-install: pkgs
+git2: pkgs
 ifeq ($(OS),centos)
 	-yum remove -y git
 	-yum install -y git2u
