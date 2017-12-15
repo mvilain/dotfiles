@@ -182,7 +182,7 @@ ifeq ($(OS),centos)
 	systemctl set-default graphical.target
 else ifeq ($(OS),centos6)
 	yum groupinstall -y "X Window system"
-	yum groupinstall -y "Xfce" --skip-broken
+	yum groupinstall -y "Xfce" "Fonts" --skip-broken
 	yum install -y firefox gvim
 else ifeq ($(OS),ubuntu)
 	apt-get update
