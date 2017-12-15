@@ -193,9 +193,9 @@ endif
 	@echo "reboot to start with GUI"
 
 no-gui:
-else ifeq ($(OS),centos6)
+ifeq ($(OS),centos6)
 	sed -i.x11 -e "s/id:5/id:3/" /etc/inittab
-ifeq ($(OS),centos)
+else ifeq ($(OS),centos)
 	systemctl set-default multi-user.target
 else ifeq ($(OS),ubuntu)
 	systemctl set-default multi-user.target
