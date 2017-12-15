@@ -222,7 +222,7 @@ ifeq ($(OS),centos)
 	-easy_install pip
 	-yum install -y python36u python36u-setuptools python36u-pip
 else ifeq ($(OS),centos6)
-	-yum install python27 python27-pip python27-setuptools
+	-yum install -y python27 python27-pip python27-setuptools
 	-yum install -y python36u python36u-setuptools python36u-pip
 endif
 
