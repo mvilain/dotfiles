@@ -183,7 +183,8 @@ ifeq ($(OS),centos)
 else ifeq ($(OS),centos6)
 	yum groupinstall -y "X Window system"
 	yum groupinstall -y "Xfce" "Fonts" --skip-broken
-	yum install -y firefox gvim
+	yum install -y firefox gvim xorg-x11-fonts-Type1 xorg-x11-fonts-misc
+	sed -i.mu3 -e "s/id:3/id:5/" /etc/inittab
 else ifeq ($(OS),ubuntu)
 	apt-get update
 	apt-get install -y xfce4 vim-gnome
@@ -192,13 +193,14 @@ endif
 	@echo "reboot to start with GUI"
 
 no-gui:
+else ifeq ($(OS),centos6)
+	sed -i.x11 -e "s/id:5/id:3/" /etc/inittab
 ifeq ($(OS),centos)
 	systemctl set-default multi-user.target
-	echo "reboot to start with without GUI"
 else ifeq ($(OS),ubuntu)
 	systemctl set-default multi-user.target
-	echo "reboot to start with without GUI"
 endif
+	echo "reboot to start with without GUI"
 
 # Centos assumes installed w/o GUI at command line
 # ubunut assumes installed on top of GUI with mount point
