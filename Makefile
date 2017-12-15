@@ -186,7 +186,7 @@ else ifeq ($(OS),centos6)
 	yum install -y firefox gvim
 else ifeq ($(OS),ubuntu)
 	apt-get update
-	apt-get install xfce4 vim-gnome
+	apt-get install -y xfce4 vim-gnome
 	systemctl set-default graphical.target
 endif
 	@echo "reboot to start with GUI"
@@ -227,6 +227,7 @@ else ifeq ($(OS),centos6)
 endif
 
 
+# ubuntu 17.10 has python3 already installed
 python3u:
 ifeq ($(OS),ubuntu)
 	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
