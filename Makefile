@@ -210,6 +210,7 @@ else ifeq ($(OS),fedora)
 	dnf install -y @xfce-desktop-environment
 	dnf install -y firefox gvim
 	systemctl set-default graphical.target
+	systemctl enable lightdm.service
 else ifeq ($(OS),ubuntu)
 	apt-get update
 	apt-get install -y xfce4 vim-gnome
@@ -224,6 +225,7 @@ else ifeq ($(OS),centos)
 	systemctl set-default multi-user.target
 else ifeq ($(OS),fedora)
 	systemctl set-default multi-user.target
+	systemctl disable lightdm.service
 else ifeq ($(OS),ubuntu)
 	systemctl set-default multi-user.target
 endif
@@ -257,6 +259,7 @@ endif
 
 
 # ubuntu 17.10 has python3 already installed
+# fedora 27 has python3 already installed
 python3u:
 ifeq ($(OS),ubuntu)
 	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
