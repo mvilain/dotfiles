@@ -29,10 +29,10 @@ endif
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
 	.functions .inputrc .screenrc .vimrc
 
-RHEL_PKGS := wget vim lsof bash-completion epel-release bind-utils net-tools
-C7_PKGS := $(RHEL_PKGS) yum-utils
-C6_PKGS := $(RHEL_PKGS) yum-utils sudo
-F_PKGS := $(RHEL_PKGS) dnf-util
+RHEL_PKGS := wget vim lsof bash-completion bind-utils net-tools
+C7_PKGS := $(RHEL_PKGS) yum-utils epel-release 
+C6_PKGS := $(RHEL_PKGS) yum-utils epel-release sudo
+F_PKGS := $(RHEL_PKGS) dnf-utils
 U_PKGS := curl vim lsof bash-completion dnsutils
 PY_VER = 3.6.3
 
