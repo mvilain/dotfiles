@@ -1,6 +1,7 @@
 # Makefile for dotfiles environment
 # Maintainer Michael Vilain <michael@vilain.com> [201710.10]
 # 201712.14 added support for CentOS 6.9 + make 3.8.1
+# 201712.23 added support for Fedora 27
 
 .PHONY : build clean install
 
@@ -17,6 +18,7 @@ endif
 # centos or ubuntu (no others tested)
 # /etc/os-release doesn't exist on CentOS 6 but does on Ubuntu
 # make 3.81 only tests for empty/non-empty string
+# returns OS=fedora
 REL = $(shell test -e /etc/os-release && echo "Y")
 ifeq ($(REL),)
 OS =  $(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
@@ -27,9 +29,10 @@ endif
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
 	.functions .inputrc .screenrc .vimrc
 
-# requires https://centos[67].iuscommunity.org/ius-release.rpm
-C7_PKGS := wget vim lsof bash-completion epel-release bind-utils net-tools yum-utils
-C6_PKGS := $(C7_PKGS) sudo
+RHEL_PKGS := wget vim lsof bash-completion epel-release bind-utils net-tools
+C7_PKGS := $(RHEL_PKGS) yum-utils
+C6_PKGS := $(RHEL_PKGS) yum-utils sudo
+F_PKGS := $(RHEL_PKGS) dnf-util
 U_PKGS := curl vim lsof bash-completion dnsutils
 PY_VER = 3.6.3
 
@@ -63,7 +66,8 @@ else
 	echo "$(LOGNAME) ALL = NOPASSWD: ALL" > /etc/sudoers.d/$(LOGNAME)
 endif
 
-# prerequisite for git2u and python36u
+# requires https://centos[67].iuscommunity.org/ius-release.rpm
+# prerequisite for centos git2u and python36u
 pkgs:
 ifeq ($(OS),centos6)
 	-yum install -y $(C7_PKGS)
@@ -71,6 +75,8 @@ ifeq ($(OS),centos6)
 else ifeq ($(OS),centos)
 	-yum install -y $(C6_PKGS)
 	-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+ifeq ($(OS),fedora)
+	-dnf install -y $(F_PKGS)
 else ifeq ($(OS),ubuntu)
 	apt-get install -y $(U_PKGS)
 endif
@@ -78,6 +84,11 @@ endif
 update:
 ifeq ($(OS),centos)
 	-yum update -y
+	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
+	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
+	-grub2-mkconfig -o /boot/grub2/grub.cfg
+else ifeq ($(OS),fedora)
+	-dnf update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
@@ -90,6 +101,7 @@ else ifeq ($(OS),ubuntu)
 endif
 
 
+# fedora 27 already has git 2.x installed
 git: git-install git-config
 
 git-install:
@@ -146,6 +158,8 @@ ifeq ($(OS),centos)
 	-yum install -y ntp
 else ifeq ($(OS),centos6)
 	-yum install -y ntp
+else ifeq ($(OS),fedora)
+	-dnf install -y ntp
 else ifeq ($(OS),ubuntu)
 	-apt-get install -y ntp ntpdate ntp-doc
 endif
@@ -160,6 +174,10 @@ ifeq ($(OS),centos6)
 	#[ ! -e /etc/localtime.orig ] && mv /etc/localtime /etc/localtime.orig
 	# ln -s /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
 else ifeq ($(OS),centos)
+	systemctl enable ntpd
+	systemctl start ntpd
+	timedatectl set-timezone America/Los_Angeles
+else ifeq ($(OS),fedora)
 	systemctl enable ntpd
 	systemctl start ntpd
 	timedatectl set-timezone America/Los_Angeles
@@ -185,6 +203,10 @@ else ifeq ($(OS),centos6)
 	yum groupinstall -y "Xfce" "Fonts" --skip-broken
 	yum install -y firefox gvim xorg-x11-fonts-Type1 xorg-x11-fonts-misc
 	sed -i.mu3 -e "s/id:3/id:5/" /etc/inittab
+else ifeq ($(OS),fedora)
+	dnf install -y @xfce-desktop-environment
+	dnf install -y firefox gvim
+	systemctl set-default graphical.target
 else ifeq ($(OS),ubuntu)
 	apt-get update
 	apt-get install -y xfce4 vim-gnome
@@ -196,6 +218,8 @@ no-gui:
 ifeq ($(OS),centos6)
 	sed -i.x11 -e "s/id:5/id:3/" /etc/inittab
 else ifeq ($(OS),centos)
+	systemctl set-default multi-user.target
+else ifeq ($(OS),fedora)
 	systemctl set-default multi-user.target
 else ifeq ($(OS),ubuntu)
 	systemctl set-default multi-user.target
