@@ -109,6 +109,9 @@ ifeq ($(OS),centos)
 	-yum install -y git
 else ifeq ($(OS),centos6)
 	-yum install  -y git
+else ifeq ($(OS),fedora)
+	-git --version
+	-echo "git 2.x already installed"
 else ifeq ($(OS),ubuntu)
 	-apt-get install -y git
 endif
