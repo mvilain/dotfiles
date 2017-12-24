@@ -75,7 +75,7 @@ ifeq ($(OS),centos6)
 else ifeq ($(OS),centos)
 	-yum install -y $(C6_PKGS)
 	-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
-ifeq ($(OS),fedora)
+else ifeq ($(OS),fedora)
 	-dnf install -y $(F_PKGS)
 else ifeq ($(OS),ubuntu)
 	apt-get install -y $(U_PKGS)
