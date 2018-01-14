@@ -1,0 +1,16 @@
+# Install on CentOS 6+7
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: install CentOS epel-release
+      yum: name={{item}} state=present update_cache=yes
+      with_items:
+        - epel-release
+    - name: Install required packages (this may take a while)
+      yum: name={{item}} state=present
+      with_items:
+        - git2u
+        - make
+        - ntp
+...

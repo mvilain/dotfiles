@@ -1,0 +1,13 @@
+# install on Fedora
+# requires python, git, and make pre-installed
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Install required Fedora packages (this may take a while)
+      dnf: name={{item}} state=present
+      with_items:
+        - git
+        - make
+        - ntp
+...

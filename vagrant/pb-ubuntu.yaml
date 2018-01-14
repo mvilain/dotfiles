@@ -1,0 +1,15 @@
+# Install on Ubuntu
+# requires python pre-installed on 16.04
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Install required packages (this may take a while)
+      apt: name={{item}} state=present update_cache=yes
+      with_items:
+        - git
+        - make
+        - ntp 
+        - ntpdate 
+        - ntp-doc
+...

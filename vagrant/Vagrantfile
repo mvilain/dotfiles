@@ -1,0 +1,134 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define "centos6" do |centos6|
+    centos6.vm.box = "centos/6"
+    # centos6.vm.box_check_update = false
+    # centos6.vm.network "forwarded_port", guest: 80, host: 8080
+    # centos6.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    # centos6.vm.network "private_network", ip: "192.168.33.10"
+    # centos6.vm.network "public_network"
+    # centos6.vm.synced_folder "../data", "/vagrant_data"
+    centos6.vm.provider "virtualbox" do |vb|
+      #vb.gui = true
+      vb.memory = "1024"
+    end
+    centos6.vm.provision "shell", inline: <<-SHELL
+      ##yum update -y
+      yum install -y https://centos6.iuscommunity.org/ius-release.rpm
+    SHELL
+    centos6.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-centos.yaml"
+    end
+  end
+
+  config.vm.define "centos7" do |centos7|
+    centos7.vm.box = "centos/7"
+    # centos7.vm.box_check_update = false
+    # centos7.vm.network "forwarded_port", guest: 80, host: 8080
+    # centos7.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    # centos7.vm.network "private_network", ip: "192.168.33.10"
+    # centos7.vm.network "public_network"
+    # centos7.vm.synced_folder "../data", "/vagrant_data"
+    centos7.vm.provider "virtualbox" do |vb|
+      #vb.gui = true
+      vb.memory = "1024"
+    end
+    centos7.vm.provision "shell", inline: <<-SHELL
+      ##yum update -y
+      yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+    SHELL
+    centos7.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-centos.yaml"
+    end
+  end
+
+  config.vm.define "fedora" do |fedora|
+    fedora.vm.box = "fedora/27-cloud-base"
+    # fedora.vm.box_check_update = false
+    # fedora.vm.network "forwarded_port", guest: 80, host: 8080
+    # fedora.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    # fedora.vm.network "private_network", ip: "192.168.33.10"
+    # fedora.vm.network "public_network"
+    # fedora.vm.synced_folder "../data", "/vagrant_data"
+    fedora.vm.provider "virtualbox" do |vb|
+      #vb.gui = true
+      vb.memory = "1024"
+    end
+    fedora.vm.provision "shell", inline: <<-SHELL
+      dnf install -y python
+    SHELL
+    fedora.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-fedora.yaml"
+    end
+  end
+
+  config.vm.define "ubuntu14" do |ubuntu14|
+    ubuntu14.vm.box = "ubuntu/trusty64" # 14.04-python preinstalled
+    # ubuntu14.vm.box_check_update = false
+    # ubuntu14.vm.network "forwarded_port", guest: 80, host: 8080
+    # ubuntu14.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    # ubuntu14.vm.network "private_network", ip: "192.168.33.10"
+    # ubuntu14.vm.network "public_network"
+    # ubuntu14.vm.synced_folder "../data", "/vagrant_data"
+    ubuntu14.vm.provider "virtualbox" do |vb|
+      #vb.gui = true
+      vb.memory = "1024"
+    end
+    ubuntu14.vm.provision "shell", inline: <<-SHELL
+      apt-get install -y python
+    SHELL
+    ubuntu14.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-ubuntu.yaml"
+    end
+  end
+
+  config.vm.define "ubuntu16" do |ubuntu16|
+    ubuntu16.vm.box = "ubuntu/xenial64" # 16.04-needs python 
+    # ubuntu16.vm.box_check_update = false
+    # ubuntu16.vm.network "forwarded_port", guest: 80, host: 8080
+    # ubuntu16.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    # ubuntu16.vm.network "private_network", ip: "192.168.33.10"
+    # ubuntu16.vm.network "public_network"
+    # ubuntu16.vm.synced_folder "../data", "/vagrant_data"
+    ubuntu16.vm.provider "virtualbox" do |vb|
+      #vb.gui = true
+      vb.memory = "1024"
+    end
+    ubuntu16.vm.provision "shell", inline: <<-SHELL
+      apt-get install -y python
+    SHELL
+    ubuntu16.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-ubuntu.yaml"
+    end
+  end
+
+  config.vm.define "ubuntu" do |ubuntu|
+    ubuntu.vm.box = "bento/ubuntu-17.04" # python preinstalled
+    # ubuntu.vm.box_check_update = false
+    # ubuntu.vm.network "forwarded_port", guest: 80, host: 8080
+    # ubuntu.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    # ubuntu.vm.network "private_network", ip: "192.168.33.10"
+    # ubuntu.vm.network "public_network"
+    # ubuntu.vm.synced_folder "../data", "/vagrant_data"
+    ubuntu.vm.provider "virtualbox" do |vb|
+      #vb.gui = true
+      vb.memory = "1024"
+    end
+    ubuntu.vm.provision "shell", inline: <<-SHELL
+      apt-get install -y python
+    SHELL
+    ubuntu.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-ubuntu.yaml"
+    end
+
+  end
+end
