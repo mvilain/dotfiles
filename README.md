@@ -1,6 +1,6 @@
 # dotfiles
 
-mvilain's Linux dotfiles and assorted other stuff
+my Linux dotfiles and assorted other stuff
 
 ## files
 
@@ -14,9 +14,16 @@ mvilain's Linux dotfiles and assorted other stuff
 * **.functions** -- define various web-centric functions for a bash session
 * **.inputrc .screenrc** -- setup input and screen environments
 * **.vimrc** -- setup default VIM environment to use slate colors with .exrc's defaults
-* **macos/stime.sh** -- speak date and time using MacOS "say" command
-* **macos/xxattr** -- remove all extended attributes for a file
+* **macos/** -- directory of MacOS scripts
+  * **stime.sh** -- speak date and time using MacOS "say" command
+  * **xxattr** -- remove all extended attributes for a file
+  * **xxfrom** -- add URL to MacOS file attributes so they show up in GetInfo
 * **Makefile** -- targets to install git, ntp, dot files, and various packages (tested on centos and ubuntu)
+* **vagrant/** -- directory for vagrant testing of Makefile
+  * **Vagrantfile** -- vagrant config to create VB guests to test Makefile in CentOS, Fedora, and Ubuntu environments
+  * **pb-centos.yaml** -- ansible playbook to provision on CentOS 6 + 7
+  * **pb-fedora.yaml** -- ansible playbook to provision on Fedora 27
+  * **pb-ubuntu.yaml** -- ansible playbook to provision on Ubuntu 14.04, 16.04, 17.04
 * **rename.pl** -- perl script to use regex to rename files
 * **striphtml** -- perl script to remove html markup from a file and remap international characters to marked up values
 * **xero** -- perl script to open and trucate a file making it zero length
