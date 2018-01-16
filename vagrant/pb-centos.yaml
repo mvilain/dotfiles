@@ -3,6 +3,7 @@
 - hosts: all
   become: true
   tasks:
+
     - name: install CentOS epel-release
       yum: name={{item}} state=present update_cache=yes
       with_items:
@@ -13,4 +14,20 @@
         - git2u
         - make
         - ntp
+
+    - name: configure NTP and timezone
+      service: name=ntpd state=started enabled=yes
+
+    - name: set timezone
+      timezone: name=America/Los_Angeles
+    - name: TOD
+      command: date
+      register: tod 
+    - debug: var=tod.stdout_lines
+
+    # ensure ntp has time to connect with external servers (centos7)
+    - name: ntpdc
+      command: ntpdc -c peer
+      register: ntpdc
+    - debug: var=ntpdc.stdout_lines
 ...
