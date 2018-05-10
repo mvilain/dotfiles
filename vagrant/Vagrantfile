@@ -115,22 +115,51 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define "ubuntu" do |ubuntu|
-    ubuntu.vm.box = "bento/ubuntu-17.04" # python preinstalled
-    # ubuntu.vm.box_check_update = false
-    # ubuntu.vm.network "forwarded_port", guest: 80, host: 8080
-    # ubuntu.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-    # ubuntu.vm.network "private_network", ip: "192.168.33.10"
-    # ubuntu.vm.network "public_network"
-    # ubuntu.vm.synced_folder "../data", "/vagrant_data"
-    ubuntu.vm.provider "virtualbox" do |vb|
+  # config.vm.define "ubuntu17" do |ubuntu17|
+  #   ubuntu17.vm.box = "bento/ubuntu-17.04" # python preinstalled
+  #   # ubuntu17.vm.box_check_update = false
+  #   # ubuntu17.vm.network "forwarded_port", guest: 80, host: 8080
+  #   # ubuntu17.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+  #   # ubuntu17.vm.network "private_network", ip: "192.168.33.10"
+  #   # ubuntu17.vm.network "public_network"
+  #   # ubuntu17.vm.synced_folder "../data", "/vagrant_data"
+  #   ubuntu17.vm.provider "virtualbox" do |vb|
+  #     #vb.gui = true
+  #     vb.memory = "1024"
+  #   end
+  #   ubuntu17.vm.provision "shell", inline: <<-SHELL
+  #     echo "...fixing apt database..."
+  #     sed -i -e "s/archive.ubuntu.com/old-releases.ubuntu.com/" \
+  #       -e "s/security.ubuntu.com/old-releases.ubuntu.com/" \
+  #       -e "s/at.archive.ubuntu.com/old-releases.ubuntu.com/" /etc/apt/sources.list
+  #     apt-get install -y python
+  #   SHELL
+  #   ubuntu17.vm.provision "ansible" do |ansible|
+  #     ansible.compatibility_mode = "2.0"
+  #     ansible.playbook = "pb-ubuntu.yaml"
+  #     # ansible.raw_arguments = ["--verbose"]
+  #   end
+
+  config.vm.define "ubuntu18" do |ubuntu18|
+    ubuntu18.vm.box = "geerlingguy/ubuntu1804" # python preinstalled
+    # ubuntu18.vm.box_check_update = false
+    # ubuntu18.vm.network "forwarded_port", guest: 80, host: 8080
+    # ubuntu18.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+    # ubuntu18.vm.network "private_network", ip: "192.168.33.10"
+    # ubuntu18.vm.network "public_network"
+    # ubuntu18.vm.synced_folder "../data", "/vagrant_data"
+    ubuntu18.vm.provider "virtualbox" do |vb|
       #vb.gui = true
       vb.memory = "1024"
     end
-    ubuntu.vm.provision "shell", inline: <<-SHELL
+    ubuntu18.vm.provision "shell", inline: <<-SHELL
+      # echo "...fixing apt database..."
+      # sed -i -e "s/archive.ubuntu.com/old-releases.ubuntu.com/" \
+      #   -e "s/security.ubuntu.com/old-releases.ubuntu.com/" \
+      #   -e "s/at.archive.ubuntu.com/old-releases.ubuntu.com/" /etc/apt/sources.list
       apt-get install -y python
     SHELL
-    ubuntu.vm.provision "ansible" do |ansible|
+    ubuntu18.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-ubuntu.yaml"
       # ansible.raw_arguments = ["--verbose"]
