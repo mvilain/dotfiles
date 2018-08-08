@@ -1,0 +1,72 @@
+#!/bin/bash
+
+PATH="/bin:/sbin:/usr/local/bin:/usr/local/sbin"
+PATH="${PATH}:/Developer/Tools"
+PATH="${PATH}:/usr/local/mysql/sbin:/usr/local/mysql/bin" # mysql
+PATH="${PATH}:/usr/local/pcre/bin"						# pcre+php+APC
+#PATH="${PATH}:/Library/PostgreSQL/bin"					# postgres 9.2
+PATH="${PATH}:/opt/local/bin:/opt/local/sbin"			# MacPorts
+PATH="${PATH}:/usr/bin:/usr/sbin:."
+export PATH
+
+MANPATH="/usr/local/share/man:/opt/local/share/man"
+MANPATH="${MANPATH}:/usr/local/mysql/man"
+MANPATH="${MANPATH}:/usr/share/man"
+export MANPATH
+
+PAGER="/usr/bin/more"
+export PAGER
+
+INFOPATH="/usr/share/info:/usr/local/share/info:/opt/local/share/info"
+INFOPATH="${INFOPATH}:/usr/local/mysql/share/info"
+export INFOPATH
+
+export CLASSPATH="/System/Library/Frameworks/JavaVM.framework/Home"
+
+#export PGDATA="/Library/PostgreSQL/data"
+#export PGPORT=5432
+#export PGLOCALEDIR="/Library/PostgreSQL/9.2/share/locale"
+
+export VERSIONER_PERL_PREFER_32_BIT=yes		# force 32-bit PERL
+
+if [ `id -u` = 0 ]; then
+	PS1='\h[\!]\w # '
+	#export PGUSER="postgres"
+	#export PGDATABASE="postgres"
+else
+	PS1='\h[\!]\w % '
+	#export PGUSER=$USER
+	#export PGDATABASE="ttrss"
+fi
+
+alias clr='clear' 
+alias docklock='defaults write com.apple.Dock contents-immutable -bool yes; killall Dock'
+alias dockunlock='defaults write com.apple.Dock contents-immutable -bool no; killall Dock'
+alias eject='drutil tray eject'
+alias h='history | tail -20'
+alias launchlist='launchctl list|grep -v "^-"'
+alias ll='ls -alFGO'
+alias ls='ls -aFG'
+alias mttrash='rm -R ~/.Trash/*'
+alias speedtest='wget -O /dev/null http://speedtest.wdc01.softlayer.com/downloads/test10.zip'
+alias ftp_start='sudo -s "launchctl load -wF /System/Library/LaunchDaemons/ftp.plist; launchctl start com.apple.ftpd"'
+alias ftp_stop='sudo -s "launchctl stop com.apple.ftpd;launchctl unload -wF /System/Library/LaunchDaemons/ftp.plist"'
+alias swapon='du -sh /var/vm/'
+
+export CLICOLOR="true"
+#export LSCOLORS="exfxcxdxbxegedhbagacad"
+
+# Add tab completion for `defaults read|write NSGlobalDomain`
+# You could just use `-g` instead, but I like being explicit
+complete -W "NSGlobalDomain" defaults
+
+crontab() { 
+	VISUAL_TMP="$VISUAL"
+	VISUAL="pico"
+	EDITOR="pico"
+	command crontab "$@"
+	VISUAL="$VISUAL_TMP"
+} 
+psgrep() {
+	ps auxwww | grep -i "$@" | grep -v grep
+}
