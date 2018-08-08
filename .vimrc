@@ -22,14 +22,16 @@ set nocompatible
 set backspace=indent,eol,start
 
 "if has("vms")
-  set nobackup		" do not keep a backup file, use versions instead
+"  set nobackup		" do not keep a backup file, use versions instead
 "else
-  "set backup		" keep a backup file
+"  set backup		" keep a backup file
 "endif
 set history=50		" keep 50 lines of command line history
 set ruler			" show the cursor position all the time
 set showcmd			" display incomplete commands
 set incsearch		" do incremental searching
+set guifont=Menlo\ Regular:h14
+"set guicursor=n-v-c:block-Cursor
 
 " For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
 " let &guioptions = substitute(&guioptions, "t", "", "g")
@@ -80,27 +82,6 @@ else
 
 endif " has("autocmd")
 
-" available colorscheme
-" blue.vim
-" darkblue.vim
-" default.vim
-" delek.vim
-" desert.vim
-" elflord.vim
-" evening.vim
-" koehler.vim
-" morning.vim
-" murphy.vim
-" pablo.vim
-" peachpuff.vim
-" ron.vim
-" shine.vim
-" slate.vim
-" torte.vim
-" zellner.vim
-
-"hi Comment ctermfg=LightBlue
-colorscheme slate
 set autoindent autowrite ignorecase redraw showmode
 set shiftwidth=4 tabstop=4 wrapmargin=4
 map g 1G 
