@@ -4,7 +4,7 @@
 Vagrant.configure("2") do |config|
 
   config.vm.define "centos6" do |centos6|
-    centos6.vm.box = "centos/6"
+    centos6.vm.box = "geerlingguy/centos6"
     # centos6.vm.box_check_update = false
     # centos6.vm.network "forwarded_port", guest: 80, host: 8080
     # centos6.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "centos7" do |centos7|
-    centos7.vm.box = "centos/7"
+    centos7.vm.box = "geerlingguy/centos7"
     # centos7.vm.box_check_update = false
     # centos7.vm.network "forwarded_port", guest: 80, host: 8080
     # centos7.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
@@ -50,7 +50,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "fedora" do |fedora|
-    fedora.vm.box = "fedora/27-cloud-base"
+    fedora.vm.box = "fedora/28-cloud-base"
     # fedora.vm.box_check_update = false
     # fedora.vm.network "forwarded_port", guest: 80, host: 8080
     # fedora.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
@@ -72,7 +72,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "ubuntu14" do |ubuntu14|
-    ubuntu14.vm.box = "ubuntu/trusty64" # 14.04-python preinstalled
+    ubuntu14.vm.box = "geerlingguy/ubuntu1404" # 14.04-python preinstalled
     # ubuntu14.vm.box_check_update = false
     # ubuntu14.vm.network "forwarded_port", guest: 80, host: 8080
     # ubuntu14.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
@@ -94,7 +94,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "ubuntu16" do |ubuntu16|
-    ubuntu16.vm.box = "ubuntu/xenial64" # 16.04-needs python 
+    ubuntu16.vm.box = "geerlingguy/ubuntu1604" # 16.04-needs python 
     # ubuntu16.vm.box_check_update = false
     # ubuntu16.vm.network "forwarded_port", guest: 80, host: 8080
     # ubuntu16.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
