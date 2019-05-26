@@ -50,9 +50,7 @@ OFF="\[\033[0m\]"
 
 # original used gray text plus cyan letters 
 if [[ ${EUID} == 0 ]] ; then
-  PS1='${RED}\t \# ${bRED}\h ${RED}\w \033[0;31m\[${RED}\]# \[${RESET}\]'
   PS1="${RED}\t ${CYA}[\h \# \w]${RED}# ${OFF}"
 else
-  PS1='\[\033[0;32m\][\t-\#\[\033[0;32m\]]\[\033[0;32m\][\[\033[0;34m\]\h \[\033[0;32m\]\w\[\033[0;32m\]]\[\033[0;32m\]\[\033[0;32m\]\\$ \[\033[00m\]'
   PS1="${GRE}\t ${CYA}[\h \# \w]${GRE}$ ${OFF}"
 fi
