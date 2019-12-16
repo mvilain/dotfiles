@@ -2,10 +2,11 @@
 # Maintainer Michael Vilain <michael@vilain.com> [201710.10]
 # 201712.14 added support for CentOS 6.9 + make 3.8.1
 # 201712.23 added support for Fedora 27
+# 201912.15 updated docker-compose and added CentOS 8
 
 .PHONY : build clean install
 
-DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m`"
+DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.0/docker-compose-`uname -s`-`uname -m`"
 
 IP = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
 ifeq ($(IP),)
@@ -23,13 +24,14 @@ REL = $(shell test -e /etc/os-release && echo "Y")
 ifeq ($(REL),)
 OS =  $(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
 else ifeq ($(REL),Y)
-OS = $(shell test -e /etc/os-release && grep '^ID=' /etc/os-release | sed -e 's/ID=//')
+OS = $(shell test -e /etc/os-release && grep 'PRETTY_NAME' /etc/os-release | sed -e 's/PRETTY_NAME=//' -e 's/ (Core)//' -e 's/ Linux //' | tr '[:upper:]' '[:lower:]')
 endif
 
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
 	.functions .inputrc .screenrc .vimrc
 
 RHEL_PKGS := wget vim lsof bash-completion bind-utils net-tools
+C8_PKGS := $(RHEL_PKGS) yum-utils epel-release 
 C7_PKGS := $(RHEL_PKGS) yum-utils epel-release 
 C6_PKGS := $(RHEL_PKGS) yum-utils epel-release sudo
 F_PKGS := $(RHEL_PKGS) dnf-utils
@@ -56,7 +58,7 @@ build:
 
 clean: 
 
-install : ntp files pkgs
+install : time files pkgs
 
 files: $(DOTFILES)
 	/bin/cp -v $(DOTFILES) ${HOME}/
@@ -68,27 +70,30 @@ endif
 
 # requires https://centos[67].iuscommunity.org/ius-release.rpm
 # prerequisite for centos git2u and python36u
-pkgs:
+pkgs :
 ifeq ($(OS),centos6)
-	-yum install -y $(C7_PKGS)
-	-yum install -y https://centos6.iuscommunity.org/ius-release.rpm
-else ifeq ($(OS),centos)
 	-yum install -y $(C6_PKGS)
+	-yum install -y https://centos6.iuscommunity.org/ius-release.rpm
+else ifeq ($(OS),centos7)
+	-yum install -y $(C7_PKGS)
 	-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+else ifeq ($(OS),centos8)
+	-yum install -y $(C8_PKGS)
+	#-yum install -y https://centos7.iuscommunity.org/ius-release.rpm
 else ifeq ($(OS),fedora)
 	-dnf install -y $(F_PKGS)
 else ifeq ($(OS),ubuntu)
 	apt-get install -y $(U_PKGS)
 endif
 
-update:
-ifeq ($(OS),centos)
+update :
+ifeq ($(OS),centos8)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
-else ifeq ($(OS),fedora)
-	-dnf update -y
+else ifeq ($(OS),centos7)
+	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
@@ -96,15 +101,20 @@ else ifeq ($(OS),centos6)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /boot/grub/grub.conf
+else ifeq ($(OS),fedora)
+	-dnf update -y
+	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
+	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
+	-grub2-mkconfig -o /boot/grub2/grub.cfg
 else ifeq ($(OS),ubuntu)
 	-apt-get update && apt-get upgrade -y
 endif
 
 
 # fedora 27 already has git 2.x installed
-git: git-install git-config
+git : git-install git-config
 
-git-install:
+git-install :
 ifeq ($(OS),centos)
 	-yum install -y git
 else ifeq ($(OS),centos6)
@@ -116,7 +126,7 @@ else ifeq ($(OS),ubuntu)
 	-apt-get install -y git
 endif
 
-git2: pkgs
+git2 : pkgs
 ifeq ($(OS),centos)
 	-yum remove -y git
 	-yum install -y git2u
@@ -126,7 +136,7 @@ else ifeq ($(OS),centos6)
 endif
 
 
-git-config:
+git-config :
 	git config --global user.name "Michael Vilain"
 	git config --global user.email "michael@vilain.com"
 	git config --global color.ui true
@@ -141,7 +151,7 @@ git-config:
 
 
 # must be run as root or it won't install
-docker:
+docker :
 	if [ ! -e /bin/docker ]; then \
 		curl -fsSL https://get.docker.com/ | sh; \
 		curl -L $(DOCKER_COMPOSE_URL) > /usr/local/bin/docker-compose; \
@@ -155,11 +165,14 @@ ifneq ($(SUDO_USER),)
 	usermod -aG docker $(SUDO_USER)
 endif
 
-ntp: ntp-install ntp-config
-ntp-install:
-ifeq ($(OS),centos)
+ntp : ntp-install ntp-config
+ntp-install :
+ifeq ($(OS),centos8)
+	-yum install -y chrony
+else ifeq ($(OS),centos7)
 	-yum install -y ntp
 else ifeq ($(OS),centos6)
+	-yum install -y ntp
 	-yum install -y ntp
 else ifeq ($(OS),fedora)
 	-dnf install -y ntp
@@ -167,7 +180,7 @@ else ifeq ($(OS),ubuntu)
 	-apt-get install -y ntp ntpdate ntp-doc
 endif
 
-ntp-config:
+ntp-config :
 ifneq ($(AWS),"n")
 	sed -i.orig -e "s/centos.pool/amazon.pool/g" /etc/ntp.conf # only if on AWS
 endif
@@ -176,9 +189,13 @@ ifeq ($(OS),centos6)
 	service ntpd start
 	#[ ! -e /etc/localtime.orig ] && mv /etc/localtime /etc/localtime.orig
 	# ln -s /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
-else ifeq ($(OS),centos)
+else ifeq ($(OS),centos7)
 	systemctl enable ntpd
 	systemctl start ntpd
+	timedatectl set-timezone America/Los_Angeles
+else ifeq ($(OS),centos8)
+	systemctl enable chronyd
+	systemctl start chronyd
 	timedatectl set-timezone America/Los_Angeles
 else ifeq ($(OS),fedora)
 	systemctl enable ntpd
@@ -195,7 +212,7 @@ endif
 # http://jensd.be/125/linux/rel/install-mate-or-xfce-on-centos-7
 # 5/16/17 epel's xfce seems to be broken requiring wrong version
 # skip-broken fixes this temporarily
-gui:
+gui :
 ifeq ($(OS),centos)
 	yum groupinstall -y "X Window system"
 	yum groupinstall -y "Xfce" --skip-broken
