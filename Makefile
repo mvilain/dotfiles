@@ -58,7 +58,7 @@ build:
 
 clean: 
 
-install : time files pkgs
+install : ntp files pkgs
 
 files: $(DOTFILES)
 	/bin/cp -v $(DOTFILES) ${HOME}/
