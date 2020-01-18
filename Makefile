@@ -1,8 +1,9 @@
 # Makefile for dotfiles environment
-# Maintainer Michael Vilain <michael@vilain.com> [201710.10]
+# Maintainer Michael Vilain <michael@vilain.com>
 # 201712.14 added support for CentOS 6.9 + make 3.8.1
 # 201712.23 added support for Fedora 27
 # 201912.15 updated docker-compose and added CentOS 8
+# 202001.18 fixed time destination
 
 .PHONY : build clean install
 
@@ -38,7 +39,7 @@ F_PKGS := $(RHEL_PKGS) dnf-utils
 U_PKGS := curl vim lsof bash-completion dnsutils
 PY_VER = 3.6.3
 
-TARGETS :=  install
+TARGETS :=  install git-config
 
 all: $(TARGETS)
 
@@ -58,7 +59,7 @@ build:
 
 clean: 
 
-install : time files pkgs
+install : ntp files pkgs
 
 files: $(DOTFILES)
 	/bin/cp -v $(DOTFILES) ${HOME}/
