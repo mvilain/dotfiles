@@ -7,6 +7,7 @@ export PATH="/usr/local/bin:$HOME/bin:$PATH"
 for file in ~/.{path,bash_prompt,exports,aliases,functions,extra}; do
 	[ -r "$file" ] && source "$file"
 done
+#[ "$PS1" = "\\s-\\v\\\$ " ] && PS1="[\u@\h \W]\\$ "
 
 if [ -f /usr/local/etc/bash_completion ]; then
   . /usr/local/etc/bash_completion
