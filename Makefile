@@ -4,10 +4,7 @@
 # 201712.23 added support for Fedora 27
 # 201912.15 updated docker-compose and added CentOS 8
 # 202001.18 fixed time destination
-<<<<<<< Updated upstream
-=======
 # 202001.26 added git.core editor
->>>>>>> Stashed changes
 
 .PHONY : build clean install
 
