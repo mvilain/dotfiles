@@ -5,14 +5,15 @@
 # 201912.15 updated docker-compose and added CentOS 8
 # 202001.18 fixed time destination
 # 202001.26 added git.core editor
+# 202002.11 update docker-compose url
 
 .PHONY : build clean install
 
-DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.0/docker-compose-`uname -s`-`uname -m`"
+DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
 IP = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
 ifeq ($(IP),)
-IP = $(shell ifconfig -a | grep "inet " | grep "broadcast" | grep -Ev "172|127.0.0.1" | awk '{print $2}')
+IP = $(shell ip addr | grep -i "broadcast" -A2 | awk '/inet/{print $2}')
 AWS = "n"
 else
 AZ = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/placement/availability-zone)
@@ -46,11 +47,11 @@ all: $(TARGETS)
 
 build: 
 #ifeq ($(OS),"centos6")
-#	@echo "!!"
+#  @echo "!!"
 #else ifeq ($(OS),"centos")
-#	@echo "!!!"
+#  @echo "!!!"
 #else ifeq ($(OS),ubuntu)
-#	@echo "!"
+#  @echo "!"
 #endif
 	@echo "/etc/os-release exists? " $(REL)
 	@echo "OS = " $(OS)
@@ -60,7 +61,7 @@ build:
 
 clean: 
 
-install : ntp files pkgs
+install: ntp files packages
 
 files: $(DOTFILES)
 	/bin/cp -v $(DOTFILES) ${HOME}/
@@ -72,7 +73,7 @@ endif
 
 # requires https://centos[67].iuscommunity.org/ius-release.rpm
 # prerequisite for centos git2u and python36u
-pkgs :
+packages:
 ifeq ($(OS),centos6)
 	-yum install -y $(C6_PKGS)
 	-yum install -y https://centos6.iuscommunity.org/ius-release.rpm
@@ -88,7 +89,7 @@ else ifeq ($(OS),ubuntu)
 	apt-get install -y $(U_PKGS)
 endif
 
-update :
+update:
 ifeq ($(OS),centos8)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
@@ -116,7 +117,7 @@ endif
 # fedora 27 already has git 2.x installed
 git : git-install git-config
 
-git-install :
+git-install:
 ifeq ($(OS),centos)
 	-yum install -y git
 else ifeq ($(OS),centos6)
@@ -128,7 +129,7 @@ else ifeq ($(OS),ubuntu)
 	-apt-get install -y git
 endif
 
-git2 : pkgs
+git2: pkgs
 ifeq ($(OS),centos)
 	-yum remove -y git
 	-yum install -y git2u
@@ -138,7 +139,7 @@ else ifeq ($(OS),centos6)
 endif
 
 
-git-config :
+git-config:
 	git config --global user.name "Michael Vilain"
 	git config --global user.email "michael@vilain.com"
 	git config --global color.ui true
@@ -153,7 +154,7 @@ git-config :
 
 
 # must be run as root or it won't install
-docker :
+docker:
 	if [ ! -e /bin/docker ]; then \
 		curl -fsSL https://get.docker.com/ | sh; \
 		curl -L $(DOCKER_COMPOSE_URL) > /usr/local/bin/docker-compose; \
@@ -167,7 +168,7 @@ ifneq ($(SUDO_USER),)
 	usermod -aG docker $(SUDO_USER)
 endif
 
-ntp : ntp-install ntp-config
+ntp: ntp-install ntp-config
 ntp-install :
 ifeq ($(OS),centos8)
 	-yum install -y chrony
@@ -266,7 +267,7 @@ endif
 	@echo "You can now reboot the system"
 
 
-python3: pkgs
+python3: packages
 ifeq ($(OS),centos)
 	-yum install -y python2-pip
 	-easy_install pip
