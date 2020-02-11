@@ -13,7 +13,7 @@ DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.4
 
 IP = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
 ifeq ($(IP),)
-IP = $(shell ip addr | grep -i "broadcast" -A2 | awk '/inet/{print $2}')
+IP = $(shell ifconfig -a | grep -i "broadcast,running" -A1 | awk '/inet /{print $2}')
 AWS = "n"
 else
 AZ = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/placement/availability-zone)
