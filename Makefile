@@ -13,7 +13,7 @@ DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.4
 
 IP = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
 ifeq ($(IP),)
-IP = $(shell ifconfig -a | grep -i "broadcast,running" -A1 | awk '/inet /{print $2}')
+IP = $(shell ifconfig -a | grep -i "BROADCAST,RUNNING" -A2 | grep 'inet ' | sed -e 's/ netmask.*//i' -e 's/.*inet //')
 AWS = "n"
 else
 AZ = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/placement/availability-zone)
@@ -27,8 +27,11 @@ REL = $(shell test -e /etc/os-release && echo "Y")
 ifeq ($(REL),)
 OS =  $(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
 else ifeq ($(REL),Y)
-OS = $(shell test -e /etc/os-release && grep 'PRETTY_NAME' /etc/os-release | sed -e 's/PRETTY_NAME=//' -e 's/ (Core)//' -e 's/ Linux //' | tr '[:upper:]' '[:lower:]')
+ID = $(shell awk '/^ID=/{print $1}' /etc/os-release | sed -e "s/ID=//")
+VER = $(shell grep "VERSION_ID" /etc/os-release | sed -e 's/VERSION_ID=//' -e 's/"//g')
+OS = $(ID)$(VER)
 endif
+
 
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
 	.functions .inputrc .screenrc .vimrc
@@ -46,16 +49,9 @@ TARGETS :=  install git-config
 all: $(TARGETS)
 
 build: 
-#ifeq ($(OS),"centos6")
-#  @echo "!!"
-#else ifeq ($(OS),"centos")
-#  @echo "!!!"
-#else ifeq ($(OS),"ubuntu")
-#  @echo "!"
-#endif
 	@echo "/etc/os-release exists? " $(REL)
-	@echo "OS = " $(OS)
-	@echo "IP = " $(IP)
+	@echo ID=$(ID)   VER=$(VER)  "==>"  $(OS)
+	@echo IP=$(IP)
 	@echo "docker-compose = " $(DOCKER_COMPOSE_URL)
 	@echo "logname =" $(LOGNAME) " sudo_user=" $(SUDO_USER)
 
@@ -83,9 +79,9 @@ else ifeq ($(OS),"centos7")
 else ifeq ($(OS),"centos8")
 	yum install -y $(C8_PKGS)
 	#yum install -y https://centos7.iuscommunity.org/ius-release.rpm
-else ifeq ($(OS),"fedora")
+else ifeq ($(ID),fedora)
 	dnf install -y $(F_PKGS)
-else ifeq ($(OS),"ubuntu")
+else ifeq ($(ID),ubuntu)
 	apt-get install -y $(U_PKGS)
 endif
 
@@ -105,12 +101,12 @@ else ifeq ($(OS),"centos8")
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
-else ifeq ($(OS),"fedora")
+else ifeq ($(ID),fedora)
 	-dnf update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
-else ifeq ($(OS),"ubuntu")
+else ifeq ($(ID),ubuntu)
 	-apt-get update && apt-get upgrade -y
 endif
 
@@ -123,10 +119,11 @@ ifeq ($(OS),"centos6")
 	-yum install  -y git
 else ifeq ($(OS),"centos7")
 	-yum install -y git
-else ifeq ($(OS),"fedora")
-	-git --version
-	-echo "git 2.x already installed"
-else ifeq ($(OS),"ubuntu")
+else ifeq ($(ID),fedora)
+	-dnf install -y git
+# 	-git --version
+# 	-echo "git 2.x already installed"
+else ifeq ($(ID),ubuntu)
 	-apt-get install -y git
 endif
 
@@ -178,9 +175,9 @@ else ifeq ($(OS),"centos7")
 	-yum install -y ntp
 else ifeq ($(OS),"centos8")
 	-yum install -y chrony
-else ifeq ($(OS),"fedora")
+else ifeq ($(ID),fedora)
 	-dnf install -y ntp
-else ifeq ($(OS),"ubuntu")
+else ifeq ($(ID),ubuntu)
 	-apt-get install -y ntp ntpdate ntp-doc
 endif
 
@@ -201,11 +198,11 @@ else ifeq ($(OS),"centos8")
 	systemctl enable chronyd
 	systemctl start chronyd
 	timedatectl set-timezone America/Los_Angeles
-else ifeq ($(OS),"fedora")
+else ifeq ($(ID),fedora)
 	systemctl enable ntpd
 	systemctl start ntpd
 	timedatectl set-timezone America/Los_Angeles
-else ifeq ($(OS),"ubuntu")
+else ifeq ($(ID),ubuntu)
 	systemctl enable ntp
 	systemctl start ntp
 	timedatectl set-timezone America/Los_Angeles
@@ -227,12 +224,12 @@ else ifeq ($(OS),"centos6")
 	yum groupinstall -y "Xfce" "Fonts" --skip-broken
 	yum install -y firefox gvim xorg-x11-fonts-Type1 xorg-x11-fonts-misc
 	sed -i.mu3 -e "s/id:3/id:5/" /etc/inittab
-else ifeq ($(OS),"fedora")
+else ifeq ($(ID),fedora)
 	dnf install -y @xfce-desktop-environment
 	dnf install -y firefox gvim
 	systemctl set-default graphical.target
 	systemctl enable lightdm.service
-else ifeq ($(OS),"ubuntu")
+else ifeq ($(ID),ubuntu)
 	apt-get update
 	apt-get install -y xfce4 vim-gnome
 	systemctl set-default graphical.target
@@ -244,10 +241,10 @@ ifeq ($(OS),"centos6")
 	sed -i.x11 -e "s/id:5/id:3/" /etc/inittab
 else ifeq ($(OS),"centos7")
 	systemctl set-default multi-user.target
-else ifeq ($(OS),"fedora")
+else ifeq ($(ID),fedora)
 	systemctl set-default multi-user.target
 	systemctl disable lightdm.service
-else ifeq ($(OS),"ubuntu")
+else ifeq ($(ID),ubuntu)
 	systemctl set-default multi-user.target
 endif
 	echo "reboot to start with without GUI"
@@ -260,7 +257,7 @@ ifeq ($(OS),"centos7")
 	-yum install -y dkms gcc make kernel-devel bzip2 binutils patch libgomp glibc-headers glibc-devel kernel-headers
 	-mount /dev/sr0 /mnt
 	-cd /mnt && ./VBoxLinuxAdditions.run
-else ifeq ($(OS),"ubuntu")
+else ifeq ($(ID),ubuntu)
 	-apt-get update && apt-get -y upgrade
 	-apt-get install -y build-essential module-assistant
 	-cd /media/mivilain/VBOXADDITIONS_5.1.22_115126 && ./VBoxLinuxAdditions.run
@@ -282,7 +279,7 @@ endif
 # ubuntu 17.10 has python3 already installed
 # fedora 27 has python3 already installed
 python3u:
-ifeq ($(OS),"ubuntu")
+ifeq ($(ID),ubuntu)
 	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
 	-wget https://www.python.org/ftp/python/$(PY_VER)/Python-$(PY_VER).tgz
 	-tar -xzf Python-$(PY_VER).tgz
