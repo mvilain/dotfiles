@@ -13,7 +13,7 @@
 DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
 # vanilla debian 10 doesn't have curl or net-tools' ifconfig installed out of the box
-IP = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
+IP = $(shell test -e /usr/bin/curl && curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
 ifeq ($(IP),)
 #IP = $(shell ifconfig -a | grep -i "BROADCAST,RUNNING" -A2 | grep 'inet ' | sed -e 's/ netmask.*//i' -e 's/.*inet //')
 IP = $(shell ip addr | grep -i "BROADCAST,MULTICAST,UP," -A2 | grep 'inet ' | sed -e 's@/24 .*@@' -e 's/.*inet //')

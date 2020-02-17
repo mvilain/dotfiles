@@ -44,3 +44,31 @@ To mount a mount point defined in the VMware shared folder definitions, use
 in /etc/fstab.
 
 https://unix.stackexchange.com/questions/310458/vmhgfs-fuse-permission-denied-issue
+
+
+## Debian 10 setup
+
+Debian 10 doesn't allow for setting static IP address through standard boot off of ISO.
+
+So do the following:
+
+- modify /etc/network/interfaces to have the following:
+```
+iface ens33 inet static
+  address 192.168.x.xxx
+  netmask 255.255.255.0
+  gateway 192.168.x.xxx
+  dns-nameservers 8.8.8.8 8.8.4.4
+```
+
+- modify /etc/resolve.config and reboot
+```
+domain local.net
+search local.net
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+```
+
+- remove the CDROM entry from /etc/apt/sources.list
+
+    sed -i -e "/^deb cdrom:/d" /etc/apt/sources.list
