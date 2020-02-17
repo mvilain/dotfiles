@@ -18,12 +18,12 @@ my Linux dotfiles and assorted other stuff
   * **stime.sh** -- speak date and time using MacOS "say" command
   * **xxattr** -- remove all extended attributes for a file
   * **xxfrom** -- add URL to MacOS file attributes so they show up in GetInfo
-* **Makefile** -- targets to install git, ntp, dot files, and various packages (tested on centos and ubuntu)
+* **Makefile** -- targets to install git, ntp, dot files, and various packages (tested on centos, fedora, debian, and ubuntu)
 * **vagrant/** -- directory for vagrant testing of Makefile
   * **Vagrantfile** -- vagrant config to create VB guests to test Makefile in CentOS, Fedora, and Ubuntu environments
   * **pb-centos.yaml** -- ansible playbook to provision on CentOS 6 + 7
   * **pb-fedora.yaml** -- ansible playbook to provision on Fedora 27
-  * **pb-ubuntu.yaml** -- ansible playbook to provision on Ubuntu 14.04, 16.04, 17.04
+  * **pb-ubuntu.yaml** -- ansible playbook to provision on Ubuntu 14.04, 16.04, 18.04
 * **rename.pl** -- perl script to use regex to rename files
 * **striphtml** -- perl script to remove html markup from a file and remap international characters to marked up values
 * **xero** -- perl script to open and trucate a file making it zero length
@@ -32,3 +32,15 @@ my Linux dotfiles and assorted other stuff
 
 [https://tecadmin.net/install-python-3-5-on-centos/]
 [http://stackoverflow.com/questions/37723236/pip-error-while-installing-python-ignoring-ensurepip-failure-pip-8-1-1-requir/37723517]
+
+## open-vmware-tools
+
+Many OS' support this package as pre-installed rather than the VMware Tools.
+
+To mount a mount point defined in the VMware shared folder definitions, use 
+
+    .host:/<mount>  /mnt/hgfs fuse.vmhgfs-fuse allow_other,defaults 0 0
+
+in /etc/fstab.
+
+https://unix.stackexchange.com/questions/310458/vmhgfs-fuse-permission-denied-issue

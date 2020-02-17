@@ -6,21 +6,24 @@
 # 202001.18 fixed time destination
 # 202001.26 added git.core editor
 # 202002.15 update docker-compose url+fix if block tests
+# 202002.17 add Debian support
 
 .PHONY : build clean install
 
 DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
+# vanilla debian 10 doesn't have curl or net-tools' ifconfig installed out of the box
 IP = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
 ifeq ($(IP),)
-IP = $(shell ifconfig -a | grep -i "BROADCAST,RUNNING" -A2 | grep 'inet ' | sed -e 's/ netmask.*//i' -e 's/.*inet //')
+#IP = $(shell ifconfig -a | grep -i "BROADCAST,RUNNING" -A2 | grep 'inet ' | sed -e 's/ netmask.*//i' -e 's/.*inet //')
+IP = $(shell ip addr | grep -i "BROADCAST,MULTICAST,UP," -A2 | grep 'inet ' | sed -e 's@/24 .*@@' -e 's/.*inet //')
 AWS = "n"
 else
 AZ = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/placement/availability-zone)
 endif
 
 # centos or ubuntu (no others tested)
-# /etc/os-release doesn't exist on CentOS 6 but does on Ubuntu
+# /etc/os-release doesn't exist on CentOS 6 but does on CentOS 7+8, Ubuntu, and Debian
 # make 3.81 only tests for empty/non-empty string
 # returns OS=fedora
 REL = $(shell test -e /etc/os-release && echo "Y")
@@ -42,6 +45,7 @@ C7_PKGS := $(RHEL_PKGS) yum-utils epel-release
 C6_PKGS := $(RHEL_PKGS) yum-utils epel-release sudo
 F_PKGS := $(RHEL_PKGS) dnf-utils
 U_PKGS := curl vim lsof bash-completion dnsutils
+D_PKGS := $(U_PKGS) sudo rsync net-tools open-vm-tools
 PY_VER = 3.6.3
 
 TARGETS :=  install git-config
@@ -50,14 +54,14 @@ all: $(TARGETS)
 
 build: 
 	@echo "/etc/os-release exists? " $(REL)
-	@echo ID=$(ID)   VER=$(VER)  "==>"  $(OS)
-	@echo IP=$(IP)
-	@echo "docker-compose = " $(DOCKER_COMPOSE_URL)
-	@echo "logname =" $(LOGNAME) " sudo_user=" $(SUDO_USER)
+	@echo "ID="$(ID)   "VER="$(VER)  "=>"  $(OS)
+	@echo "IP="$(IP)
+	@echo "docker-compose: "$(DOCKER_COMPOSE_URL)
+	@echo "logname:" $(LOGNAME) " sudo_user:" $(SUDO_USER)
 
 clean: 
 
-install: ntp files packages
+install: files packages
 
 files: $(DOTFILES)
 	/bin/cp -v $(DOTFILES) ${HOME}/
@@ -78,11 +82,13 @@ else ifeq ($(OS),"centos7")
 	yum install -y https://centos7.iuscommunity.org/ius-release.rpm
 else ifeq ($(OS),"centos8")
 	yum install -y $(C8_PKGS)
-	#yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+	#yum install -y https://centos8.iuscommunity.org/ius-release.rpm
 else ifeq ($(ID),fedora)
 	dnf install -y $(F_PKGS)
 else ifeq ($(ID),ubuntu)
 	apt-get install -y $(U_PKGS)
+else ifeq ($(ID),debian)
+	apt-get install -y $(D_PKGS)
 endif
 
 
@@ -108,6 +114,8 @@ else ifeq ($(ID),fedora)
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
 else ifeq ($(ID),ubuntu)
 	-apt-get update && apt-get upgrade -y
+else ifeq ($(ID),debian)
+	-apt-get update && apt-get upgrade -y
 endif
 
 
@@ -124,6 +132,8 @@ else ifeq ($(ID),fedora)
 # 	-git --version
 # 	-echo "git 2.x already installed"
 else ifeq ($(ID),ubuntu)
+	-apt-get install -y git
+else ifeq ($(ID),debian)
 	-apt-get install -y git
 endif
 
@@ -179,6 +189,8 @@ else ifeq ($(ID),fedora)
 	-dnf install -y ntp
 else ifeq ($(ID),ubuntu)
 	-apt-get install -y ntp ntpdate ntp-doc
+else ifeq ($(ID),debian)
+	-apt-get install -y ntp ntpdate ntp-doc
 endif
 
 ntp-config :
@@ -203,6 +215,10 @@ else ifeq ($(ID),fedora)
 	systemctl start ntpd
 	timedatectl set-timezone America/Los_Angeles
 else ifeq ($(ID),ubuntu)
+	systemctl enable ntp
+	systemctl start ntp
+	timedatectl set-timezone America/Los_Angeles
+else ifeq ($(ID),debian)
 	systemctl enable ntp
 	systemctl start ntp
 	timedatectl set-timezone America/Los_Angeles
@@ -233,6 +249,10 @@ else ifeq ($(ID),ubuntu)
 	apt-get update
 	apt-get install -y xfce4 vim-gnome
 	systemctl set-default graphical.target
+else ifeq ($(ID),debian)
+	apt-get update
+	apt-get install -y xfce4 vim-gtk3
+	systemctl set-default graphical.target
 endif
 	@echo "reboot to start with GUI"
 
@@ -246,8 +266,10 @@ else ifeq ($(ID),fedora)
 	systemctl disable lightdm.service
 else ifeq ($(ID),ubuntu)
 	systemctl set-default multi-user.target
+else ifeq ($(ID),debian)
+	systemctl set-default multi-user.target
 endif
-	echo "reboot to start with without GUI"
+	@echo "reboot to start with without GUI"
 
 # Centos assumes installed w/o GUI at command line
 # ubunut assumes installed on top of GUI with mount point
@@ -257,12 +279,13 @@ ifeq ($(OS),"centos7")
 	-yum install -y dkms gcc make kernel-devel bzip2 binutils patch libgomp glibc-headers glibc-devel kernel-headers
 	-mount /dev/sr0 /mnt
 	-cd /mnt && ./VBoxLinuxAdditions.run
+	@echo "You can now reboot the system"
 else ifeq ($(ID),ubuntu)
 	-apt-get update && apt-get -y upgrade
 	-apt-get install -y build-essential module-assistant
 	-cd /media/mivilain/VBOXADDITIONS_5.1.22_115126 && ./VBoxLinuxAdditions.run
-endif
 	@echo "You can now reboot the system"
+endif
 
 
 python3: packages
@@ -276,8 +299,9 @@ else ifeq ($(OS),"centos7")
 endif
 
 
-# ubuntu 17.10 has python3 already installed
+# ubuntu 17.10+ has python3 already installed
 # fedora 27 has python3 already installed
+# debian 10 has python3
 python3u:
 ifeq ($(ID),ubuntu)
 	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
