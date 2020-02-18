@@ -6,7 +6,7 @@
 # 202001.18 fixed time destination
 # 202001.26 added git.core editor
 # 202002.15 update docker-compose url+fix if block tests
-# 202002.17 add Debian support
+# 202002.17 add Debian and OpenSuse support
 
 .PHONY : build clean install
 
@@ -30,7 +30,7 @@ REL = $(shell test -e /etc/os-release && echo "Y")
 ifeq ($(REL),)
 OS =  $(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
 else ifeq ($(REL),Y)
-ID = $(shell awk '/^ID=/{print $1}' /etc/os-release | sed -e "s/ID=//")
+ID = $(shell awk '/^ID=/{print $1}' /etc/os-release | sed -e "s/ID=//" -e "s/-leap//" -e "s/open//")
 VER = $(shell grep "VERSION_ID" /etc/os-release | sed -e 's/VERSION_ID=//' -e 's/"//g')
 OS = $(ID)$(VER)
 endif
@@ -46,9 +46,10 @@ C6_PKGS := $(RHEL_PKGS) yum-utils epel-release sudo
 F_PKGS := $(RHEL_PKGS) dnf-utils
 U_PKGS := curl vim lsof bash-completion dnsutils
 D_PKGS := $(U_PKGS) sudo rsync net-tools open-vm-tools
+S_PKGS = wget vim lsof bash-completion bind-utils net-tools
 PY_VER = 3.6.3
 
-TARGETS :=  install git-config
+TARGETS :=  install
 
 all: $(TARGETS)
 
@@ -68,7 +69,7 @@ files: $(DOTFILES)
 ifneq ($(SUDO_USER),)
 	echo "$(SUDO_USER) ALL = NOPASSWD: ALL" > /etc/sudoers.d/$(SUDO_USER)
 else
-	echo "$(LOGNAME) ALL = NOPASSWD: ALL" > /etc/sudoers.d/$(LOGNAME)
+	@echo '***Append as root***  echo "$(LOGNAME) ALL = NOPASSWD: ALL" > /etc/sudoers.d/$(LOGNAME)'
 endif
 
 # requires https://centos[67].iuscommunity.org/ius-release.rpm
@@ -89,6 +90,8 @@ else ifeq ($(ID),ubuntu)
 	apt-get install -y $(U_PKGS)
 else ifeq ($(ID),debian)
 	apt-get install -y $(D_PKGS)
+else ifeq ($(ID),"suse")
+	zypper --non-interactive install $(S_PKGS)
 endif
 
 
@@ -116,6 +119,10 @@ else ifeq ($(ID),ubuntu)
 	-apt-get update && apt-get upgrade -y
 else ifeq ($(ID),debian)
 	-apt-get update && apt-get upgrade -y
+else ifeq ($(ID),"suse")
+	-sed -i.orig -e 's/splash=silent/splash=verbose/' /etc/default/grub
+	-grub2-mkconfig -o /boot/grub2/grub.cfg
+	zypper up
 endif
 
 
@@ -135,9 +142,11 @@ else ifeq ($(ID),ubuntu)
 	-apt-get install -y git
 else ifeq ($(ID),debian)
 	-apt-get install -y git
+else ifeq ($(ID),"suse")
+	-zypper --non-interactive install git
 endif
 
-git2: pkgs
+git2: packages
 ifeq ($(OS),"centos6")
 	-yum remove -y git
 	-yum install  -y git2u
@@ -147,7 +156,7 @@ else ifeq ($(OS),"centos7")
 endif
 
 
-git-config:
+git-config: git-install
 	git config --global user.name "Michael Vilain"
 	git config --global user.email "michael@vilain.com"
 	git config --global color.ui true
@@ -191,6 +200,8 @@ else ifeq ($(ID),ubuntu)
 	-apt-get install -y ntp ntpdate ntp-doc
 else ifeq ($(ID),debian)
 	-apt-get install -y ntp ntpdate ntp-doc
+else ifeq ($(ID),"suse")
+	echo use "chronyc sources"
 endif
 
 ntp-config :
@@ -222,6 +233,11 @@ else ifeq ($(ID),debian)
 	systemctl enable ntp
 	systemctl start ntp
 	timedatectl set-timezone America/Los_Angeles
+else ifeq ($(ID),"suse")
+	systemctl status chronyd
+	systemctl start chronyd
+	timedatectl set-timezone America/Los_Angeles
+	chronyc sources
 endif
 
 
@@ -253,6 +269,10 @@ else ifeq ($(ID),debian)
 	apt-get update
 	apt-get install -y xfce4 vim-gtk3
 	systemctl set-default graphical.target
+else ifeq ($(ID),"suse")
+	-zypper -n in patterns-openSUSE-xfce
+	-zypper --non-interactive install gvim
+	systemctl set-default graphical.target
 endif
 	@echo "reboot to start with GUI"
 
@@ -267,6 +287,8 @@ else ifeq ($(ID),fedora)
 else ifeq ($(ID),ubuntu)
 	systemctl set-default multi-user.target
 else ifeq ($(ID),debian)
+	systemctl set-default multi-user.target
+else ifeq ($(ID),"suse")
 	systemctl set-default multi-user.target
 endif
 	@echo "reboot to start with without GUI"
@@ -299,9 +321,7 @@ else ifeq ($(OS),"centos7")
 endif
 
 
-# ubuntu 17.10+ has python3 already installed
-# fedora 27 has python3 already installed
-# debian 10 has python3
+# ubuntu 17.10+, fedora 27, debian 10, and opensuse-leap has python3
 python3u:
 ifeq ($(ID),ubuntu)
 	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
