@@ -7,48 +7,53 @@
 # 202001.26 added git.core editor
 # 202002.15 update docker-compose url+fix if block tests
 # 202002.17 add Debian and OpenSuse support
-# 203005.01 fix CentOS 8
+# 203005.02 fix CentOS eval of $(OS)
 
 .PHONY : test clean install
 
-DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
+DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
-# vanilla debian 10 doesn't have curl or net-tools' ifconfig installed out of the box
-IP = $(shell test -e /usr/bin/curl && curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
-ifeq ($(IP),)
-#IP = $(shell ifconfig -a | grep -i "BROADCAST,RUNNING" -A2 | grep 'inet ' | sed -e 's/ netmask.*//i' -e 's/.*inet //')
-IP = $(shell ip addr | grep -i "BROADCAST,MULTICAST,UP," -A2 | grep 'inet ' | sed -e 's@/24 .*@@' -e 's/.*inet //')
-AWS = "n"
+# vanilla debian 10 doesn't have curl or 
+#         net-tools' ifconfig installed out of the box
+IP := $(shell test -e /usr/bin/curl && curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
+ifeq ($(strip $(IP)),)
+IP := $(shell ip addr | grep -i "BROADCAST,MULTICAST,UP," -A2 | grep 'inet ' | sed -e 's@/24 .*@@' -e 's/.*inet //')
+AWS := "n"
 else
-AZ = $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/placement/availability-zone)
+AZ := $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/placement/availability-zone)
 endif
 
 # centos or ubuntu (no others tested)
 # /etc/os-release doesn't exist on CentOS 6 but does on CentOS 7+8, Ubuntu, and Debian
 # make 3.81 only tests for empty/non-empty string
 # returns OS=fedora
-REL = $(shell test -e /etc/os-release && echo "Y")
-ifeq ($(REL),)
-OS =  $(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
+REL := $(shell test -e /etc/os-release && echo "Y")
+ifeq ($(strip $(REL)),)
+OS=$(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
+# OS =  $(shell grep -q "CentOS Linux release 7" /etc/redhat-release && echo centos7)
+# OS =  $(shell grep -q "CentOS Linux release 8" /etc/redhat-release && echo centos8)
+ID := "centos"
+VER := "6"
 else ifeq ($(REL),Y)
-ID = $(shell awk '/^ID=/{print $1}' /etc/os-release | sed -e "s/ID=//" -e "s/-leap//" -e "s/open//")
+ID := $(shell awk '/^ID=/{print $1}' /etc/os-release | sed -e "s/ID=//" -e "s/-leap//" -e "s/open//" -e 's/"//g')
 VER = $(shell grep "VERSION_ID" /etc/os-release | sed -e 's/VERSION_ID=//' -e 's/"//g')
-OS = $(ID)$(VER)
+OS := $(ID)$(VER)
 endif
 
 
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
 	.functions .inputrc .screenrc .vimrc
 
-RHEL_PKGS := wget vim lsof bash-completion bind-utils net-tools
-C8_PKGS := $(RHEL_PKGS) yum-utils epel-release 
-C7_PKGS := $(RHEL_PKGS) yum-utils epel-release 
-C6_PKGS := $(RHEL_PKGS) yum-utils epel-release sudo
+RHEL_PKGS := wget vim lsof bind-utils net-tools yum-utils epel-release
+C8_PKGS := $(RHEL_PKGS) bash-completion
+C7_PKGS := $(RHEL_PKGS) bash-completion
+C6_PKGS := $(RHEL_PKGS) 
 F_PKGS := $(RHEL_PKGS) dnf-utils
 U_PKGS := curl vim lsof bash-completion dnsutils
 D_PKGS := $(U_PKGS) sudo rsync net-tools open-vm-tools
-S_PKGS = wget vim lsof bash-completion bind-utils net-tools
-PY_VER = 3.6.3
+S_PKGS := wget vim lsof bash-completion bind-utils net-tools
+# used for installing from scratch on Ubuntu python3u recipe
+PY_VER := 3.8.2
 
 TARGETS :=  install
 
@@ -56,10 +61,29 @@ all: $(TARGETS)
 
 test: 
 	@echo "/etc/os-release exists? " $(REL)
-	@echo "ID="$(ID)   "VER="$(VER)  "OS="$(OS)
+	@echo "ID=<$(ID)>   VER=<$(VER)>"
+	@echo '<$(OS)>'
 	@echo "IP="$(IP)
 	@echo "docker-compose: "$(DOCKER_COMPOSE_URL)
 	@echo "logname:" $(LOGNAME) " sudo_user:" $(SUDO_USER)
+ifeq ($(OS),centos6)
+	@echo "packages= "$(C6_PKGS)
+else ifeq ($(OS),centos7)
+	@echo "packages= "$(C7_PKGS)
+else ifeq ($(OS),centos8)
+	@echo "packages= "$(C8_PKGS)
+else ifeq ($(ID),fedora)
+	@echo "packages= "$(F_PKGS)
+else ifeq ($(ID),ubuntu)
+	@echo "packages= "$(U_PKGS)
+else ifeq ($(ID),debian)
+	@echo "packages= "$(D_PKGS)
+else ifeq ($(ID),"suse")
+	@echo "packages= "$(S_PKGS)
+else
+	@echo "packages="
+endif
+
 
 clean: 
 
@@ -76,44 +100,42 @@ endif
 # requires https://centos[678].iuscommunity.org/ius-release.rpm
 # prerequisite for centos git2u and python36u
 packages:
-	@echo $(OS)
-ifeq ($(OS),"centos6")
-	yum install -y $(C6_PKGS)
-	yum install -y https://centos6.iuscommunity.org/ius-release.rpm
-
-else ifeq ($(OS),"centos7")
-	yum install -y $(C7_PKGS)
-	yum install -y https://centos7.iuscommunity.org/ius-release.rpm
-
-else ifeq ($(OS),"centos8")
-	yum install -y $(C8_PKGS)
-	#yum install -y https://centos8.iuscommunity.org/ius-release.rpm
-
+	@echo '<$(OS)>'
+	
+ifeq ($(OS),centos6)
+	-yum install -y $(C6_PKGS)
+	-yum install -y https://repo.ius.io/ius-release-el6.rpm \
+		https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+else ifeq ($(OS),centos7)
+	-yum install -y $(C7_PKGS)
+	-yum install -y https://repo.ius.io/ius-release-el7.rpm \
+		https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+else ifeq ($(OS),centos8)
+	-yum install -y $(C8_PKGS)
 else ifeq ($(ID),fedora)
-	dnf install -y $(F_PKGS)
-
+	-dnf install -y $(F_PKGS)
 else ifeq ($(ID),ubuntu)
-	apt-get install -y $(U_PKGS)
-
+	-apt-get install -y $(U_PKGS)
 else ifeq ($(ID),debian)
-	apt-get install -y $(D_PKGS)
-
+	-apt-get install -y $(D_PKGS)
 else ifeq ($(ID),"suse")
-	zypper --non-interactive install $(S_PKGS)
+	-zypper --non-interactive install $(S_PKGS)
+else
+	@echo "can't evaluate OS"
 endif
 
 
 update:
-ifeq ($(OS),"centos6")
+ifeq ($(OS),centos6)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /boot/grub/grub.conf
-else ifeq ($(OS),"centos7")
+else ifeq ($(OS),centos7)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
-else ifeq ($(OS),"centos8")
+else ifeq ($(OS),centos8)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
@@ -130,17 +152,19 @@ else ifeq ($(ID),debian)
 else ifeq ($(ID),"suse")
 	-sed -i.orig -e 's/splash=silent/splash=verbose/' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
-	zypper up
+	-zypper up
 endif
 
 
-# fedora 27 already has git 2.x installed
+# fedora 27 and centos8 already has git 2.x installed
 git : git-install git-config
 
 git-install:
-ifeq ($(OS),"centos6")
+ifeq ($(OS),centos6)
 	-yum install  -y git
-else ifeq ($(OS),"centos7")
+else ifeq ($(OS),centos7)
+	-yum install -y git
+else ifeq ($(OS),centos8)
 	-yum install -y git
 else ifeq ($(ID),fedora)
 	-dnf install -y git
@@ -155,11 +179,13 @@ else ifeq ($(ID),"suse")
 endif
 
 git2: packages
-ifeq ($(OS),"centos6")
+ifeq ($(OS),centos6)
 	-yum remove -y git
-	-yum install  -y git2u
-else ifeq ($(OS),"centos7")
+	-yum install  -y git2u-all
+else ifeq ($(OS),centos7)
 	-yum remove -y git
+	-yum install -y https://repo.ius.io/ius-release-el7.rpm \
+		https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 	-yum install -y git2u
 endif
 
@@ -194,13 +220,14 @@ ifneq ($(SUDO_USER),)
 endif
 
 ntp: ntp-install ntp-config
+
 ntp-install :
 ifeq ($(OS),"centos6")
 	-yum install -y ntp
 	-yum install -y ntp
-else ifeq ($(OS),"centos7")
+else ifeq ($(OS),centos7)
 	-yum install -y ntp
-else ifeq ($(OS),"centos8")
+else ifeq ($(OS),centos8)
 	-yum install -y chrony
 else ifeq ($(ID),fedora)
 	-dnf install -y ntp
@@ -216,23 +243,27 @@ ntp-config :
 ifneq ($(AWS),"n")
 	sed -i.orig -e "s/centos.pool/amazon.pool/g" /etc/ntp.conf # only if on AWS
 endif
-ifeq ($(OS),"centos6")
+ifeq ($(OS),centos6)
 	chkconfig --level 2 --level 3 ntpd on
 	service ntpd start
+	ntpdc -c pe
 	#[ ! -e /etc/localtime.orig ] && mv /etc/localtime /etc/localtime.orig
 	# ln -s /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
-else ifeq ($(OS),"centos7")
+else ifeq ($(OS),centos7)
 	systemctl enable ntpd
 	systemctl start ntpd
 	timedatectl set-timezone America/Los_Angeles
-else ifeq ($(OS),"centos8")
+	ntpdc -c pe
+else ifeq ($(OS),centos8)
 	systemctl enable chronyd
 	systemctl start chronyd
 	timedatectl set-timezone America/Los_Angeles
+	chronyc sources
 else ifeq ($(ID),fedora)
 	systemctl enable ntpd
 	systemctl start ntpd
 	timedatectl set-timezone America/Los_Angeles
+	ntpdc -c pe
 else ifeq ($(ID),ubuntu)
 	systemctl enable ntp
 	systemctl start ntp
@@ -254,7 +285,7 @@ endif
 # 5/16/17 epel's xfce seems to be broken requiring wrong version
 # skip-broken fixes this temporarily
 gui :
-ifeq ($(OS),"centos7")
+ifeq ($(OS),centos7)
 	yum groupinstall -y "X Window system"
 	yum groupinstall -y "Xfce" --skip-broken
 	yum install -y firefox gvim
@@ -285,9 +316,9 @@ endif
 	@echo "reboot to start with GUI"
 
 no-gui:
-ifeq ($(OS),"centos6")
+ifeq ($(OS),centos6)
 	sed -i.x11 -e "s/id:5/id:3/" /etc/inittab
-else ifeq ($(OS),"centos7")
+else ifeq ($(OS),centos7)
 	systemctl set-default multi-user.target
 else ifeq ($(ID),fedora)
 	systemctl set-default multi-user.target
@@ -299,12 +330,14 @@ else ifeq ($(ID),debian)
 else ifeq ($(ID),"suse")
 	systemctl set-default multi-user.target
 endif
-	@echo "reboot to start with without GUI"
+	@echo "reboot to start without GUI"
 
+
+# VirtualBox extensions
 # Centos assumes installed w/o GUI at command line
 # ubunut assumes installed on top of GUI with mount point
 vbox:
-ifeq ($(OS),"centos7")
+ifeq ($(OS),centos7)
 	-yum update kernel*
 	-yum install -y dkms gcc make kernel-devel bzip2 binutils patch libgomp glibc-headers glibc-devel kernel-headers
 	-mount /dev/sr0 /mnt
@@ -319,15 +352,18 @@ endif
 
 
 python3: packages
-ifeq ($(OS),"centos6")
+ifeq ($(OS),centos6)
 	-yum install -y python27 python27-pip python27-setuptools
-	-yum install -y python36u python36u-setuptools python36u-pip
-else ifeq ($(OS),"centos7")
-	-yum install -y python2-pip
-	-easy_install pip
-	-yum install -y python36u python36u-setuptools python36u-pip
-endif
+	-yum install -y python36 python36-setuptools python36-pip
+	-pip2.7 install pip --upgrade
+	-pip3.6 install pip --upgrade
 
+else ifeq ($(OS),centos7)
+	-yum install -y python2-pip
+	-yum install -y python3 python3-setuptools python3-pip
+	-pip install pip --upgrade
+	-pip3 install pip3 --upgrade
+endif
 
 # ubuntu 17.10+, fedora 27, debian 10, and opensuse-leap has python3
 python3u:
@@ -337,4 +373,6 @@ ifeq ($(ID),ubuntu)
 	-tar -xzf Python-$(PY_VER).tgz
 	-cd Python-$(PY_VER) && ./configure && make altinstall
 	-rm Python-$(PY_VER).tgz
+else
+	@echo "python3u target is for ubuntu systems only"
 endif
