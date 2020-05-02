@@ -7,8 +7,9 @@
 # 202001.26 added git.core editor
 # 202002.15 update docker-compose url+fix if block tests
 # 202002.17 add Debian and OpenSuse support
+# 203005.01 fix CentOS 8
 
-.PHONY : build clean install
+.PHONY : test clean install
 
 DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
@@ -53,9 +54,9 @@ TARGETS :=  install
 
 all: $(TARGETS)
 
-build: 
+test: 
 	@echo "/etc/os-release exists? " $(REL)
-	@echo "ID="$(ID)   "VER="$(VER)  "=>"  $(OS)
+	@echo "ID="$(ID)   "VER="$(VER)  "OS="$(OS)
 	@echo "IP="$(IP)
 	@echo "docker-compose: "$(DOCKER_COMPOSE_URL)
 	@echo "logname:" $(LOGNAME) " sudo_user:" $(SUDO_USER)
@@ -72,24 +73,31 @@ else
 	@echo '***Append as root***  echo "$(LOGNAME) ALL = NOPASSWD: ALL" > /etc/sudoers.d/$(LOGNAME)'
 endif
 
-# requires https://centos[67].iuscommunity.org/ius-release.rpm
+# requires https://centos[678].iuscommunity.org/ius-release.rpm
 # prerequisite for centos git2u and python36u
-packages :
+packages:
+	@echo $(OS)
 ifeq ($(OS),"centos6")
 	yum install -y $(C6_PKGS)
 	yum install -y https://centos6.iuscommunity.org/ius-release.rpm
+
 else ifeq ($(OS),"centos7")
 	yum install -y $(C7_PKGS)
 	yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+
 else ifeq ($(OS),"centos8")
 	yum install -y $(C8_PKGS)
 	#yum install -y https://centos8.iuscommunity.org/ius-release.rpm
+
 else ifeq ($(ID),fedora)
 	dnf install -y $(F_PKGS)
+
 else ifeq ($(ID),ubuntu)
 	apt-get install -y $(U_PKGS)
+
 else ifeq ($(ID),debian)
 	apt-get install -y $(D_PKGS)
+
 else ifeq ($(ID),"suse")
 	zypper --non-interactive install $(S_PKGS)
 endif
