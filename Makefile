@@ -30,8 +30,6 @@ endif
 REL := $(shell test -e /etc/os-release && echo "Y")
 ifeq ($(strip $(REL)),)
 OS=$(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
-# OS =  $(shell grep -q "CentOS Linux release 7" /etc/redhat-release && echo centos7)
-# OS =  $(shell grep -q "CentOS Linux release 8" /etc/redhat-release && echo centos8)
 ID := "centos"
 VER := "6"
 else ifeq ($(REL),Y)
@@ -45,9 +43,9 @@ DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward 
 	.functions .inputrc .screenrc .vimrc
 
 RHEL_PKGS := wget vim lsof bind-utils net-tools yum-utils epel-release
-C8_PKGS := $(RHEL_PKGS) bash-completion
-C7_PKGS := $(RHEL_PKGS) bash-completion
 C6_PKGS := $(RHEL_PKGS) 
+C7_PKGS := $(RHEL_PKGS) bash-completion
+C8_PKGS := $(RHEL_PKGS) bash-completion
 F_PKGS := $(RHEL_PKGS) dnf-utils
 U_PKGS := curl vim lsof bash-completion dnsutils
 D_PKGS := $(U_PKGS) sudo rsync net-tools open-vm-tools
@@ -97,19 +95,19 @@ else
 	@echo '***Append as root***  echo "$(LOGNAME) ALL = NOPASSWD: ALL" > /etc/sudoers.d/$(LOGNAME)'
 endif
 
-# requires https://centos[678].iuscommunity.org/ius-release.rpm
-# prerequisite for centos git2u and python36u
+# requires https://centos[67].iuscommunity.org/ius-release.rpm
+# prerequisite for centos git2u and python36
 packages:
 	@echo '<$(OS)>'
 	
 ifeq ($(OS),centos6)
 	-yum install -y $(C6_PKGS)
-	-yum install -y https://repo.ius.io/ius-release-el6.rpm \
-		https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+	-yum install -y https://repo.ius.io/ius-release-el6.rpm
+	-yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
 else ifeq ($(OS),centos7)
 	-yum install -y $(C7_PKGS)
-	-yum install -y https://repo.ius.io/ius-release-el7.rpm \
-		https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+	-yum install -y https://repo.ius.io/ius-release-el7.rpm
+	-yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 else ifeq ($(OS),centos8)
 	-yum install -y $(C8_PKGS)
 else ifeq ($(ID),fedora)
@@ -272,6 +270,7 @@ else ifeq ($(ID),debian)
 	systemctl enable ntp
 	systemctl start ntp
 	timedatectl set-timezone America/Los_Angeles
+	ntpq -c pe
 else ifeq ($(ID),"suse")
 	systemctl status chronyd
 	systemctl start chronyd

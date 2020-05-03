@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
     end
     centos6.vm.provision "shell", inline: <<-SHELL
       ##yum update -y
-      yum install -y https://centos6.iuscommunity.org/ius-release.rpm
+      yum https://repo.ius.io/ius-release-el6.rpm
     SHELL
     centos6.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
     end
     centos7.vm.provision "shell", inline: <<-SHELL
       ##yum update -y
-      yum install -y https://centos7.iuscommunity.org/ius-release.rpm
+      yum https://repo.ius.io/ius-release-el7.rpm
     SHELL
     centos7.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
@@ -71,27 +71,6 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define "ubuntu14" do |ubuntu14|
-    ubuntu14.vm.box = "geerlingguy/ubuntu1404" # 14.04-python preinstalled
-    # ubuntu14.vm.box_check_update = false
-    # ubuntu14.vm.network "forwarded_port", guest: 80, host: 8080
-    # ubuntu14.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-    # ubuntu14.vm.network "private_network", ip: "192.168.33.10"
-    # ubuntu14.vm.network "public_network"
-    # ubuntu14.vm.synced_folder "../data", "/vagrant_data"
-    ubuntu14.vm.provider "virtualbox" do |vb|
-      #vb.gui = true
-      vb.memory = "1024"
-    end
-    ubuntu14.vm.provision "shell", inline: <<-SHELL
-      apt-get install -y python
-    SHELL
-    ubuntu14.vm.provision "ansible" do |ansible|
-      ansible.compatibility_mode = "2.0"
-      ansible.playbook = "pb-ubuntu.yaml"
-      # ansible.raw_arguments = ["--verbose"]
-    end
-  end
 
   config.vm.define "ubuntu16" do |ubuntu16|
     ubuntu16.vm.box = "geerlingguy/ubuntu1604" # 16.04-needs python 
@@ -115,48 +94,13 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  # config.vm.define "ubuntu17" do |ubuntu17|
-  #   ubuntu17.vm.box = "bento/ubuntu-17.04" # python preinstalled
-  #   # ubuntu17.vm.box_check_update = false
-  #   # ubuntu17.vm.network "forwarded_port", guest: 80, host: 8080
-  #   # ubuntu17.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-  #   # ubuntu17.vm.network "private_network", ip: "192.168.33.10"
-  #   # ubuntu17.vm.network "public_network"
-  #   # ubuntu17.vm.synced_folder "../data", "/vagrant_data"
-  #   ubuntu17.vm.provider "virtualbox" do |vb|
-  #     #vb.gui = true
-  #     vb.memory = "1024"
-  #   end
-  #   ubuntu17.vm.provision "shell", inline: <<-SHELL
-  #     echo "...fixing apt database..."
-  #     sed -i -e "s/archive.ubuntu.com/old-releases.ubuntu.com/" \
-  #       -e "s/security.ubuntu.com/old-releases.ubuntu.com/" \
-  #       -e "s/at.archive.ubuntu.com/old-releases.ubuntu.com/" /etc/apt/sources.list
-  #     apt-get install -y python
-  #   SHELL
-  #   ubuntu17.vm.provision "ansible" do |ansible|
-  #     ansible.compatibility_mode = "2.0"
-  #     ansible.playbook = "pb-ubuntu.yaml"
-  #     # ansible.raw_arguments = ["--verbose"]
-  #   end
-
   config.vm.define "ubuntu18" do |ubuntu18|
     ubuntu18.vm.box = "geerlingguy/ubuntu1804" # python preinstalled
-    # ubuntu18.vm.box_check_update = false
-    # ubuntu18.vm.network "forwarded_port", guest: 80, host: 8080
-    # ubuntu18.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-    # ubuntu18.vm.network "private_network", ip: "192.168.33.10"
-    # ubuntu18.vm.network "public_network"
-    # ubuntu18.vm.synced_folder "../data", "/vagrant_data"
     ubuntu18.vm.provider "virtualbox" do |vb|
       #vb.gui = true
       vb.memory = "1024"
     end
     ubuntu18.vm.provision "shell", inline: <<-SHELL
-      # echo "...fixing apt database..."
-      # sed -i -e "s/archive.ubuntu.com/old-releases.ubuntu.com/" \
-      #   -e "s/security.ubuntu.com/old-releases.ubuntu.com/" \
-      #   -e "s/at.archive.ubuntu.com/old-releases.ubuntu.com/" /etc/apt/sources.list
       apt-get install -y python
     SHELL
     ubuntu18.vm.provision "ansible" do |ansible|
@@ -165,5 +109,21 @@ Vagrant.configure("2") do |config|
       # ansible.raw_arguments = ["--verbose"]
     end
 
+
+  config.vm.define "ubuntu20" do |ubuntu20|
+    ubuntu20.vm.box = "geerlingguy/ubuntu2004" # python preinstalled
+    ubuntu20.vm.provider "virtualbox" do |vb|
+      #vb.gui = true
+      vb.memory = "1024"
+    end
+    ubuntu20.vm.provision "shell", inline: <<-SHELL
+      apt-get install -y python
+    SHELL
+    ubuntu20.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-ubuntu.yaml"
+    end
+
   end
+
 end
