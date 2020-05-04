@@ -11,7 +11,6 @@ Vagrant.configure("2") do |config|
    end
 
   config.vm.define "c6" do |c6|
-#     c6.vm.box = "geerlingguy/centos6"
     c6.vm.box = "centos/6"
     c6.vm.hostname = "c6"
 #     c6.vm.box_check_update = false
@@ -20,9 +19,9 @@ Vagrant.configure("2") do |config|
 #     c6.vm.network "private_network", ip: "192.168.33.10"
 #     c6.vm.network "public_network"
 #     c6.vm.synced_folder "../data", "/vagrant_data"
-#     c6.vm.provision "shell", inline: <<-SHELL
-#       yum install -y python
-#     SHELL
+    c6.vm.provision "shell", inline: <<-SHELL
+      yum install -y python libselinux-python
+    SHELL
 
     c6.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
@@ -32,23 +31,29 @@ Vagrant.configure("2") do |config|
   end
   
   config.vm.define "c7" do |c7|
-#     c7.vm.box = "geerlingguy/centos7"
     c7.vm.box = "centos/7"
     c7.vm.hostname = "c7"
+    c7.vm.provision "shell", inline: <<-SHELL
+      yum install -y python libselinux-python
+    SHELL
 
     c7.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-centos.yaml"
     end
   end
-  
+
+  # https://linuxize.com/post/how-to-install-python-on-centos-8/
   config.vm.define "c8" do |c8|
 #     c8.vm.box = "geerlingguy/centos8"
     c8.vm.box = "centos/8"
     c8.vm.hostname = "c8"
-#     c8.vm.provision "shell", inline: <<-SHELL
-#       dnf install -y python2 python3
-#     SHELL
+    c8.vm.provision "shell", inline: <<-SHELL
+      dnf install -y epel-release
+      dnf makecache
+      dnf install -y ansible
+      alternatives --set python /usr/bin/python3
+    SHELL
 
     c8.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"

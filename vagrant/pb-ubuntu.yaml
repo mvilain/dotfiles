@@ -46,11 +46,6 @@
       register: tod 
     - debug: var=tod.stdout_lines
 
-    - name: ntpq before restart
-      shell: sleep 5 && ntpq -c peer
-      register: ntpq
-    - debug: var=ntpq.stdout_lines
-
   handlers:
     - name: restart ntp
       service: name="ntp" state=restarted
