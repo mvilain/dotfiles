@@ -3,127 +3,115 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.define "centos6" do |centos6|
-    centos6.vm.box = "geerlingguy/centos6"
-    # centos6.vm.box_check_update = false
-    # centos6.vm.network "forwarded_port", guest: 80, host: 8080
-    # centos6.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-    # centos6.vm.network "private_network", ip: "192.168.33.10"
-    # centos6.vm.network "public_network"
-    # centos6.vm.synced_folder "../data", "/vagrant_data"
-    centos6.vm.provider "virtualbox" do |vb|
-      #vb.gui = true
-      vb.memory = "1024"
-    end
-    centos6.vm.provision "shell", inline: <<-SHELL
-      ##yum update -y
-      yum https://repo.ius.io/ius-release-el6.rpm
-    SHELL
-    centos6.vm.provision "ansible" do |ansible|
+  config.ssh.insert_key = false
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 1024
+#     vb.cpus = 2
+#     vb.gui = false
+   end
+
+  config.vm.define "c6" do |c6|
+#     c6.vm.box = "geerlingguy/centos6"
+    c6.vm.box = "centos/6"
+    c6.vm.hostname = "c6"
+#     c6.vm.box_check_update = false
+#     c6.vm.network "forwarded_port", guest: 80, host: 8080
+#     c6.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
+#     c6.vm.network "private_network", ip: "192.168.33.10"
+#     c6.vm.network "public_network"
+#     c6.vm.synced_folder "../data", "/vagrant_data"
+#     c6.vm.provision "shell", inline: <<-SHELL
+#       yum install -y python
+#     SHELL
+
+    c6.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-centos.yaml"
       # ansible.raw_arguments = ["--verbose"]
     end
   end
+  
+  config.vm.define "c7" do |c7|
+#     c7.vm.box = "geerlingguy/centos7"
+    c7.vm.box = "centos/7"
+    c7.vm.hostname = "c7"
 
-  config.vm.define "centos7" do |centos7|
-    centos7.vm.box = "geerlingguy/centos7"
-    # centos7.vm.box_check_update = false
-    # centos7.vm.network "forwarded_port", guest: 80, host: 8080
-    # centos7.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-    # centos7.vm.network "private_network", ip: "192.168.33.10"
-    # centos7.vm.network "public_network"
-    # centos7.vm.synced_folder "../data", "/vagrant_data"
-    centos7.vm.provider "virtualbox" do |vb|
-      #vb.gui = true
-      vb.memory = "1024"
-    end
-    centos7.vm.provision "shell", inline: <<-SHELL
-      ##yum update -y
-      yum https://repo.ius.io/ius-release-el7.rpm
-    SHELL
-    centos7.vm.provision "ansible" do |ansible|
+    c7.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-centos.yaml"
-      # ansible.raw_arguments = ["--verbose"]
+    end
+  end
+  
+  config.vm.define "c8" do |c8|
+#     c8.vm.box = "geerlingguy/centos8"
+    c8.vm.box = "centos/8"
+    c8.vm.hostname = "c8"
+#     c8.vm.provision "shell", inline: <<-SHELL
+#       dnf install -y python2 python3
+#     SHELL
+
+    c8.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-centos8.yaml"
     end
   end
 
-  config.vm.define "fedora" do |fedora|
-    fedora.vm.box = "fedora/28-cloud-base"
-    # fedora.vm.box_check_update = false
-    # fedora.vm.network "forwarded_port", guest: 80, host: 8080
-    # fedora.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-    # fedora.vm.network "private_network", ip: "192.168.33.10"
-    # fedora.vm.network "public_network"
-    # fedora.vm.synced_folder "../data", "/vagrant_data"
-    fedora.vm.provider "virtualbox" do |vb|
-      #vb.gui = true
-      vb.memory = "1024"
-    end
-    fedora.vm.provision "shell", inline: <<-SHELL
-      dnf install -y python
+  config.vm.define "f32" do |f32|  # python already installed
+    f32.vm.box = "fedora/32-cloud-base"
+    f32.vm.hostname = "f32"
+    f32.vm.provision "shell", inline: <<-SHELL
+      echo "IGNORE THIS:  [WARNING]: Module invocation had junk after the JSON data:
+AttributeError(\"module \'platform\' has no attribute \'dist\'\")
+KeyError(\'ansible_os_family\')"
+#       dnf install -y python
     SHELL
-    fedora.vm.provision "ansible" do |ansible|
+
+    f32.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-fedora.yaml"
-      # ansible.raw_arguments = ["--verbose"]
     end
   end
 
 
-  config.vm.define "ubuntu16" do |ubuntu16|
-    ubuntu16.vm.box = "geerlingguy/ubuntu1604" # 16.04-needs python 
-    # ubuntu16.vm.box_check_update = false
-    # ubuntu16.vm.network "forwarded_port", guest: 80, host: 8080
-    # ubuntu16.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-    # ubuntu16.vm.network "private_network", ip: "192.168.33.10"
-    # ubuntu16.vm.network "public_network"
-    # ubuntu16.vm.synced_folder "../data", "/vagrant_data"
-    ubuntu16.vm.provider "virtualbox" do |vb|
-      #vb.gui = true
-      vb.memory = "1024"
-    end
-    ubuntu16.vm.provision "shell", inline: <<-SHELL
-      apt-get install -y python
+  config.vm.define "u16" do |u16|
+    u16.vm.box = "ubuntu/xenial64" # python not preinstalled
+    u16.vm.hostname = "u16"
+    u16.vm.provision "shell", inline: <<-SHELL
+      apt-get -y install python
     SHELL
-    ubuntu16.vm.provision "ansible" do |ansible|
+
+    u16.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-ubuntu.yaml"
-      # ansible.raw_arguments = ["--verbose"]
     end
   end
-
-  config.vm.define "ubuntu18" do |ubuntu18|
-    ubuntu18.vm.box = "geerlingguy/ubuntu1804" # python preinstalled
-    ubuntu18.vm.provider "virtualbox" do |vb|
-      #vb.gui = true
-      vb.memory = "1024"
-    end
-    ubuntu18.vm.provision "shell", inline: <<-SHELL
-      apt-get install -y python
+  
+  config.vm.define "u18" do |u18|
+    u18.vm.box = "ubuntu/bionic64" # python not preinstalled
+    u18.vm.hostname = "u18"
+    u18.vm.provision "shell", inline: <<-SHELL
+      apt-get -y install python
     SHELL
-    ubuntu18.vm.provision "ansible" do |ansible|
-      ansible.compatibility_mode = "2.0"
-      ansible.playbook = "pb-ubuntu.yaml"
-      # ansible.raw_arguments = ["--verbose"]
-    end
 
-
-  config.vm.define "ubuntu20" do |ubuntu20|
-    ubuntu20.vm.box = "geerlingguy/ubuntu2004" # python preinstalled
-    ubuntu20.vm.provider "virtualbox" do |vb|
-      #vb.gui = true
-      vb.memory = "1024"
-    end
-    ubuntu20.vm.provision "shell", inline: <<-SHELL
-      apt-get install -y python
-    SHELL
-    ubuntu20.vm.provision "ansible" do |ansible|
+    u18.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-ubuntu.yaml"
     end
+  end
+  
+  config.vm.define "u20" do |u20|   # python not installed...must be python not python2
+    u20.vm.box = "geerlingguy/ubuntu2004"
+#     u20.vm.box = "ubuntu/focal64"   # 5/3/20 box has problems timing out after private key
+    u20.vm.hostname = "u20"
+    u20.vm.provision "shell", inline: <<-SHELL
+      apt-get -y install python
+      apt autoremove -y
+    SHELL
 
+    u20.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-ubuntu.yaml"
+    end
   end
 
 end

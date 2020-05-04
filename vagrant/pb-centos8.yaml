@@ -1,0 +1,33 @@
+# Install on CentOS 8
+---
+- hosts: all
+  become: true
+  tasks:
+
+    - name: Install required packages (this may take a while)
+      package: 
+        name: "{{item}}"
+        state: present
+      with_items:
+        - git
+        - make
+        - vim
+
+    - name: configure chronyd and timezone
+      service: 
+        name: chronyd
+        state: started 
+        enabled: yes
+
+    - name: set timezone
+      timezone: name=America/Los_Angeles
+
+    - name: TOD
+      command: date
+      register: tod 
+    - debug: var=tod.stdout_lines
+
+    - name: chronyc sources
+      shell: sleep 5 && chronyc sources
+      register: chronyc
+    - debug: var=chronyc.stdout_lines

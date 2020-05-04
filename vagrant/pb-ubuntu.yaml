@@ -1,30 +1,66 @@
 # Install on Ubuntu
-# requires python pre-installed on 16.04
+# requires python pre-installed on 16.04 and 18.04...needs to be installed on 20.04
 ---
 - hosts: all
   become: true
   tasks:
 
     - name: Install required packages (this may take a while)
-      apt: name={{item}} state=present update_cache=yes
+      package: 
+        name: "{{item}}"
+        state: present
       with_items:
         - git
         - make
         - ntp 
         - ntpdate 
         - ntp-doc
+        - vim
 
-    - name: configure NTP and timezone
-      service: name=ntp state=started enabled=yes
+    - name: remove pool entries
+      lineinfile:
+        path: /etc/ntp.conf
+        regexp: "^pool "
+        state: absent
+        backup: yes
+
+    - name: add north-america pool server
+      lineinfile:
+        path: /etc/ntp.conf
+        state: present
+        line: "pool 0.north-america.pool.ntp.org iburst"
+        backup: yes
+      notify: "restart ntp services"
+
+    - name: enable NTP
+      service: 
+        name: ntp
+        state: started 
+        enabled: yes
 
     - name: set timezone
       timezone: name=America/Los_Angeles
+
     - name: TOD
-      shell: sleep 4; date
+      command: date
       register: tod 
     - debug: var=tod.stdout_lines
 
-    - name: ntpq
-      command: ntpq -c peer
+    - name: ntpq before restart
+      shell: sleep 5 && ntpq -c peer
       register: ntpq
     - debug: var=ntpq.stdout_lines
+
+  handlers:
+    - name: restart ntp
+      service: name="ntp" state=restarted
+      listen: "restart ntp services"
+
+    - name: get peers
+      shell: sleep 5 && ntpq -c peer
+      register: peers
+      listen: "restart ntp services"
+
+    - name: display peers after restart
+      debug: var=peers.stdout_lines
+      listen: "restart ntp services"

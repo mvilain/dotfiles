@@ -6,28 +6,58 @@
   tasks:
 
     - name: Install required Fedora packages (this may take a while)
-      dnf: name={{item}} state=present
+      dnf: 
+        name: "{{item}}"
+        state: present
       with_items:
         - git
         - make
         - ntp
+        - vim
 
-    - name: configure NTP and timezone
-      service: name=ntpd state=started enabled=yes
-    - name: ntpq
-      command: ntpq -c peer
-      register: ntpq
-    - debug: var=ntpq.stdout_lines
+    - name: remove pool entries
+      lineinfile:
+        path: /etc/ntp.conf
+        regexp: "^pool "
+        state: absent
+        backup: yes
+
+    - name: add north-america pool server
+      lineinfile:
+        path: /etc/ntp.conf
+        state: present
+        line: "pool 0.north-america.pool.ntp.org iburst"
+      notify: "restart ntp services"
+
+    - name: enable NTP
+      service: 
+        name: ntpd
+        state: started 
+        enabled: yes
 
     - name: set timezone
       timezone: name=America/Los_Angeles
+
     - name: TOD
       command: date
       register: tod 
     - debug: var=tod.stdout_lines
 
-    - name: ntpq
-      command: ntpq -c peer
+    - name: ntpq before restart
+      shell: sleep 5 && ntpq -c peer
       register: ntpq
     - debug: var=ntpq.stdout_lines
-...
+
+  handlers:
+    - name: restart ntp
+      service: name="ntpd" state=restarted
+      listen: "restart ntp services"
+
+    - name: get peers
+      shell: sleep 5 && ntpq -c peer
+      register: peers
+      listen: "restart ntp services"
+
+    - name: display peers after restart
+      debug: var=peers.stdout_lines
+      listen: "restart ntp services"
