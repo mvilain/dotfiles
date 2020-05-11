@@ -85,7 +85,7 @@ endif
 
 clean: 
 
-install: files packages
+install: files
 
 files: $(DOTFILES)
 	/bin/cp -v $(DOTFILES) ${HOME}/
