@@ -7,7 +7,7 @@
 # 202001.26 added git.core editor
 # 202002.15 update docker-compose url+fix if block tests
 # 202002.17 add Debian and OpenSuse support
-# 203005.02 fix CentOS eval of $(OS)
+# 203005.11 fix CentOS eval of $(OS); add tar to CentOS 8 packages
 
 .PHONY : test clean install
 
@@ -45,7 +45,7 @@ DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward 
 RHEL_PKGS := wget vim lsof bind-utils net-tools yum-utils epel-release
 C6_PKGS := $(RHEL_PKGS) 
 C7_PKGS := $(RHEL_PKGS) bash-completion
-C8_PKGS := $(RHEL_PKGS) bash-completion
+C8_PKGS := $(RHEL_PKGS) bash-completion tar
 F_PKGS := $(RHEL_PKGS) dnf-utils
 U_PKGS := curl vim lsof bash-completion dnsutils
 D_PKGS := $(U_PKGS) sudo rsync net-tools open-vm-tools
