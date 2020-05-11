@@ -370,6 +370,7 @@ else ifeq ($(OS),centos7)
 
 else ifeq ($(OS),centos8)
 	-yum install -y python3-pip
+	-pip3 install wheel 
 	-pip3 install pip setuptools certifi --upgrade
 
 endif
