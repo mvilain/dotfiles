@@ -35,15 +35,24 @@ my Linux dotfiles and assorted other stuff
 
 ## open-vmware-tools
 
-Many OS' support this package as pre-installed rather than the VMware Tools.
+Many OS' support this package as pre-installed rather than the VMware Tools. CentOS 7 does but not CentOS 8.
 
-To mount a mount point defined in the VMware shared folder definitions, use 
+To mount a mount point defined in the VMware shared folder definitions, in /etc/fstab use
 
     .host:/<mount>  /mnt/hgfs fuse.vmhgfs-fuse allow_other,defaults 0 0
 
-in /etc/fstab.
+or use
+
+    mount -t fuse.vmhgfs-fuse .host:/<mount> /mnt/hgfs -o allow_other
 
 https://unix.stackexchange.com/questions/310458/vmhgfs-fuse-permission-denied-issue
+
+On centos8, you must remove the open-vm-tools and install VMware's tools:
+
+    dnf remove -y open-vm-tools open-vm-tools-desktop
+    dnf install -y tar
+
+https://linuxconfig.org/how-to-install-vmware-tools-on-rhel-8-centos-8
 
 
 ## Debian 10 setup

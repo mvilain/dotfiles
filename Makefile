@@ -284,16 +284,21 @@ endif
 # 5/16/17 epel's xfce seems to be broken requiring wrong version
 # skip-broken fixes this temporarily
 gui :
-ifeq ($(OS),centos7)
-	yum groupinstall -y "X Window system"
-	yum groupinstall -y "Xfce" --skip-broken
-	yum install -y firefox gvim
-	systemctl set-default graphical.target
-else ifeq ($(OS),"centos6")
+ifeq ($(OS),"centos6")
 	yum groupinstall -y "X Window system"
 	yum groupinstall -y "Xfce" "Fonts" --skip-broken
 	yum install -y firefox gvim xorg-x11-fonts-Type1 xorg-x11-fonts-misc
 	sed -i.mu3 -e "s/id:3/id:5/" /etc/inittab
+else ifeq ($(OS),centos7)
+	yum groupinstall -y "Server with GUI"
+# 	yum groupinstall -y "X Window system"
+# 	yum groupinstall -y "Xfce" --skip-broken
+	yum install -y firefox gvim
+	systemctl set-default graphical.target
+else ifeq ($(OS),centos8)
+	yum groupinstall -y "Server with GUI"
+	yum install -y firefox gvim
+	systemctl set-default graphical.target
 else ifeq ($(ID),fedora)
 	dnf install -y @xfce-desktop-environment
 	dnf install -y firefox gvim
