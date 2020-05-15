@@ -367,6 +367,12 @@ else ifeq ($(OS),centos7)
 	-yum install -y python3 python3-setuptools python3-pip
 	-pip install pip --upgrade
 	-pip3 install pip3 --upgrade
+
+else ifeq ($(OS),centos8)
+	-yum install -y python3-pip
+	-pip3 install wheel 
+	-pip3 install pip setuptools certifi --upgrade
+
 endif
 
 # ubuntu 17.10+, fedora 27, debian 10, and opensuse-leap has python3
