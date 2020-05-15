@@ -7,7 +7,7 @@
 # 202001.26 added git.core editor
 # 202002.15 update docker-compose url+fix if block tests
 # 202002.17 add Debian and OpenSuse support
-# 203005.11 fix CentOS eval of $(OS); add tar to CentOS 8 packages
+# 202005.11 fix CentOS eval of $(OS); add tar to CentOS 8 packages
 
 .PHONY : test clean install
 

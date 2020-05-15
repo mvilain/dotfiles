@@ -45,7 +45,6 @@ Vagrant.configure("2") do |config|
 
   # https://linuxize.com/post/how-to-install-python-on-centos-8/
   config.vm.define "c8" do |c8|
-#     c8.vm.box = "geerlingguy/centos8"
     c8.vm.box = "centos/8"
     c8.vm.hostname = "c8"
     c8.vm.provision "shell", inline: <<-SHELL
@@ -90,7 +89,7 @@ KeyError(\'ansible_os_family\')"
       ansible.playbook = "pb-ubuntu.yaml"
     end
   end
-  
+
   config.vm.define "u18" do |u18|
     u18.vm.box = "ubuntu/bionic64" # python not preinstalled
     u18.vm.hostname = "u18"
@@ -103,10 +102,11 @@ KeyError(\'ansible_os_family\')"
       ansible.playbook = "pb-ubuntu.yaml"
     end
   end
-  
+
+# https://www.reddit.com/r/Ubuntu/comments/ga187h/focal64_vagrant_box_issues/
   config.vm.define "u20" do |u20|   # python not installed...must be python not python2
     u20.vm.box = "geerlingguy/ubuntu2004"
-#     u20.vm.box = "ubuntu/focal64"   # 5/3/20 box has problems timing out after private key
+#     u20.vm.box = "ubuntu/focal64"  # 5/13/20 box missing key package
     u20.vm.hostname = "u20"
     u20.vm.provision "shell", inline: <<-SHELL
       apt-get -y install python
