@@ -35,7 +35,16 @@ my Linux dotfiles and assorted other stuff
 
 ## open-vmware-tools
 
-Many OS' support this package as pre-installed rather than the VMware Tools. CentOS 7 does but not CentOS 8.
+Many OS' support this package as pre-installed rather than the VMware Tools. CentOS 7 does. CentOS 8.1 **does not** and you must uninstall the open-vm-tools package and install the VMware tools.
+
+On centos8.1, you must remove the open-vm-tools and install VMware's tools:
+
+    dnf remove -y open-vm-tools open-vm-tools-desktop
+    dnf install -y tar
+
+https://linuxconfig.org/how-to-install-vmware-tools-on-rhel-8-centos-8
+
+This is **fixed in CentOS 8.2.**
 
 To mount a mount point defined in the VMware shared folder definitions, in /etc/fstab use
 
@@ -46,13 +55,6 @@ or use
     mount -t fuse.vmhgfs-fuse .host:/<mount> /mnt/hgfs -o allow_other
 
 https://unix.stackexchange.com/questions/310458/vmhgfs-fuse-permission-denied-issue
-
-On centos8, you must remove the open-vm-tools and install VMware's tools:
-
-    dnf remove -y open-vm-tools open-vm-tools-desktop
-    dnf install -y tar
-
-https://linuxconfig.org/how-to-install-vmware-tools-on-rhel-8-centos-8
 
 
 ## Debian 10 setup
