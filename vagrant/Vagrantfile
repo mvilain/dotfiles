@@ -105,7 +105,7 @@ KeyError(\'ansible_os_family\')"
 
 # https://www.reddit.com/r/Ubuntu/comments/ga187h/focal64_vagrant_box_issues/
   config.vm.define "u20" do |u20|   # python not installed...must be python not python2
-    u20.vm.box = "geerlingguy/ubuntu2004"
+    u20.vm.box = "bento/ubuntu-20.04"
 #     u20.vm.box = "ubuntu/focal64"  # 5/13/20 box missing key package
     u20.vm.hostname = "u20"
     u20.vm.provision "shell", inline: <<-SHELL
