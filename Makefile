@@ -8,10 +8,11 @@
 # 202002.15 update docker-compose url+fix if block tests
 # 202002.17 add Debian and OpenSuse support
 # 202005.11 fix CentOS eval of $(OS); add tar to CentOS 8 packages
+# 202006.27 update current version of docker-compose; add notes for CentOS 8.2
 
 .PHONY : test clean install
 
-DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
+DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
 # vanilla debian 10 doesn't have curl or 
 #         net-tools' ifconfig installed out of the box
