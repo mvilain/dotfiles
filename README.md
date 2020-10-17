@@ -35,24 +35,29 @@ my Linux dotfiles and assorted other stuff
 
 ## open-vmware-tools
 
-Many OS' support this package as pre-installed rather than the VMware Tools. CentOS 7 does. CentOS 8.1 **does not** and you must uninstall the open-vm-tools package and install the VMware tools.
+Many OS' support this package as pre-installed rather than the VMware Tools. CentOS 7 does but CentOS 8.1 **does not**. 
+You must uninstall the open-vm-tools package and install the VMware tools.
 
-On centos8.1, you must remove the open-vm-tools and install VMware's tools:
+On CentOS 8.1, you must remove the open-vm-tools and install VMware's tools:
 
     dnf remove -y open-vm-tools open-vm-tools-desktop
-    dnf install -y tar
+    dnf install -y tar perl
+    mkdir /mnt/hgfs
+
+Then install the VMware Tools from the client's GUI.
 
 https://linuxconfig.org/how-to-install-vmware-tools-on-rhel-8-centos-8
 
-This is **fixed in CentOS 8.2.**
+In CentOS 8.2, open-vm-tools is already installed and running correctly if you select the 
+minimal install with the basic CentOS packages.
 
-To mount a mount point defined in the VMware shared folder definitions, in /etc/fstab use
+To mount all the shared folders configured with the VM, type the following as root:
 
-    .host:/<mount>  /mnt/hgfs fuse.vmhgfs-fuse allow_other,defaults 0 0
+    mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
 
-or use
+To ensure the /mnt/hgfs mount points at boot, insert the following into /etc/fstab:
 
-    mount -t fuse.vmhgfs-fuse .host:/<mount> /mnt/hgfs -o allow_other
+    .host:/ /mnt/hgfs fuse.vmhgfs-fuse allow_other,defaults 0 0
 
 https://unix.stackexchange.com/questions/310458/vmhgfs-fuse-permission-denied-issue
 
