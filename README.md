@@ -60,19 +60,28 @@ And add the following to /etc/fstab
 
 - CentOS VMWARE
 
-CentOS 8.1 **does not**.  You must uninstall the open-vm-tools package and install VMware tools.
-
-On CentOS 8.1, you must remove the open-vm-tools and install VMware's tools:
+CentOS 8.1's open-vm-tools does not work.  You must remove the package and install VMware tools.
 
     dnf remove -y open-vm-tools open-vm-tools-desktop
     dnf install -y tar perl
     mkdir /mnt/hgfs
 
-Then install the VMware Tools from the client's GUI.
+Then install the VMware Tools from the client's GUI, which will make the CD available
+for mounting.
 
-https://linuxconfig.org/how-to-install-vmware-tools-on-rhel-8-centos-8
+    [configure VM to have shared folder]
+    yum uninstall open-vm-tools
+    [select VMware Tools Installation from Virtual Machine menu]
+    mount /dev/cdrom /mnt
+    tar -xvzf /mnt/VMwareTools-x.y.z-nnnnnnn.tar.gz -C /tmp
+    /tmp/vmware-tools-distrib/vmware-install.pl
+    [do you still want to proceed with this installation? [no] YES]
+    [take the defaults for the rest of the choices]
+    [reboot and mount points will appear /mnt/hgfs/<mount-point>]
 
-In CentOS 8.2 minimal install, open-vm-tools for VMware is already installed and just needs to be started.
+[https://linuxconfig.org/how-to-install-vmware-tools-on-rhel-8-centos-8]
+
+In CentOS 8.2's minimal install, open-vm-tools is already installed and just needs to be started.
 
     mkdir /mnt/hgfs
     systemctl start vmtoolsd
@@ -87,7 +96,7 @@ To ensure the /mnt/hgfs mount points at boot, insert the following into /etc/fst
 
     .host:/<mount-point> /mnt/hgfs fuse.vmhgfs-fuse allow_other,defaults 0 0
 
-https://unix.stackexchange.com/questions/310458/vmhgfs-fuse-permission-denied-issue
+[https://unix.stackexchange.com/questions/310458/vmhgfs-fuse-permission-denied-issue]
 
 
 - Debian VIRTUALBOX
@@ -184,7 +193,7 @@ For Ubuntu 14.04, 16.04, and 18.04, open-vm-tools doesn't work, so do the follow
     apt-get purge open-vm-tools # on 16.04, remove the broken package
     [select VMware Tools Installation from Virtual Machine menu]
     mount /dev/cdrom /mnt
-    tar -xvzf /mnt/VMwareTools-10.3.21-14772444.tar.gz -C /tmp
+    tar -xvzf /mnt/VMwareTools-x.y.z-nnnnnnn.tar.gz -C /tmp
     /tmp/vmware-tools-distrib/vmware-install.pl
     [do you still want to proceed with this installation? [no] YES]
     [take the defaults for the rest of the choices]
