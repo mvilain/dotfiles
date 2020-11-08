@@ -33,11 +33,11 @@ my Linux dotfiles and assorted other stuff
 [https://tecadmin.net/install-python-3-5-on-centos/]
 [http://stackoverflow.com/questions/37723236/pip-error-while-installing-python-ignoring-ensurepip-failure-pip-8-1-1-requir/37723517]
 
-## Shared Folders
+## VM Guest's Shared Folders
 
 Many OS' support this package as pre-installed rather than the VMware Tools or installing the VirtualBox Guest Toolkit.
 
-### VIRTUALBOX CentOS
+- CentOS VIRTUALBOX
 
 For VirtualBox Guests, they require kernel development and a bunch of other packages.
 
@@ -46,9 +46,7 @@ For VirtualBox Guests, they require kernel development and a bunch of other pack
     [reboot]
     [select Insert Guest Additions CD Image from Devices menu]
     mount /dev/cdrom /mnt
-    cd /mnt
-    ./VBoxLinuxAdditions.run install
-    cd
+    /mnt/VBoxLinuxAdditions.run install
     umount /mnt
     mkdir /mnt/<mount-point>
     mount -t vboxsf <mount-point> /mnt/<mount-point>
@@ -60,7 +58,7 @@ And add the following to /etc/fstab
 [https://www.virtualbox.org/manual/ch04.html#additions-linux]
 
 
-### VMWARE CentOS
+- CentOS VMWARE
 
 CentOS 8.1 **does not**.  You must uninstall the open-vm-tools package and install VMware tools.
 
@@ -81,7 +79,6 @@ In CentOS 8.2 minimal install, open-vm-tools for VMware is already installed and
 
 [https://www.virtualbox.org/manual/ch02.html#externalkernelmodules]
 
-
 To mount all the shared folders configured with the VM, type the following as root:
 
     mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
@@ -92,7 +89,8 @@ To ensure the /mnt/hgfs mount points at boot, insert the following into /etc/fst
 
 https://unix.stackexchange.com/questions/310458/vmhgfs-fuse-permission-denied-issue
 
-### VIRTUALBOX Debian
+
+- Debian VIRTUALBOX
 
 As root (sudo isn't installed on Debian 9 by default), install the following:
 
@@ -102,8 +100,7 @@ As root (sudo isn't installed on Debian 9 by default), install the following:
     [reboot]
     [select Insert Guest Additions CD Image from Devices menu]
     mount /dev/cdrom /mnt
-    ./VBoxLinuxAdditions.run install
-    cd
+    /mnt/VBoxLinuxAdditions.run install
     umount /mnt
     [reboot]
     mount -t vboxsf <mount-point> /mnt/<mount-point>
@@ -115,7 +112,7 @@ And add the following to /etc/fstab
 [https://linuxize.com/post/how-to-install-virtualbox-guest-additions-on-debian-10/]
 
 
-### VMWARE Debian
+- Debian VMWARE
 
 As root with su (sudo isn't installed on Debian by default), install the following:
 
@@ -134,7 +131,7 @@ On Debian 10, you have to create the mount point and restart the service,
 Debian 10's VMware Guest works best with 2 cores and 4096MB of memory.  It als doesn't allow 
 for setting static IP address through standard boot off of ISO.  So do the following:
 
-- modify /etc/network/interfaces to have the following:
+  - modify /etc/network/interfaces to have the following:
 ```
 iface ens33 inet static
   address 192.168.x.xxx
@@ -143,10 +140,68 @@ iface ens33 inet static
   dns-nameservers 8.8.8.8 8.8.4.4
 ```
 
-- modify /etc/resolve.config and reboot
+  - modify /etc/resolve.config and reboot
 ```
 domain local.net
 search local.net
 nameserver 8.8.8.8
 nameserver 8.8.4.4
 ```
+
+
+- Ubuntu VIRTUALBOX
+
+For Ubuntu 16.04 and 14.04, install a minimal system using the entire disk with the LVM. 
+If you upgrade the OS, the upgrade scripts make changes to the volume groups and 
+will fail if you don't use the volume manager.
+
+This procedure has been tested with Ubuntu 14.04, 16.04, 18.04, and 20.04
+
+    [minimal Ubuntu Server install with security updates]
+    apt-get update -y
+    apt-get install -y virtualbox-guest-dkms
+    [reboot]
+    [select Insert Guest Additions CD Image from Devices menu]
+    mount /dev/cdrom /mnt
+    /mnt/VBoxLinuxAdditions.run install
+    [reboot]
+    mkdir /mnt/<mount-point>
+    lsmod | grep vbox # [you should see the VBox additions]
+    mount -t vboxsf <mount-point> /mnt/<mount-point>
+
+And add the following to /etc/fstab
+
+    /<mount-point> /mnt/<mount-point> vboxsf defaults 0 0
+
+
+- Ubuntu VMWARE
+
+For Ubuntu 14.04, 16.04, and 18.04, open-vm-tools doesn't work, so do the following:
+
+    [minimal Ubuntu Server install with security updates]
+    [configure VM to have shared folder]
+    apt-get install -y make
+    apt-get purge open-vm-tools # on 16.04, remove the broken package
+    [select VMware Tools Installation from Virtual Machine menu]
+    mount /dev/cdrom /mnt
+    tar -xvzf /mnt/VMwareTools-10.3.21-14772444.tar.gz -C /tmp
+    /tmp/vmware-tools-distrib/vmware-install.pl
+    [do you still want to proceed with this installation? [no] YES]
+    [take the defaults for the rest of the choices]
+    [reboot and mount points will appear /mnt/hgfs/<mount-point>]
+
+For Ubuntu 20.04, do the following:
+
+    [minimal Ubuntu Server install with the old installer]
+    [configure VM to have shared folder]
+    apt-get update -y
+    apt-get install -y open-vm-tools
+    [reboot]
+    mkdir /mnt/hgfs
+    mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
+
+Add the following to /etc/fstab
+
+    .host:/ /mnt/hgfs fuse.vmhgfs-fuse defaults,allow_other 0 0_
+
+[https://linuxconfig.org/install-vmware-tools-on-ubuntu-20-04-focal-fossa-linux]
