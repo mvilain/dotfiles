@@ -9,10 +9,11 @@
 # 202002.17 add Debian and OpenSuse support
 # 202005.11 fix CentOS eval of $(OS); add tar to CentOS 8 packages
 # 202006.27 update current version of docker-compose; add notes for CentOS 8.2
+# 202011.18 change docker to use RPMs; docker compose 1.26 -> 1.27.4
 
 .PHONY : test clean install
 
-DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
+DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/tag/1.27.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
 # vanilla debian 10 doesn't have curl or 
 #         net-tools' ifconfig installed out of the box
@@ -204,6 +205,7 @@ git-config: git-install
 
 
 # must be run as root or it won't install
+# don't use recommended repository because that's OS-dependent...use script
 docker:
 	if [ ! -e /bin/docker ]; then \
 		curl -fsSL https://get.docker.com/ | sh; \
@@ -213,6 +215,7 @@ docker:
 		systemctl enable docker; \
 		systemctl daemon-reload; \
 		systemctl start docker; \
+		docker run hello-world; \
 	fi
 ifneq ($(SUDO_USER),)
 	usermod -aG docker $(SUDO_USER)
