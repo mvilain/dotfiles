@@ -81,10 +81,10 @@ for mounting.
 
 [https://linuxconfig.org/how-to-install-vmware-tools-on-rhel-8-centos-8]
 
-In CentOS 8.2's minimal install, open-vm-tools is already installed and just needs to be started.
+In CentOS 7.x and 8.2's minimal install, open-vm-tools is already installed and just needs to be started.
 
     mkdir /mnt/hgfs
-    systemctl start vmtoolsd
+    systemctl restart vmtoolsd
 
 [https://www.virtualbox.org/manual/ch02.html#externalkernelmodules]
 
