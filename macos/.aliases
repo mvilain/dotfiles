@@ -85,14 +85,13 @@ alias cleanaudit="sudo -S ls /var/audit;echo;echo 'Cleaning audit data...\c';ech
 alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
 alias rootpref="sudo -s ls -@ailOR /private/var/root/Library/Preferences"
 alias skext="sudo kextcache -system-prelinked-kernel && sudo kextcache -system-caches"
-alias repair="diskutil repairPermissions /"
 alias rb="sudo shutdown -r +1"
 
 alias spotoff="sudo mdutil -a -i off"
 alias spoton="sudo mdutil -a -i on"
 
-alias show="defaults write com.apple.Finder AppleShowAllFiles -bool true && killall Finder"
-alias hide="defaults write com.apple.Finder AppleShowAllFiles -bool false && killall Finder"
+alias showall="defaults write com.apple.Finder AppleShowAllFiles -bool true && killall Finder"
+alias hideall="defaults write com.apple.Finder AppleShowAllFiles -bool false && killall Finder"
 
 # enable or disable Bonjour
 alias dbon="sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist"
