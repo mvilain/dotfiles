@@ -58,7 +58,7 @@ And add the following to /etc/fstab
 
 [https://www.virtualbox.org/manual/ch04.html#additions-linux]
 
-### CentOS VMWARE
+### CentOS and Fedora VMWARE
 
 CentOS 8.1's open-vm-tools does not work.  You must remove the package and install VMware tools.
 
@@ -81,7 +81,7 @@ for mounting.
 
 [https://linuxconfig.org/how-to-install-vmware-tools-on-rhel-8-centos-8]
 
-In CentOS 7.x and 8.2's minimal install, open-vm-tools is already installed and just needs to be started.
+In CentOS 7.x and 8.2's minimal install, open-vm-tools is already installed and just needs to be started. This also works for Fedora 33.
 
     mkdir /mnt/hgfs
     systemctl restart vmtoolsd
