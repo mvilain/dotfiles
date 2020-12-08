@@ -37,15 +37,16 @@ my Linux dotfiles and assorted other stuff
 
 Many OS' support this package as pre-installed rather than the VMware Tools or installing the VirtualBox Guest Toolkit.
 
-- CentOS VIRTUALBOX
+### CentOS VIRTUALBOX
 
 For VirtualBox Guests, they require kernel development and a bunch of other packages.
 
-    yum update -y
     yum install -y gcc make perl bzip2 tar elfutils-libelf-devel kernel-headers kernel-devel
+    yum update -y
     [reboot]
     [select Insert Guest Additions CD Image from Devices menu]
     mount /dev/cdrom /mnt
+    cd /mnt
     /mnt/VBoxLinuxAdditions.run install
     umount /mnt
     mkdir /mnt/<mount-point>
@@ -57,8 +58,7 @@ And add the following to /etc/fstab
 
 [https://www.virtualbox.org/manual/ch04.html#additions-linux]
 
-
-- CentOS VMWARE
+### CentOS VMWARE
 
 CentOS 8.1's open-vm-tools does not work.  You must remove the package and install VMware tools.
 
@@ -98,8 +98,7 @@ To ensure the /mnt/hgfs mount points at boot, insert the following into /etc/fst
 
 [https://unix.stackexchange.com/questions/310458/vmhgfs-fuse-permission-denied-issue]
 
-
-- Debian VIRTUALBOX
+### Debian VIRTUALBOX
 
 As root (sudo isn't installed on Debian 9 by default), install the following:
 
@@ -120,8 +119,7 @@ And add the following to /etc/fstab
 
 [https://linuxize.com/post/how-to-install-virtualbox-guest-additions-on-debian-10/]
 
-
-- Debian VMWARE
+### Debian VMWARE
 
 As root with su (sudo isn't installed on Debian by default), install the following:
 
@@ -133,14 +131,17 @@ On Debian 9, this will automatically start the open-vm-tools service on the host
 
 On Debian 10, you have to create the mount point and restart the service,
 
-    mkdir /mnt/hgfs
-    systemctl restart open-vm-tools
-    mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
+```
+mkdir /mnt/hgfs
+systemctl restart open-vm-tools
+mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
+```
 
 Debian 10's VMware Guest works best with 2 cores and 4096MB of memory.  It als doesn't allow 
 for setting static IP address through standard boot off of ISO.  So do the following:
 
   - modify /etc/network/interfaces to have the following:
+
 ```
 iface ens33 inet static
   address 192.168.x.xxx
@@ -149,7 +150,7 @@ iface ens33 inet static
   dns-nameservers 8.8.8.8 8.8.4.4
 ```
 
-  - modify /etc/resolve.config and reboot
+  + modify /etc/resolve.config and reboot
 ```
 domain local.net
 search local.net
@@ -157,8 +158,7 @@ nameserver 8.8.8.8
 nameserver 8.8.4.4
 ```
 
-
-- Ubuntu VIRTUALBOX
+### Ubuntu VIRTUALBOX
 
 For Ubuntu 16.04 and 14.04, install a minimal system using the entire disk with the LVM. 
 If you upgrade the OS, the upgrade scripts make changes to the volume groups and 
@@ -183,7 +183,7 @@ And add the following to /etc/fstab
     /<mount-point> /mnt/<mount-point> vboxsf defaults 0 0
 
 
-- Ubuntu VMWARE
+### Ubuntu VMWARE
 
 For Ubuntu 14.04, 16.04, and 18.04, open-vm-tools doesn't work, so do the following:
 
