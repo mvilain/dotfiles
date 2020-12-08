@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
    end
 
   config.vm.define "c6" do |c6|
-    c6.vm.box = "centos/6"
+    c6.vm.box = "bento/centos-6"
     c6.vm.hostname = "c6"
 #     c6.vm.box_check_update = false
 #     c6.vm.network "forwarded_port", guest: 80, host: 8080
