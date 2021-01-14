@@ -60,17 +60,14 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  config.vm.define "f32" do |f32|  # python already installed
-    f32.vm.box = "fedora/32-cloud-base"
-    f32.vm.hostname = "f32"
-    f32.vm.provision "shell", inline: <<-SHELL
-      echo "IGNORE THIS:  [WARNING]: Module invocation had junk after the JSON data:
-AttributeError(\"module \'platform\' has no attribute \'dist\'\")
-KeyError(\'ansible_os_family\')"
-#       dnf install -y python
+  config.vm.define "f33" do |f33|  # python already installed
+    f33.vm.box = "fedora/33-cloud-base"
+    f33.vm.hostname = "f33"
+    f33.vm.provision "shell", inline: <<-SHELL
+      dnf install -y python3
     SHELL
 
-    f32.vm.provision "ansible" do |ansible|
+    f33.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-fedora.yaml"
     end
@@ -81,12 +78,12 @@ KeyError(\'ansible_os_family\')"
     u16.vm.box = "ubuntu/xenial64" # python not preinstalled
     u16.vm.hostname = "u16"
     u16.vm.provision "shell", inline: <<-SHELL
-      apt-get -y install python
+      apt-get -y install python3
     SHELL
 
     u16.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
-      ansible.playbook = "pb-ubuntu.yaml"
+      ansible.playbook = "pb-ubuntu16.yaml"
     end
   end
 
@@ -94,7 +91,7 @@ KeyError(\'ansible_os_family\')"
     u18.vm.box = "ubuntu/bionic64" # python not preinstalled
     u18.vm.hostname = "u18"
     u18.vm.provision "shell", inline: <<-SHELL
-      apt-get -y install python
+      apt-get -y install python3
     SHELL
 
     u18.vm.provision "ansible" do |ansible|
@@ -105,11 +102,11 @@ KeyError(\'ansible_os_family\')"
 
 # https://www.reddit.com/r/Ubuntu/comments/ga187h/focal64_vagrant_box_issues/
   config.vm.define "u20" do |u20|   # python not installed...must be python not python2
-    u20.vm.box = "bento/ubuntu-20.04"
-#     u20.vm.box = "ubuntu/focal64"  # 5/13/20 box missing key package
+#    u20.vm.box = "bento/ubuntu-20.04"
+    u20.vm.box = "ubuntu/focal64"  # 5/13/20 box missing key package
     u20.vm.hostname = "u20"
     u20.vm.provision "shell", inline: <<-SHELL
-      apt-get -y install python
+      apt-get -y install python3
       apt autoremove -y
     SHELL
 
