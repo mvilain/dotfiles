@@ -1,0 +1,65 @@
+# Install on Ubuntu 16.04
+# requires python pre-installed on 16.04
+---
+- hosts: all
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    packages:
+        - git
+        - make
+        - ntp 
+        - ntpdate 
+        - ntp-doc
+        - vim
+
+  tasks:
+    - include_tasks: check-version.yaml
+
+    - name: Install required packages (this may take a while)
+      package: 
+        name: "{{ packages }}"
+        state: present
+
+    - name: remove pool entries
+      lineinfile:
+        path: /etc/ntp.conf
+        regexp: "^pool "
+        state: absent
+        backup: yes
+
+    - name: add north-america pool server
+      lineinfile:
+        path: /etc/ntp.conf
+        state: present
+        line: "pool 0.north-america.pool.ntp.org iburst"
+        backup: yes
+      notify: "restart ntp services"
+
+    - name: enable NTP
+      service: 
+        name: ntp
+        state: started 
+        enabled: yes
+
+    - name: set timezone
+      timezone: name=America/Los_Angeles
+
+    - name: TOD
+      command: date
+      register: tod 
+    - debug: var=tod.stdout_lines
+
+  handlers:
+    - name: restart ntp
+      service: name="ntp" state=restarted
+      listen: "restart ntp services"
+
+    - name: get peers
+      shell: sleep 5 && ntpq -c peer
+      register: peers
+      listen: "restart ntp services"
+
+    - name: display peers after restart
+      debug: var=peers.stdout_lines
+      listen: "restart ntp services"
