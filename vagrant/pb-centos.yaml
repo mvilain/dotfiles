@@ -2,7 +2,9 @@
 ---
 - hosts: all
   become: true
+
   tasks:
+    - include_tasks: check-version.yaml
 
     - name: Install required packages (this may take a while)
       package: 

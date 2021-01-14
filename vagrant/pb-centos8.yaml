@@ -2,16 +2,21 @@
 ---
 - hosts: all
   become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    packages:
+        - git
+        - make
+        - chrony
+        - vim
+
   tasks:
+    - include_tasks: check-version.yaml
 
     - name: Install required packages (this may take a while)
       dnf: 
-        name: "{{item}}"
+        name: "{{ packages }}"
         state: present
-      with_items:
-        - git
-        - make
-        - vim
 
     - name: configure chronyd and timezone
       service: 
