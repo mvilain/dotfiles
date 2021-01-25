@@ -1,3 +1,6 @@
+#!/bin/bash
+# list these with typedef -F or declare -F
+
 # Create a new directory and enter it
 function mkd() {
     mkdir -p "$@" && cd "$@"
@@ -20,7 +23,7 @@ function fs() {
 # Use Git’s colored diff when available
 hash git &>/dev/null
 if [ $? -eq 0 ]; then
-    function diff() {
+    function gdiff() {
         git diff --no-index --color-words "$@"
     }
 fi
