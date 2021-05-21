@@ -80,6 +80,8 @@ else ifeq ($(ID),debian)
 	@echo "packages= "$(D_PKGS)
 else ifeq ($(ID),"suse")
 	@echo "packages= "$(S_PKGS)
+else ifeq ($(ID),"zorin")
+	@echo "packages= "$(D_PKGS)
 else
 	@echo "packages="
 endif
@@ -120,6 +122,8 @@ else ifeq ($(ID),debian)
 	-apt-get install -y $(D_PKGS)
 else ifeq ($(ID),"suse")
 	-zypper --non-interactive install $(S_PKGS)
+else ifeq ($(ID),zorin)
+	-apt-get install -y $(D_PKGS)
 else
 	@echo "can't evaluate OS"
 endif
@@ -153,6 +157,8 @@ else ifeq ($(ID),"suse")
 	-sed -i.orig -e 's/splash=silent/splash=verbose/' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
 	-zypper up
+else ifeq ($(ID),zorin)
+	-apt-get update && apt-get upgrade -y
 endif
 
 
@@ -176,6 +182,8 @@ else ifeq ($(ID),debian)
 	-apt-get install -y git
 else ifeq ($(ID),"suse")
 	-zypper --non-interactive install git
+else ifeq ($(ID),zorin)
+	-apt-get install -y git
 endif
 
 git2: packages
@@ -239,6 +247,8 @@ else ifeq ($(ID),debian)
 	-apt-get install -y ntp ntpdate ntp-doc
 else ifeq ($(ID),"suse")
 	echo use "chronyc sources"
+else ifeq ($(ID),zorin)
+	-apt-get install -y ntp ntpdate ntp-doc
 endif
 
 ntp-config :
@@ -280,6 +290,11 @@ else ifeq ($(ID),"suse")
 	systemctl start chronyd
 	timedatectl set-timezone America/Los_Angeles
 	chronyc sources
+else ifeq ($(ID),zorin)
+	systemctl enable ntp
+	systemctl start ntp
+	timedatectl set-timezone America/Los_Angeles
+	ntpq -c pe
 endif
 
 
@@ -320,6 +335,10 @@ else ifeq ($(ID),"suse")
 	-zypper -n in patterns-openSUSE-xfce
 	-zypper --non-interactive install gvim
 	systemctl set-default graphical.target
+else ifeq ($(ID),zorin)
+	apt-get update
+	apt-get install -y xfce4 vim-gtk3
+	systemctl set-default graphical.target
 endif
 	@echo "reboot to start with GUI"
 
@@ -336,6 +355,8 @@ else ifeq ($(ID),ubuntu)
 else ifeq ($(ID),debian)
 	systemctl set-default multi-user.target
 else ifeq ($(ID),"suse")
+	systemctl set-default multi-user.target
+else ifeq ($(ID),zorin)
 	systemctl set-default multi-user.target
 endif
 	@echo "reboot to start without GUI"
@@ -379,7 +400,7 @@ else ifeq ($(OS),centos8)
 
 endif
 
-# ubuntu 17.10+, fedora 27, debian 10, and opensuse-leap has python3
+# ubuntu 17.10+, fedora 27, debian 10, opensuse-leap, and zorin have python3
 python3u:
 ifeq ($(ID),ubuntu)
 	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
