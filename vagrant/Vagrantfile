@@ -22,7 +22,6 @@ Vagrant.configure("2") do |config|
     c6.vm.provision "shell", inline: <<-SHELL
       yum install -y python libselinux-python
     SHELL
-
     c6.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-centos.yaml"
@@ -36,7 +35,6 @@ Vagrant.configure("2") do |config|
     c7.vm.provision "shell", inline: <<-SHELL
       yum install -y python libselinux-python
     SHELL
-
     c7.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-centos.yaml"
@@ -53,21 +51,19 @@ Vagrant.configure("2") do |config|
       dnf install -y ansible
       alternatives --set python /usr/bin/python3
     SHELL
-
     c8.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-centos8.yaml"
     end
   end
 
-  config.vm.define "f33" do |f33|  # python already installed
-    f33.vm.box = "fedora/33-cloud-base"
-    f33.vm.hostname = "f33"
-    f33.vm.provision "shell", inline: <<-SHELL
+  config.vm.define "f34" do |f34|  # python already installed
+    f34.vm.box = "fedora/34-cloud-base"
+    f34.vm.hostname = "f34"
+    f34.vm.provision "shell", inline: <<-SHELL
       dnf install -y python3
     SHELL
-
-    f33.vm.provision "ansible" do |ansible|
+    f34.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-fedora.yaml"
     end
@@ -80,7 +76,6 @@ Vagrant.configure("2") do |config|
     u16.vm.provision "shell", inline: <<-SHELL
       apt-get -y install python3
     SHELL
-
     u16.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-ubuntu16.yaml"
@@ -93,7 +88,6 @@ Vagrant.configure("2") do |config|
     u18.vm.provision "shell", inline: <<-SHELL
       apt-get -y install python3
     SHELL
-
     u18.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-ubuntu.yaml"
@@ -109,7 +103,6 @@ Vagrant.configure("2") do |config|
       apt-get -y install python3
       apt autoremove -y
     SHELL
-
     u20.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-ubuntu.yaml"
