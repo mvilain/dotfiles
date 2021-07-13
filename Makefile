@@ -154,7 +154,7 @@ else ifeq ($(ID),ubuntu)
 	-apt-get update && apt-get upgrade -y
 else ifeq ($(ID),debian)
 	-apt-get update && apt-get upgrade -y
-else ifeq ($(ID),"suse")
+else ifeq ($(ID),suse)
 	-sed -i.orig -e 's/splash=silent/splash=verbose/' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
 	-zypper up
@@ -181,7 +181,7 @@ else ifeq ($(ID),ubuntu)
 	-apt-get install -y git
 else ifeq ($(ID),debian)
 	-apt-get install -y git
-else ifeq ($(ID),"suse")
+else ifeq ($(ID),suse)
 	-zypper --non-interactive install git
 else ifeq ($(ID),zorin)
 	-apt-get install -y git
@@ -246,7 +246,7 @@ else ifeq ($(ID),ubuntu)
 	-apt-get install -y ntp ntpdate ntp-doc
 else ifeq ($(ID),debian)
 	-apt-get install -y ntp ntpdate ntp-doc
-else ifeq ($(ID),"suse")
+else ifeq ($(ID),suse)
 	echo use "chronyc sources"
 else ifeq ($(ID),zorin)
 	-apt-get install -y ntp ntpdate ntp-doc
@@ -286,7 +286,7 @@ else ifeq ($(ID),debian)
 	systemctl start ntp
 	timedatectl set-timezone America/Los_Angeles
 	ntpq -c pe
-else ifeq ($(ID),"suse")
+else ifeq ($(ID),suse)
 	systemctl status chronyd
 	systemctl start chronyd
 	timedatectl set-timezone America/Los_Angeles
@@ -332,7 +332,7 @@ else ifeq ($(ID),debian)
 	apt-get update
 	apt-get install -y xfce4 vim-gtk3
 	systemctl set-default graphical.target
-else ifeq ($(ID),"suse")
+else ifeq ($(ID),suse)
 	-zypper -n in patterns-openSUSE-xfce
 	-zypper --non-interactive install gvim
 	systemctl set-default graphical.target
@@ -355,7 +355,7 @@ else ifeq ($(ID),ubuntu)
 	systemctl set-default multi-user.target
 else ifeq ($(ID),debian)
 	systemctl set-default multi-user.target
-else ifeq ($(ID),"suse")
+else ifeq ($(ID),suse)
 	systemctl set-default multi-user.target
 else ifeq ($(ID),zorin)
 	systemctl set-default multi-user.target
@@ -398,6 +398,10 @@ else ifeq ($(OS),centos8)
 	-yum install -y python3-pip
 	-pip3 install wheel 
 	-pip3 install pip setuptools certifi --upgrade
+
+else ifeq ($(OS),suse)
+	-zypper install -y python3-setuptools
+	-easy_install install wheel pip certifi
 
 endif
 
