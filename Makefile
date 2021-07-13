@@ -10,10 +10,11 @@
 # 202005.11 fix CentOS eval of $(OS); add tar to CentOS 8 packages
 # 202006.27 update current version of docker-compose; add notes for CentOS 8.2
 # 202011.18 change docker to use RPMs; docker compose 1.26 -> 1.27.4
+# 202107.13 updated docker compose; added additional support for OpenSUSE
 
 .PHONY : test clean install
 
-DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/tag/1.27.4/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
+DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/tag/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
 # vanilla debian 10 doesn't have curl or 
 #         net-tools' ifconfig installed out of the box
@@ -62,7 +63,7 @@ all: $(TARGETS)
 test: 
 	@echo "/etc/os-release exists? " $(REL)
 	@echo "ID=<$(ID)>   VER=<$(VER)>"
-	@echo '<$(OS)>'
+	@echo 'OS=<$(OS)>'
 	@echo "IP="$(IP)
 	@echo "docker-compose: "$(DOCKER_COMPOSE_URL)
 	@echo "logname:" $(LOGNAME) " sudo_user:" $(SUDO_USER)
@@ -120,7 +121,7 @@ else ifeq ($(ID),ubuntu)
 	-apt-get install -y $(U_PKGS)
 else ifeq ($(ID),debian)
 	-apt-get install -y $(D_PKGS)
-else ifeq ($(ID),"suse")
+else ifeq ($(ID),suse)
 	-zypper --non-interactive install $(S_PKGS)
 else ifeq ($(ID),zorin)
 	-apt-get install -y $(D_PKGS)
