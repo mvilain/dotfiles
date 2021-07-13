@@ -100,7 +100,7 @@ endif " has("autocmd")
 " zellner.vim
 
 "hi Comment ctermfg=LightBlue
-colorscheme default
+" colorscheme default
 "set guifont=Menlo\ Regular:h13
 set autoindent autowrite ignorecase redraw showmode
 set shiftwidth=4 tabstop=4 wrapmargin=4
