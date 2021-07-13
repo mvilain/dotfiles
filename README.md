@@ -58,7 +58,7 @@ And add the following to /etc/fstab
 
 [https://www.virtualbox.org/manual/ch04.html#additions-linux]
 
-### CentOS and Fedora VMWARE
+## CentOS and Fedora VMWARE
 
 CentOS 8.1's open-vm-tools does not work.  You must remove the package and install VMware tools.
 
@@ -98,7 +98,7 @@ To ensure the /mnt/hgfs mount points at boot, insert the following into /etc/fst
 
 [https://unix.stackexchange.com/questions/310458/vmhgfs-fuse-permission-denied-issue]
 
-### Debian VIRTUALBOX
+## Debian VIRTUALBOX
 
 As root (sudo isn't installed on Debian 9 by default), install the following:
 
@@ -119,7 +119,7 @@ And add the following to /etc/fstab
 
 [https://linuxize.com/post/how-to-install-virtualbox-guest-additions-on-debian-10/]
 
-### Debian VMWARE
+## Debian VMWARE
 
 As root with su (sudo isn't installed on Debian by default), install the following:
 
@@ -158,7 +158,7 @@ nameserver 8.8.8.8
 nameserver 8.8.4.4
 ```
 
-### Ubuntu VIRTUALBOX
+## Ubuntu VIRTUALBOX
 
 For Ubuntu 16.04 and 14.04, install a minimal system using the entire disk with the LVM. 
 If you upgrade the OS, the upgrade scripts make changes to the volume groups and 
@@ -183,7 +183,7 @@ And add the following to /etc/fstab
     /<mount-point> /mnt/<mount-point> vboxsf defaults 0 0
 
 
-### Ubuntu VMWARE
+## Ubuntu VMWARE
 
 For Ubuntu 14.04, 16.04, and 18.04, open-vm-tools doesn't work, so do the following:
 
@@ -214,3 +214,31 @@ Add the following to /etc/fstab
     .host:/ /mnt/hgfs fuse.vmhgfs-fuse defaults,allow_other 0 0_
 
 [https://linuxconfig.org/install-vmware-tools-on-ubuntu-20-04-focal-fossa-linux]
+
+
+## APPENDIX
+
+### adding submodule to git
+
+This creates a HEADless snapshot of the submodule in the main repo.
+
+    cd ./macos
+    git submodule add https://github.com/mvilain/mac-dev-playbook.git
+
+When you update the submodule and push it, the snapshot must be refreshed with the changes.
+
+    git submodule update
+    git submodule update --remote
+    git commit -a -m "submodule update"
+
+### removing submodules from git
+
+Here's how to remove submodules (from [How to delete a submodule](https://gist.github.com/myusuf3/7f645819ded92bda6677))
+
+- Delete the relevant section from the .gitmodules file.
+- Stage the .gitmodules changes `git add .gitmodules`
+- Delete the relevant section from .git/config.
+- Run `git rm --cached path_to_submodule` (no trailing slash).
+- Run `rm -rf .git/modules/path_to_submodule` (no trailing slash).
+- Delete the now untracked submodule files `rm -rf path_to_submodule`
+- Commit `git commit -m "Removed submodule"`
