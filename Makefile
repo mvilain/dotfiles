@@ -11,6 +11,7 @@
 # 202006.27 update current version of docker-compose; add notes for CentOS 8.2
 # 202011.18 change docker to use RPMs; docker compose 1.26 -> 1.27.4
 # 202107.13 updated docker compose; added additional support for OpenSUSE
+# 202108.22 add dev target for developer tools
 
 .PHONY : test clean install
 
@@ -55,6 +56,8 @@ D_PKGS := $(U_PKGS) sudo rsync net-tools open-vm-tools
 S_PKGS := wget vim lsof bash-completion bind-utils net-tools
 # used for installing from scratch on Ubuntu python3u recipe
 PY_VER := 3.8.2
+# used for installing git from scratch
+GIT_VER := 2.33.0
 
 TARGETS :=  install
 
@@ -303,7 +306,7 @@ endif
 # http://jensd.be/125/linux/rel/install-mate-or-xfce-on-centos-7
 # 5/16/17 epel's xfce seems to be broken requiring wrong version
 # skip-broken fixes this temporarily
-gui :
+gui:
 ifeq ($(OS),"centos6")
 	yum groupinstall -y "X Window system"
 	yum groupinstall -y "Xfce" "Fonts" --skip-broken
@@ -362,7 +365,6 @@ else ifeq ($(ID),zorin)
 endif
 	@echo "reboot to start without GUI"
 
-
 # VirtualBox extensions
 # Centos assumes installed w/o GUI at command line
 # ubunut assumes installed on top of GUI with mount point
@@ -415,4 +417,34 @@ ifeq ($(ID),ubuntu)
 	-rm Python-$(PY_VER).tgz
 else
 	@echo "python3u target is for ubuntu systems only"
+endif
+
+# development tools
+dev:
+ifeq ($(OS),"centos6")
+	yum groupinstall -y "Development Tools"
+
+else ifeq ($(OS),centos7)
+	yum group install -y "Development Tools"
+	yum install -y automake curl-devel gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel
+	wget https://github.com/git/git/archive/refs/tags/v$(GIT_VER).tar.gz -O git.tar.gz
+	tar -xzf git.tar.gz
+	cd git-*
+	make configure &&	./configure --prefix=/usr/local && make
+	sudo make install
+
+else ifeq ($(OS),centos8)
+	yum groupinstall -y "Development Tools"
+	yum install -y automake curl-devel gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel
+
+else ifeq ($(ID),fedora)
+	dnf group install -y "Development Tools"
+	dnf install -y automake curl-devel gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel
+
+else ifeq ($(ID),ubuntu)
+	apt-get install -y build-essential autoconf libghc-zlib-dev libssl-dev libcurl4-gnutls-dev lib-expat1-dev gettext
+
+else ifeq ($(ID),debian)
+	apt-get install -y build-essential autoconf libghc-zlib-dev libssl-dev libcurl4-gnutls-dev lib-expat1-dev gettext
+
 endif
