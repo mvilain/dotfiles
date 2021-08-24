@@ -12,7 +12,7 @@
 # 202011.18 change docker to use RPMs; docker compose 1.26 -> 1.27.4
 # 202107.13 updated docker compose; added additional support for OpenSUSE
 # 202108.22 add dev target for developer tools
-# 202108.23 add alma8 and rocky8 targets
+# 202108.23 add alma and rocky targets
 
 .PHONY : test clean install
 
@@ -37,6 +37,7 @@ ifeq ($(strip $(REL)),)
 OS=$(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
 ID := "centos"
 VER := "6"
+
 else ifeq ($(REL),Y)
 ID := $(shell awk '/^ID=/{print $1}' /etc/os-release | sed -e "s/ID=//" -e "s/-leap//" -e "s/open//" -e 's/"//g')
 VER = $(shell grep "VERSION_ID" /etc/os-release | sed -e 's/VERSION_ID=//' -e 's/"//g')
@@ -74,7 +75,7 @@ test:
 	@echo "docker-compose: "$(DOCKER_COMPOSE_URL)
 	@echo "logname:" $(LOGNAME) " sudo_user:" $(SUDO_USER)
 # ------------------------------------------------------------------------ RHEL distros
-ifeq ($(OS),alma8)
+ifeq ($(ID),almalinux)
 	@echo "packages= "$(C8_PKGS)
 else ifeq ($(OS),centos6)
 	@echo "packages= "$(C6_PKGS)
@@ -84,7 +85,7 @@ else ifeq ($(OS),centos8)
 	@echo "packages= "$(C8_PKGS)
 else ifeq ($(ID),fedora)
 	@echo "packages= "$(F_PKGS)
-else ifeq ($(ID),rocky8)
+else ifeq ($(ID),rocky)
 	@echo "packages= "$(C8_PKGS)
 # ------------------------------------------------------------------------ DEBIAN distros
 else ifeq ($(ID),ubuntu)
@@ -117,7 +118,7 @@ endif
 packages:
 	@echo '<$(OS)>'
 # ------------------------------------------------------------------------ RHEL distros
-ifeq ($(OS),alma8)
+ifeq ($(ID),almalinux)
 	-yum install -y $(C8_PKGS)
 else ifeq ($(OS),centos6)
 	-yum install -y $(C6_PKGS)
@@ -131,7 +132,7 @@ else ifeq ($(OS),centos8)
 	-yum install -y $(C8_PKGS)
 else ifeq ($(ID),fedora)
 	-dnf install -y $(F_PKGS)
-else ifeq ($(OS),rocky8)
+else ifeq ($(ID),rocky)
 	-yum install -y $(C8_PKGS)
 # ------------------------------------------------------------------------ DEBIAN distros
 else ifeq ($(ID),ubuntu)
@@ -149,7 +150,7 @@ endif
 
 update:
 # ------------------------------------------------------------------------ RHEL distros
-ifeq ($(OS),alma8)
+ifeq ($(ID),almalinux)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
@@ -172,7 +173,7 @@ else ifeq ($(ID),fedora)
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
 	-grub2-mkconfig -o /boot/grub2/grub.cfg
-else ifeq ($(OS),rocky8)
+else ifeq ($(ID),rocky)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
@@ -208,7 +209,7 @@ else ifeq ($(ID),fedora)
 	-dnf install -y git
 # 	-git --version
 # 	-echo "git 2.x already installed"
-else ifeq ($(OS),rocky8)
+else ifeq ($(ID),rocky)
 	-yum install -y git
 # ------------------------------------------------------------------------ DEBIAN distros
 else ifeq ($(ID),ubuntu)
@@ -268,7 +269,7 @@ ntp: ntp-install ntp-config
 
 ntp-install :
 # ------------------------------------------------------------------------ RHEL distros
-ifeq ($(OS),alma8)
+ifeq ($(ID),almalinux)
 	-yum install -y chrony
 else ifeq ($(OS),"centos6")
 	-yum install -y ntp
@@ -279,7 +280,7 @@ else ifeq ($(OS),centos8)
 	-yum install -y chrony
 else ifeq ($(ID),fedora)
 	-dnf install -y ntp
-else ifeq ($(OS),rocky8)
+else ifeq ($(ID),rocky)
 	-yum install -y chrony
 # ------------------------------------------------------------------------ DEBIAN distros
 else ifeq ($(ID),ubuntu)
@@ -297,7 +298,7 @@ ifneq ($(AWS),"n")
 	sed -i.orig -e "s/centos.pool/amazon.pool/g" /etc/ntp.conf # only if on AWS
 endif
 # ------------------------------------------------------------------------ RHEL distros
-ifeq ($(OS),alma8)
+ifeq ($(ID),almalinux)
 	systemctl enable chronyd
 	systemctl start chronyd
 	timedatectl set-timezone America/Los_Angeles
@@ -328,7 +329,7 @@ else ifeq ($(ID),fedora)
 	timedatectl set-timezone America/Los_Angeles
 	ntpdc -c pe
 
-else ifeq ($(OS),rocky8)
+else ifeq ($(ID),rocky)
 	systemctl enable chronyd
 	systemctl start chronyd
 	timedatectl set-timezone America/Los_Angeles
@@ -365,7 +366,7 @@ endif
 # skip-broken fixes this temporarily
 gui:
 # ------------------------------------------------------------------------ RHEL distros
-ifeq ($(OS),alma8)
+ifeq ($(ID),almalinux)
 	yum groupinstall -y "Server with GUI"
 	yum install -y firefox gvim
 	systemctl set-default graphical.target
@@ -394,7 +395,7 @@ else ifeq ($(ID),fedora)
 	systemctl set-default graphical.target
 	systemctl enable lightdm.service
 
-else ifeq ($(OS),rocky8)
+else ifeq ($(ID),rocky)
 	yum groupinstall -y "Server with GUI"
 	yum install -y firefox gvim
 	systemctl set-default graphical.target
@@ -491,7 +492,7 @@ endif
 # ubuntu 17.10+, fedora 27, debian 10, opensuse-leap, and zorin have python3
 python3u:
 ifeq ($(ID),ubuntu)
-	apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
+	-apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
 	-wget https://www.python.org/ftp/python/$(PY_VER)/Python-$(PY_VER).tgz
 	-tar -xzf Python-$(PY_VER).tgz
 	-cd Python-$(PY_VER) && ./configure && make altinstall
@@ -503,59 +504,59 @@ endif
 # install git from source; requires development tools
 git-src:
 # ------------------------------------------------------------------------ RHEL distros
-ifeq ($(OS),alma8)
-	-sudo yum groupinstall -y "Development Tools"
-	-sudo yum install -y $(GIT_DEV_RPM_PKGS)
+ifeq ($(ID),almalinux)
+	-yum groupinstall -y "Development Tools"
+	-yum install -y $(GIT_DEV_RPM_PKGS)
 	-wget https://github.com/git/git/archive/refs/tags/v2.33.0.tar.gz -O git.tar.gz
 	-tar -xzf git.tar.gz && cd git-* && make configure && ./configure --prefix=/usr/local && make
-	-sudo make install
+	-make install
 	-cd .. && rm -rf git-* git.tar.gz
 
 else ifeq ($(OS),"centos6")
-	-sudo yum groupinstall -y "Development Tools"
-	-sudo yum install -y $(GIT_DEV_RPM_PKGS)
+	-yum groupinstall -y "Development Tools"
+	-yum install -y $(GIT_DEV_RPM_PKGS)
 	-wget https://github.com/git/git/archive/refs/tags/v$(GIT_VER).tar.gz -O git.tar.gz
 	-tar -xzf git.tar.gz && cd git-* && make configure && ./configure --prefix=/usr/local && make
-	-sudo make install
+	-make install
 	-cd .. && rm -rf git-* git.tar.gz
 
 else ifeq ($(OS),centos7)
-	-sudo yum groupinstall -y "Development Tools"
-	-sudo yum install -y $(GIT_DEV_RPM_PKGS)
+	-yum groupinstall -y "Development Tools"
+	-yum install -y $(GIT_DEV_RPM_PKGS)
 	-wget https://github.com/git/git/archive/refs/tags/v$(GIT_VER).tar.gz -O git.tar.gz
 	-tar -xzf git.tar.gz && cd git-* && make configure && ./configure --prefix=/usr/local && make
-	-sudo make install
+	-make install
 	-cd .. && rm -rf git-* git.tar.gz
 
 else ifeq ($(OS),centos8)
-	-sudo yum groupinstall -y "Development Tools"
-	-sudo yum install -y $(GIT_DEV_RPM_PKGS)
+	-yum groupinstall -y "Development Tools"
+	-yum install -y $(GIT_DEV_RPM_PKGS)
 	-wget https://github.com/git/git/archive/refs/tags/v$(GIT_VER).tar.gz -O git.tar.gz
 	-tar -xzf git.tar.gz && cd git-* && make configure && ./configure --prefix=/usr/local && make
-	-sudo make install
+	-make install
 	-cd .. && rm -rf git-* git.tar.gz
 
 else ifeq ($(ID),fedora)
-	-sudo dnf groupinstall -y "Development Tools"
-	-sudo dnf install -y $(GIT_DEV_RPM_PKGS)
+	-dnf groupinstall -y "Development Tools"
+	-dnf install -y $(GIT_DEV_RPM_PKGS)
 	-wget https://github.com/git/git/archive/refs/tags/v$(GIT_VER).tar.gz -O git.tar.gz
 	-tar -xzf git.tar.gz && cd git-* && make configure && ./configure --prefix=/usr/local && make
-	-sudo make install
+	-make install
 	-cd .. && rm -rf git-* git.tar.gz
 
-else ifeq ($(OS),rocky8)
-	-sudo yum groupinstall -y "Development Tools"
-	-sudo yum install -y $(GIT_DEV_RPM_PKGS)
+else ifeq ($(ID),rocky)
+	-yum groupinstall -y "Development Tools"
+	-yum install -y $(GIT_DEV_RPM_PKGS)
 	-wget https://github.com/git/git/archive/refs/tags/v2.33.0.tar.gz -O git.tar.gz
 	-tar -xzf git.tar.gz && cd git-* && make configure && ./configure --prefix=/usr/local && make
-	-sudo make install
+	-make install
 	-cd .. && rm -rf git-* git.tar.gz
 
 # ------------------------------------------------------------------------ DEBIAN distros
 else ifeq ($(ID),debian)
-	-sudo apt-get install -y $(GIT_DEV_DEB_PKGS)
+	-apt-get install -y $(GIT_DEV_DEB_PKGS)
 
 else ifeq ($(ID),ubuntu)
-	-sudo apt-get install -y build-essential autoconf libghc-zlib-dev libssl-dev libcurl4-gnutls-dev lib-expat1-dev gettext
+	-apt-get install -y build-essential autoconf libghc-zlib-dev libssl-dev libcurl4-gnutls-dev lib-expat1-dev gettext
 
 endif
