@@ -102,16 +102,18 @@ To ensure the /mnt/hgfs mount points at boot, insert the following into /etc/fst
 
 As root (sudo isn't installed on Debian 9 by default), install the following:
 
-    sed -i "s/^deb cdrom/#deb cdrom/" /etc/apt/sources.list
-    apt-get update -y
-    apt-get install -y sudo gcc make perl bzip2 tar build-essential dkms linux-headers-$(uname -r)
-    [reboot]
-    [select Insert Guest Additions CD Image from Devices menu]
-    mount /dev/cdrom /mnt
-    /mnt/VBoxLinuxAdditions.run install
-    umount /mnt
-    [reboot]
-    mount -t vboxsf <mount-point> /mnt/<mount-point>
+```bash
+sed -i "s/^deb cdrom/#deb cdrom/" /etc/apt/sources.list
+apt-get update -y
+apt-get install -y sudo gcc make perl bzip2 tar build-essential dkms linux-headers-$(uname -r)
+[reboot]
+[select Insert Guest Additions CD Image from Devices menu]
+mount /dev/cdrom /mnt
+/mnt/VBoxLinuxAdditions.run install
+umount /mnt
+[reboot]
+mount -t vboxsf <mount-point> /mnt/<mount-point>
+```
 
 And add the following to /etc/fstab
 
@@ -123,18 +125,21 @@ And add the following to /etc/fstab
 
 As root with su (sudo isn't installed on Debian by default), install the following:
 
-    sed -i "s/^deb cdrom/#deb cdrom/" /etc/apt/sources.list
-    apt-get install -y sudo make perl bzip2 tar open-vm-tools
+```base
+sed -i "s/^deb cdrom/#deb cdrom/" /etc/apt/sources.list
+apt-get install -y sudo make git perl bzip2 tar open-vm-tools
+```
 
 On Debian 9, this will automatically start the open-vm-tools service on the host. 
 /mnt/hgfs will contain all the mount point defined in the Guest's configuration.
 
 On Debian 10, you have to create the mount point and restart the service,
 
-```
+```bash
 mkdir /mnt/hgfs
 systemctl restart open-vm-tools
 mount -t fuse.vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
+echo ".host:/ /mnt/hgfs fuse.vmhgfs-fuse defaults,allow_other 0 0" >> /etc/fstab
 ```
 
 Debian 10's VMware Guest works best with 2 cores and 4096MB of memory.  It als doesn't allow 
@@ -143,6 +148,8 @@ for setting static IP address through standard boot off of ISO.  So do the follo
   - modify /etc/network/interfaces to have the following:
 
 ```
+allow-hotplug ens33
+#iface ens33 inet dhcp
 iface ens33 inet static
   address 192.168.x.xxx
   netmask 255.255.255.0
