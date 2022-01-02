@@ -52,12 +52,12 @@ alias cdb="cd /usr/local/bin "
 #alias sparse1000="hdiutil create -type SPARSE -size 1000g -fs HFS+ growableTo1000g"
 alias sparseDVD="hdiutil create -type SPARSE -sectors 9181224 -fs HFS+ SparseDVD; hdiutil attach SparseDVD.sparseimage"
 
-alias g="git"
 alias grep="grep --color=auto"
 alias h="history"
 alias j="jobs"
 alias s="subl ."
 alias v="vim"
+alias typo='open -a /Applications/Typora.app'
 
 alias o="open"
 alias oo="open ."
@@ -67,10 +67,18 @@ alias fs="stat -f \"%z bytes\""
 alias pcmds="systemsetup -printCommands"
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
 alias undopush="git push -f origin HEAD^:master"
+alias a2='ssh vilain@ftp.vilain.com -p 7822'
+alias a2sftp='sftp -P 7822 vilain@ftp.vilain.com'
+alias ftp_load='sudo launchctl load -wF /Library/LaunchDaemons/ftp.plist'
+alias ftp_unload='sudo launchctl unload -wF /Library/LaunchDaemons/ftp.plist'
+alias ftp_start='sudo launchctl load -wF /Library/LaunchDaemons/ftp.plist && sudo launchctl start com.apple.ftpd'
+alias ftp_stop='sudo launchctl stop com.apple.ftpd && sudo launchctl unload -wF /Library/LaunchDaemons/ftp.plist'
+alias free='top -l 1 -s 0 | grep PhysMem'
+
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
-#alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup; gem update --system; npm update npm -g; npm update -g'
-alias update='sudo softwareupdate -i -a; sudo port selfupdate; sudo port upgrade outdated; sudo port uninstall inactive'
+#alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup;gem update --system; npm update npm -g; npm update -g'
+alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup'
 
 # Clean up LaunchServices to remove duplicates in the “Open With” menu
 alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
@@ -78,7 +86,7 @@ alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/La
 alias c="tr -d '\n' | pbcopy"
 alias asa="sudo rm -rf  ~/Library/Saved\ Application\ State/*"
 alias emptytrash="sudo rm -rfv /Volumes/*/.Trashes; sudo rm -rfv ~/.Trash; sudo rm -rfv /private/var/log/asl/*.asl"
-alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
+#alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
 alias flush="dscacheutil -flushcache"
 alias cleanasl="echo 'Cleaning ASL files...\c';sudo -S find -d /var/log/asl -name "AUX*" -exec rm -fr {} \;;sudo -S find -d /var/log/asl -name "*\.asl" -exec rm -fr {} \;;sudo -S find /var/log/DiagnosticMessages/ -name "*\.asl";sudo -S ls -@ailO /var/log/asl /var/log/DiagnosticMessages;echo;echo done."
 alias cleanaudit="sudo -S ls /var/audit;echo;echo 'Cleaning audit data...\c';echo;sudo -S find /var/audit -name *\.2* -type f -exec rm -f {} \;;sudo -S ls /var/audit;echo;echo done."
@@ -98,6 +106,7 @@ alias dbon="sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDN
 alias ebon="sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist" 
 
 alias localip="ipconfig getifaddr en1"
+alias remoteip="wget -T 10 -t 1 -4qO- http://ip1.dynupdate.no-ip.com/"
 alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
 alias whois="whois -h whois-servers.net"
 alias sniff="sudo ngrep -d 'en1' -t '^(GET|POST) ' 'tcp and port 80'"
@@ -124,4 +133,6 @@ alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
 alias varnishon='iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 6081;iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 6081 -j REDIRECT --to-ports 80'
 alias varnishoff='iptables -t nat -D PREROUTING -i eth0 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 6081;iptables -t nat -D PREROUTING -i eth0 -p tcp -m tcp --dport 6081 -j REDIRECT --to-ports 80'
 alias varnishstatus='iptables -L -t nat |grep -q 6081; if [ "test$?" = "test0" ]; then echo "Varnish On"; else echo "Varnish Off"; fi'
+alias itb='pushd ~/Music/iTunes; zip "iTunes Library.`date "+%y-%m-%d-%H00"`.zip" *.{itl,xml} ; find . -name "iTunes Library*.zip" -mtime +2 -delete; popd'
 
+alias dumpsnapshots='for i in `tmutil listlocalsnapshotdates / | grep 20`; do tmutil deletelocalsnapshots $i; done'
