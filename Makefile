@@ -13,6 +13,7 @@
 # 202107.13 updated docker compose; added additional support for OpenSUSE
 # 202108.22 add dev target for developer tools
 # 202108.23 add alma and rocky targets
+# 202201.07 added git pager config
 
 .PHONY : test clean install
 
@@ -238,6 +239,7 @@ git-config: git-install
 	git config --global user.name "Michael Vilain"
 	git config --global user.email "michael@vilain.com"
 	git config --global color.ui true
+	git config --global core.pager ''
 	git config --global push.default simple
 	git config --global alias.st status 
 	git config --global alias.co checkout 
