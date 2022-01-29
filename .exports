@@ -23,6 +23,9 @@ export LESS_TERMCAP_md="$ORANGE"
 
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="more"
+# or for systemctl and journalctl
+export SYSTEMD_PAGE="less -r"
+export SYSTEMD_LESS="FRXMK"
 
 # Fix psycopg2 on 10.7.3
 export PGHOST=/tmp

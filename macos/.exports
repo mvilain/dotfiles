@@ -20,11 +20,15 @@ export LC_ALL="en_US.UTF-8"
 # Highlight section titles in manual pages
 export LESS_TERMCAP_md="$ORANGE"
 
-# Don’t clear the screen after quitting a manual page
+# Don’t clear the screen after quitting a manual page, aws, or journalctl
+export AWS_PAGER="more"
 export MANPAGER="more"
+export PAGER="cat"
+export SYSTEMD_PAGER="less -r"
 
 # Fix psycopg2 on 10.7.3
 export PGHOST=/tmp
 
 # no ._ files in archives please
 export COPYFILE_DISABLE=true
+
