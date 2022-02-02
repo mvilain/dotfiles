@@ -14,6 +14,7 @@
 # 202108.22 add dev target for developer tools
 # 202108.23 add alma and rocky targets
 # 202201.07 added git pager config
+# 202202.01 added gitpager to config
 
 .PHONY : test clean install
 
@@ -248,6 +249,7 @@ git-config: git-install
 	git config --global alias.origin "remote show origin"
 	git config --global alias.mylog "log --pretty = format:'%h %s [%an]' --graph" 
 	git config --global alias.lol "log --graph --decorate --pretty=oneline --abbrev-commit --all"
+	git config --global --replace-all core.pager "less -F -X"
 
 
 # must be run as root or it won't install
