@@ -570,13 +570,13 @@ endif
 zsh: git
 # ------------------------------------------------------------------------ RHEL distros
 ifeq ($(OS),centos6)
-	echo installing zsh
+	yum install -y zsh vim
 else ifeq ($(OS),centos7)
-	-yum install -y zsh vim
+	yum install -y zsh vim
 else ifeq ($(OS),centos8)
-	-yum install -y zsh vim
+	yum install -y zsh vim
 else ifeq ($(ID),fedora)
-	echo installing zsh
+	dnf install -y zsh vim
 # ------------------------------------------------------------------------ DEBIAN distros
 else ifeq ($(ID),ubuntu)
 	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
