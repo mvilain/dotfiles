@@ -125,8 +125,6 @@ ifeq ($(ID),almalinux)
 	-yum install -y $(C8_PKGS)
 else ifeq ($(OS),centos6)
 	-yum install -y $(C6_PKGS)
-	-yum install -y https://repo.ius.io/ius-release-el6.rpm
-	-yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
 else ifeq ($(OS),centos7)
 	-yum install -y $(C7_PKGS)
 	-yum install -y https://repo.ius.io/ius-release-el7.rpm
@@ -579,11 +577,11 @@ else ifeq ($(ID),fedora)
 	dnf install -y zsh vim
 # ------------------------------------------------------------------------ DEBIAN distros
 else ifeq ($(ID),ubuntu)
-	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
+	apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
 else ifeq ($(ID),debian)
-	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
+	apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
 else ifeq ($(ID),suse)
-	echo installing zsh
+	zypper --non-interactive install zsh
 else ifeq ($(ID),zorin)
 	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
 endif
@@ -592,4 +590,4 @@ zsh-config:
 	-git clone https://github.com/ohmyzsh/ohmyzsh.git ${HOME}/.oh-my-zsh
 # 	-/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	-/bin/cp -v robbyrussell.zsh-theme ${HOME}/.oh-my-zsh/themes/
-	echo "chsh -s /bin/zsh ${LOGNAME}"
+	-echo "run 'chsh -s /bin/zsh ${LOGNAME}' ... to change your shell"

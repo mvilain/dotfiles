@@ -12,8 +12,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "a2" do |a2|
     a2.vm.box = "bento/amazonlinux-2"
-    a2.ssh.insert_key = false
-    a2.vm.network 'private_network', ip: '192.168.10.190'
+    # a2.vm.network 'private_network', ip: '192.168.10.190'
     a2.vm.hostname = 'a2.test'
     a2.vm.provision "shell", inline: <<-SHELL
       amazon-linux-extras install epel #ansible2=2.8 kernel-ng python3.8
@@ -64,20 +63,21 @@ Vagrant.configure("2") do |config|
   # https://linuxize.com/post/how-to-install-python-on-centos-8/
   # 2/24/22 centos/8 and bento/centos-8.5 yum's repos don't work any more
   #      Error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirrorlist: No URLs in mirrorlist
-  config.vm.define "c8" do |c8|
-    c8.vm.box = "bento/rockylinux-8"
-    c8.vm.hostname = "c8.test"
-    c8.vm.provision "shell", inline: <<-SHELL
+  config.vm.define "r8" do |r8|
+    r8.vm.box = "bento/rockylinux-8"
+    r8.vm.hostname = "r8.test"
+    r8.vm.provision "shell", inline: <<-SHELL
       dnf install -y epel-release
       dnf makecache
       dnf install -y ansible
       alternatives --set python /usr/bin/python3
     SHELL
-    c8.vm.provision "ansible" do |ansible|
+    r8.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
       ansible.playbook = "pb-centos8.yml"
     end
   end
+
 
   config.vm.define "f34" do |f34|  # python already installed
     f34.vm.box = "fedora/34-cloud-base"
@@ -103,6 +103,17 @@ Vagrant.configure("2") do |config|
     end
   end
 
+config.vm.define "s15" do |s15|
+    s15.vm.box = "suse-15.3"
+    s15.vm.hostname = 's15.test'
+    s15.vm.provision "shell", inline: <<-SHELL
+      zypper --non-interactive install git make #python3-dnf python3-pip ansible
+    SHELL
+    s15.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-suse.yml"
+    end
+  end
 
   config.vm.define "u16" do |u16|
     u16.vm.box = "ubuntu/xenial64" # python not preinstalled
