@@ -587,7 +587,7 @@ else ifeq ($(ID),zorin)
 endif
 
 zsh-config:
-	- git clone https://github.com/ohmyzsh/ohmyzsh.git ${HOME}/
+	- git clone https://github.com/ohmyzsh/ohmyzsh.git
 # 	-/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	-/bin/cp -v robbyrussell.zsh-theme ${HOME}/
 	echo "chsh -s /bin/zsh ${LOGNAME}"

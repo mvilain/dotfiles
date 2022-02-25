@@ -73,7 +73,7 @@ HIST_STAMPS="%Y.%m.%d.%H:%M:%S"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(ansible aws git terraform vagrant)
+plugins=(ansible git terraform vagrant)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -111,7 +111,7 @@ done
 [ -e /usr/local/google-cloud-sdk/completion.zsh.inc ] && source /usr/local/google-cloud-sdk/completion.zsh.inc
 
 # Load rbenv automatically by appending the following to ~/.zshrc:
-eval "$(rbenv init - zsh)"
+[ -e /usr/local/bin/rbenv ] && eval "$(rbenv init - zsh)"
 
 if [ -e /home/linuxbrew/.linuxbrew/bin/brew ]; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
