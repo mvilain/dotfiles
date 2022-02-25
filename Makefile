@@ -573,6 +573,8 @@ ifeq ($(OS),centos6)
 	echo installing zsh
 else ifeq ($(OS),centos7)
 	-yum install -y zsh vim
+else ifeq ($(OS),centos8)
+	-yum install -y zsh vim
 else ifeq ($(ID),fedora)
 	echo installing zsh
 # ------------------------------------------------------------------------ DEBIAN distros
@@ -587,7 +589,7 @@ else ifeq ($(ID),zorin)
 endif
 
 zsh-config:
-	- git clone https://github.com/ohmyzsh/ohmyzsh.git
+	-git clone https://github.com/ohmyzsh/ohmyzsh.git ${HOME}/.oh-my-zsh
 # 	-/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-	-/bin/cp -v robbyrussell.zsh-theme ${HOME}/
+	-/bin/cp -v robbyrussell.zsh-theme ${HOME}/.oh-my-zsh/themes/
 	echo "chsh -s /bin/zsh ${LOGNAME}"
