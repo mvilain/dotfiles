@@ -62,8 +62,10 @@ Vagrant.configure("2") do |config|
   end
 
   # https://linuxize.com/post/how-to-install-python-on-centos-8/
+  # 2/24/22 centos/8 and bento/centos-8.5 yum's repos don't work any more
+  #      Error: Failed to download metadata for repo 'appstream': Cannot prepare internal mirrorlist: No URLs in mirrorlist
   config.vm.define "c8" do |c8|
-    c8.vm.box = "centos/8"
+    c8.vm.box = "bento/rockylinux-8"
     c8.vm.hostname = "c8.test"
     c8.vm.provision "shell", inline: <<-SHELL
       dnf install -y epel-release
