@@ -25,9 +25,9 @@ my Linux dotfiles and assorted other stuff
 - **vagrant/** -- directory for vagrant testing of Makefile
   * **Vagrantfile** -- vagrant config to create VB guests to test Makefile in 
     CentOS, Fedora, and Ubuntu environments
-  * **pb-centos.yaml** -- ansible playbook to provision on CentOS 6 + 7
-  * **pb-fedora.yaml** -- ansible playbook to provision on Fedora 27
-  * **pb-ubuntu.yaml** -- ansible playbook to provision on Ubuntu 14.04, 16.04, 18.04
+  * **pb-centos.yml** -- ansible playbook to provision on CentOS 6 + 7
+  * **pb-fedora.yml** -- ansible playbook to provision on Fedora 27
+  * **pb-ubuntu.yml** -- ansible playbook to provision on Ubuntu 14.04, 16.04, 18.04
 - **rename.pl** -- perl script to use regex to rename files
 - **striphtml** -- perl script to remove html markup from a file and remap 
   international characters to marked up values

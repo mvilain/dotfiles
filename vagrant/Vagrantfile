@@ -2,17 +2,37 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-
+  config.vm.synced_folder '.', '/vagrant', disabled: true
   config.ssh.insert_key = false
-  config.vm.provider "virtualbox" do |vb|
-    vb.memory = 1024
-#     vb.cpus = 2
-#     vb.gui = false
-   end
+  config.vm.boot_timeout = 120
+  config.vm.provider :virtualbox do |vb|
+    #vb.gui = true
+    vb.memory = '1024'
+  end
+
+  config.vm.define "a2" do |a2|
+    a2.vm.box = "bento/amazonlinux-2"
+    a2.ssh.insert_key = false
+    a2.vm.network 'private_network', ip: '192.168.10.190'
+    a2.vm.hostname = 'a2.test'
+    a2.vm.provision "shell", inline: <<-SHELL
+      amazon-linux-extras install epel #ansible2=2.8 kernel-ng python3.8
+      yum-config-manager --enable epel
+      # alternatives --set python /usr/bin/python3.8
+      # python3.8 -m pip install --upgrade pip setuptools
+    SHELL
+    a2.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-centos.yml"
+      ansible.inventory_path = "./inventory"
+      # ansible.verbose = "v"
+      # ansible.raw_arguments = [""]
+    end
+  end 
 
   config.vm.define "c6" do |c6|
     c6.vm.box = "bento/centos-6"
-    c6.vm.hostname = "c6"
+    c6.vm.hostname = "c6.test"
 #     c6.vm.box_check_update = false
 #     c6.vm.network "forwarded_port", guest: 80, host: 8080
 #     c6.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
@@ -24,27 +44,27 @@ Vagrant.configure("2") do |config|
     SHELL
     c6.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
-      ansible.playbook = "pb-centos.yaml"
+      ansible.playbook = "pb-centos.yml"
       # ansible.raw_arguments = ["--verbose"]
     end
   end
   
   config.vm.define "c7" do |c7|
     c7.vm.box = "centos/7"
-    c7.vm.hostname = "c7"
+    c7.vm.hostname = "c7.test"
     c7.vm.provision "shell", inline: <<-SHELL
       yum install -y python libselinux-python
     SHELL
     c7.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
-      ansible.playbook = "pb-centos.yaml"
+      ansible.playbook = "pb-centos.yml"
     end
   end
 
   # https://linuxize.com/post/how-to-install-python-on-centos-8/
   config.vm.define "c8" do |c8|
     c8.vm.box = "centos/8"
-    c8.vm.hostname = "c8"
+    c8.vm.hostname = "c8.test"
     c8.vm.provision "shell", inline: <<-SHELL
       dnf install -y epel-release
       dnf makecache
@@ -53,44 +73,56 @@ Vagrant.configure("2") do |config|
     SHELL
     c8.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
-      ansible.playbook = "pb-centos8.yaml"
+      ansible.playbook = "pb-centos8.yml"
     end
   end
 
   config.vm.define "f34" do |f34|  # python already installed
     f34.vm.box = "fedora/34-cloud-base"
-    f34.vm.hostname = "f34"
+    f34.vm.hostname = "f34.test"
     f34.vm.provision "shell", inline: <<-SHELL
       dnf install -y python3
     SHELL
     f34.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
-      ansible.playbook = "pb-fedora.yaml"
+      ansible.playbook = "pb-fedora.yml"
+    end
+  end
+
+  config.vm.define "f35" do |f35|  # python already installed
+    f35.vm.box = "fedora/35-cloud-base"
+    f35.vm.hostname = "f35.test"
+    f35.vm.provision "shell", inline: <<-SHELL
+      dnf install -y python3
+    SHELL
+    f35.vm.provision "ansible" do |ansible|
+      ansible.compatibility_mode = "2.0"
+      ansible.playbook = "pb-fedora.yml"
     end
   end
 
 
   config.vm.define "u16" do |u16|
     u16.vm.box = "ubuntu/xenial64" # python not preinstalled
-    u16.vm.hostname = "u16"
+    u16.vm.hostname = "u16.test"
     u16.vm.provision "shell", inline: <<-SHELL
       apt-get -y install python3
     SHELL
     u16.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
-      ansible.playbook = "pb-ubuntu16.yaml"
+      ansible.playbook = "pb-ubuntu16.yml"
     end
   end
 
   config.vm.define "u18" do |u18|
     u18.vm.box = "ubuntu/bionic64" # python not preinstalled
-    u18.vm.hostname = "u18"
+    u18.vm.hostname = "u18.test"
     u18.vm.provision "shell", inline: <<-SHELL
       apt-get -y install python3
     SHELL
     u18.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
-      ansible.playbook = "pb-ubuntu.yaml"
+      ansible.playbook = "pb-ubuntu.yml"
     end
   end
 
@@ -98,14 +130,14 @@ Vagrant.configure("2") do |config|
   config.vm.define "u20" do |u20|   # python not installed...must be python not python2
 #    u20.vm.box = "bento/ubuntu-20.04"
     u20.vm.box = "ubuntu/focal64"  # 5/13/20 box missing key package
-    u20.vm.hostname = "u20"
+    u20.vm.hostname = "u20.test"
     u20.vm.provision "shell", inline: <<-SHELL
       apt-get -y install python3
       apt autoremove -y
     SHELL
     u20.vm.provision "ansible" do |ansible|
       ansible.compatibility_mode = "2.0"
-      ansible.playbook = "pb-ubuntu.yaml"
+      ansible.playbook = "pb-ubuntu.yml"
     end
   end
 

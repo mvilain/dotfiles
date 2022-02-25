@@ -570,23 +570,24 @@ endif
 zsh: git
 # ------------------------------------------------------------------------ RHEL distros
 ifeq ($(OS),centos6)
-	-echo installing zsh
+	echo installing zsh
 else ifeq ($(OS),centos7)
 	-yum install -y zsh vim
 else ifeq ($(ID),fedora)
-	-echo installing zsh
+	echo installing zsh
 # ------------------------------------------------------------------------ DEBIAN distros
 else ifeq ($(ID),ubuntu)
 	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
 else ifeq ($(ID),debian)
 	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
 else ifeq ($(ID),suse)
-	-echo installing zsh
+	echo installing zsh
 else ifeq ($(ID),zorin)
 	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
 endif
 
-zsh-config: zsh
-	-/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+zsh-config:
+	- git clone https://github.com/ohmyzsh/ohmyzsh.git ${HOME}/
+# 	-/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	-/bin/cp -v robbyrussell.zsh-theme ${HOME}/
-	-echo "chsh -s /bin/zsh ${LOGNAME}"
+	echo "chsh -s /bin/zsh ${LOGNAME}"

@@ -12,7 +12,7 @@
         - vim
 
   tasks:
-    - include_tasks: check-version.yaml
+    - include_tasks: check-version.yml
 
     - name: Install required packages (this may take a while)
       package: 
