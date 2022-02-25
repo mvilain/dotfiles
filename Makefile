@@ -15,10 +15,11 @@
 # 202108.23 add alma and rocky targets
 # 202201.07 added git pager config
 # 202202.01 added gitpager to config
+# 202202.21 add support for zsh install; updated docker compose release
 
 .PHONY : test clean install
 
-DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/tag/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
+DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/tag/2.2.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
 # vanilla debian 10 doesn't have curl or 
 #         net-tools' ifconfig installed out of the box
@@ -48,7 +49,7 @@ endif
 
 
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
-	.functions .inputrc .screenrc .vimrc
+	.functions .inputrc .screenrc .vimrc .zshrc
 
 RHEL_PKGS := wget vim lsof bind-utils net-tools yum-utils epel-release
 C6_PKGS := $(RHEL_PKGS) 
@@ -199,7 +200,7 @@ git : git-install git-config
 
 git-install:
 # ------------------------------------------------------------------------ RHEL distros
-ifeq ($(OS),centos8)
+ifeq ($(OS),almalinux)
 	-yum install -y git
 else ifeq ($(OS),centos6)
 	-yum install  -y git
@@ -241,15 +242,15 @@ git-config: git-install
 	git config --global user.email "michael@vilain.com"
 	git config --global color.ui true
 	git config --global core.pager ''
+# 	git config --global --replace-all core.pager "less -F -X"
 	git config --global push.default simple
 	git config --global alias.st status 
 	git config --global alias.co checkout 
 	git config --global alias.br branch 
 	git config --global alias.cl commit 
-	git config --global alias.origin "remote show origin"
-	git config --global alias.mylog "log --pretty = format:'%h %s [%an]' --graph" 
-	git config --global alias.lol "log --graph --decorate --pretty=oneline --abbrev-commit --all"
-	git config --global --replace-all core.pager "less -F -X"
+	git config --global alias.origin 'remote show origin'
+	git config --global alias.mylog 'log --pretty = format:"%h %s [%an]" --graph'
+	git config --global alias.lol 'log --graph --decorate --pretty=oneline --abbrev-commit --all'
 
 
 # must be run as root or it won't install
@@ -564,3 +565,28 @@ else ifeq ($(ID),ubuntu)
 	-apt-get install -y build-essential autoconf libghc-zlib-dev libssl-dev libcurl4-gnutls-dev lib-expat1-dev gettext
 
 endif
+
+# add code for zsh install and configuration
+zsh: git
+# ------------------------------------------------------------------------ RHEL distros
+ifeq ($(OS),centos6)
+	-echo installing zsh
+else ifeq ($(OS),centos7)
+	-yum install -y zsh vim
+else ifeq ($(ID),fedora)
+	-echo installing zsh
+# ------------------------------------------------------------------------ DEBIAN distros
+else ifeq ($(ID),ubuntu)
+	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
+else ifeq ($(ID),debian)
+	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
+else ifeq ($(ID),suse)
+	-echo installing zsh
+else ifeq ($(ID),zorin)
+	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
+endif
+
+zsh-config: zsh
+	-/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+	-/bin/cp -v robbyrussell.zsh-theme ${HOME}/
+	-echo "chsh -s /bin/zsh ${LOGNAME}"
