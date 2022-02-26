@@ -1,0 +1,19 @@
+# include_tasks: chrony_handlers.yml
+# handle notify for chrony
+---
+- name: restart chrony services
+  service:
+    name: chronyd
+    state: restarted
+    enabled: yes
+
+- name: chrony sources
+  shell: sleep 5 && chronyc sources
+  register: chronyc
+  listen: "restart chrony services"
+
+- debug: var="{{ item }}"
+  with_items:
+    # - chrony.stdout_lines
+    - chronyc.stdout_lines
+  listen: "restart chrony services"

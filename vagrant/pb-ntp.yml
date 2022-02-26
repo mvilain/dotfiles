@@ -1,0 +1,25 @@
+# Install on CentOS 6+7
+# requires python, git, and make pre-installed
+---
+- hosts: all
+  become: true
+  vars:
+    # ansible_python_interpreter: /usr/bin/python
+    packages:
+      - git
+      - make
+      - ntp
+      - vim
+
+  tasks:
+    - include_tasks: check-version.yml
+
+    - name: Install required packages (this may take a while)
+      package: 
+        name: "{{ packages }}"
+        state: present
+ 
+    - include_tasks: ntp.yml
+
+  handlers:
+    - import_tasks: ntp-handlers.yml

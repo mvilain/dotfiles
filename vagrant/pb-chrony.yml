@@ -1,0 +1,25 @@
+# Install on CentOS 8, Suse 15
+# requires python, git, and make pre-installed
+---
+- hosts: all
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    packages:
+      - git
+      - make
+      - chrony
+      - vim
+
+  tasks:
+    - include_tasks: check-version.yml
+
+    - name: Install required packages (this may take a while)
+      package: 
+        name: "{{ packages }}"
+        state: present
+
+    - include_tasks: chrony.yml
+
+  handlers:
+    - import_tasks: chrony-handlers.yml

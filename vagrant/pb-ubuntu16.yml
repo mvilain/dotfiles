@@ -6,12 +6,12 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
     packages:
-        - git
-        - make
-        - ntp 
-        - ntpdate 
-        - ntp-doc
-        - vim
+      - git
+      - make
+      - ntp 
+      - ntpdate 
+      - ntp-doc
+      - vim
 
   tasks:
     - include_tasks: check-version.yml

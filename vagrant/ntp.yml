@@ -1,0 +1,31 @@
+# include_tasks: ntp.yml
+# requires: ntp_handlers.yml
+# setup ntp
+---
+- name: remove server entries
+  lineinfile:
+    path: /etc/ntp.conf
+    regexp: "^server "
+    state: absent
+    backup: yes
+
+- name: add north-america pool server
+  lineinfile:
+    path: /etc/ntp.conf
+    state: present
+    line: "pool 0.north-america.pool.ntp.org iburst"
+  notify: "restart ntp services"
+
+- name: enable NTP service
+  service: 
+    name: ntpd
+    state: started 
+    enabled: yes
+
+- name: set timezone
+  timezone: name=America/Los_Angeles
+
+- name: TOD
+  command: date
+  register: tod 
+- debug: var=tod.stdout_lines
