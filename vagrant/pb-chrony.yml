@@ -19,7 +19,46 @@
         name: "{{ packages }}"
         state: present
 
-    - include_tasks: chrony.yml
+    # - include_tasks: chrony.yml
+    - name: configure chrony
+      template:
+        src: chrony.conf.j2
+        dest: /etc/chrony.conf
+        backup: true
+      register: chrony
+      notify: "restart chrony services"
+    #- debug: var=chrony
+
+    - name: enable chronyd service
+      service: 
+        name: chronyd
+        state: started 
+        enabled: yes
+
+    - name: set timezone
+      timezone: name=America/Los_Angeles
+
+    - name: TOD
+      command: date
+      register: tod 
+    - debug: var=tod.stdout_lines
 
   handlers:
-    - import_tasks: chrony-handlers.yml
+    # - import_tasks: chrony-handlers.yml
+    - name: restart chrony services
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
+
+    - name: chrony sources
+      shell: sleep 5 && chronyc sources
+      register: chronyc
+      listen: "restart chrony services"
+
+    - debug: var="{{ item }}"
+      with_items:
+        # - chrony.stdout_lines
+        - chronyc.stdout_lines
+      listen: "restart chrony services"
+  

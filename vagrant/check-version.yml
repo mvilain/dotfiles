@@ -1,7 +1,7 @@
 # include_tasks: check version
 ---
-- name: Verify playbook meets version requirements.
+- name: Verify playbook meets ansible version requirements.
   assert:
     that: "ansible_version.full is version_compare('2.9.0', '>=')"
-    msg: "You must update Ansible to at least 2.9.0 to use this role."
-- debug: var=ansible_version.full
+    fail_msg: "You must update Ansible to at least 2.9.0 to use this role."
+    success_msg: "All assertions passed on ansible {{ ansible_version.full }}"

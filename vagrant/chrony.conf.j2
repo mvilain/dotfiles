@@ -5,8 +5,8 @@
 pool pool.ntp.org iburst
 # pool "{{ ansible_host }}" iburst
 
-# Use NTP servers from DHCP.
-sourcedir /run/chrony-dhcp
+# Use NTP servers from DHCP. (not on SUSE)
+#sourcedir /run/chrony-dhcp
 
 # Record the rate at which the system clock gains/losses time.
 driftfile /var/lib/chrony/drift
@@ -34,10 +34,10 @@ rtcsync
 # Specify file containing keys for NTP authentication.
 keyfile /etc/chrony.keys
 
-# Save NTS keys and cookies.
+# Save NTS keys and cookies. (not on SUSE)
 #ntsdumpdir /var/lib/chrony
 
-# Insert/delete leap seconds by slewing instead of stepping.
+# Insert/delete leap seconds by slewing instead of stepping. (not on SUSE)
 #leapsecmode slew
 
 # Get TAI-UTC offset and leap seconds from the system tz database.
@@ -49,5 +49,5 @@ logdir /var/log/chrony
 # Select which information is logged.
 #log measurements statistics tracking
 
-# Also include any directives found in configuration files in
+# Also include any directives found in configuration files in (no dir on RHEL)
 #include /etc/chrony.d/*.conf
