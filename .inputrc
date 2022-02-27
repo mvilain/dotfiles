@@ -9,6 +9,7 @@ set mark-symlinked-directories on
 
 # Use the text that has already been typed as the prefix for searching through
 # commands (i.e. more intelligent Up/Down behavior)
+# From: coderwall.com/p/oqtj8w
 "\e[B": history-search-forward
 "\e[A": history-search-backward
 
@@ -25,3 +26,5 @@ set completion-query-items 200
 set input-meta on
 set output-meta on
 set convert-meta off
+
+# set editing-mode vi

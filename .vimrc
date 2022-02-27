@@ -100,9 +100,14 @@ endif " has("autocmd")
 " zellner.vim
 
 "hi Comment ctermfg=LightBlue
-" colorscheme default
+"colorscheme default
 "set guifont=Menlo\ Regular:h13
-set autoindent autowrite ignorecase redraw showmode
-set shiftwidth=4 tabstop=4 wrapmargin=4
+highlight ColorColumn ctermbg=235 guibg=#001D2F
+filetype indent on      " enable filetype-specific indenting
+filetype plugin on      " enable filetype-specific plugins
+syntax enable
+set clipboard=unnamed   " allow yy, etc. to interact with OS X clipboard
+set number autowrite ignorecase redraw showmode showcmd showmatch hlsearch
+set autoindent smartindent expandtab shiftwidth=2 tabstop=2 wrapmargin=4
 map g 1G 
 map V !}fmt -65
