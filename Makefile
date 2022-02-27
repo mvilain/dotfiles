@@ -15,7 +15,7 @@
 # 202108.23 add alma and rocky targets
 # 202201.07 added git pager config
 # 202202.01 added gitpager to config
-# 202202.21 add support for zsh install; updated docker compose release
+# 202202.27 add support for zsh install; updated docker compose release; update .vimrc+.inputs; add .osx config script
 
 .PHONY : test clean install
 
