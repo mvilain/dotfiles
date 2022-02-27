@@ -242,13 +242,18 @@ git-config: git-install
 	git config --global core.pager ''
 # 	git config --global --replace-all core.pager "less -F -X"
 	git config --global push.default simple
-	git config --global alias.st status 
-	git config --global alias.co checkout 
-	git config --global alias.br branch 
-	git config --global alias.cl commit 
+	git config --global alias.st status
+	git config --global alias.co checkout
+	git config --global alias.br branch
+	git config --global alias.c commit
+	git config --global alias.ca commit -a
+	git config --global alias.cam commit -am
+	git config --global alias.d diff
+	git config --global alias.dc diff --cached
 	git config --global alias.origin 'remote show origin'
+	git config --global alias.ll 'log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
 	git config --global alias.mylog 'log --pretty = format:"%h %s [%an]" --graph'
-	git config --global alias.lol 'log --graph --decorate --pretty=oneline --abbrev-commit --all'
+	git config --global alias.l1 'log -30 --graph --decorate --pretty=oneline --abbrev-commit'
 
 
 # must be run as root or it won't install
