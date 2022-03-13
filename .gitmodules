@@ -1,3 +1,0 @@
-[submodule "macos/mac-dev-playbook"]
-	path = macos/mac-dev-playbook
-	url = https://github.com/mvilain/mac-dev-playbook.git
