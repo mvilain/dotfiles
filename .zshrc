@@ -117,3 +117,5 @@ if [ -e /home/linuxbrew/.linuxbrew/bin/brew ]; then
 	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
+test -e ~/.iterm2_shell_integration.zsh && \
+  source ~/.iterm2_shell_integration.zsh || true
