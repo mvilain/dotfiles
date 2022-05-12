@@ -21,7 +21,6 @@
 # @see: https://github.com/herrbischoff/awesome-macos-command-line
 #
 # @author Jeff Geerling
-# https://github.com/geerlingguy/dotfiles/blob/master/.osx
 
 # Warn that some commands will not be run if the script is not run as root.
 if [[ $EUID -ne 0 ]]; then
@@ -252,6 +251,18 @@ defaults write com.apple.messageshelper.MessageController SOInputLineSettings -d
 
 # Disable continuous spell checking
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "continuousSpellCheckingEnabled" -bool false
+
+###############################################################################
+# Old style alert boxes on OS X 11+                                           #
+###############################################################################
+# https://osxdaily.com/2022/05/12/how-to-get-the-older-style-macos-alert-dialog-back/
+defaults write -g NSAlertMetricsGatheringEnabled -bool false
+
+###############################################################################
+# turn off "natural" Scroll direction                                         #
+###############################################################################
+# https://stackoverflow.com/questions/30767674/change-scroll-direction-on-mac-programatically-assign-to-key-combination-comman
+defaults write -g com.apple.swipescrolldirection -bool false
 
 ###############################################################################
 # Kill/restart affected applications                                          #

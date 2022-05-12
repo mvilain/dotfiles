@@ -19,6 +19,7 @@ my Linux dotfiles and assorted other stuff
   * **stime.sh** -- speak date and time using MacOS "say" command
   * **xxattr** -- remove all extended attributes for a file
   * **xxfrom** -- add URL to MacOS file attributes so they show up in GetInfo
+  * **.osx** -- settings for MacOS from geerlingguy.dotfiles plus my own mods
 - **Makefile** -- targets to install git, ntp, dot files, and various packages 
   (tested on centos, fedora, debian, and ubuntu)
 - **robbyrussell.zsh-theme** -- modified theme to use for zsh (prompt changed to `-> TIME USER@HOST pwd git-status` )
