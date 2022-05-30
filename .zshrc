@@ -1,6 +1,10 @@
 #!/usr/bin/zsh
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
+# set path to have M1 homebrew before /usr/bin and /usr/local/bin
+if [ -e /opt/homebrew/bin/brew ]; then
+  export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH
+fi
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -103,7 +107,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 for f in .aliases .exports; do
-	[[ -e $f ]] && source $f
+  [[ -e $f ]] && source $f
 done
 
 # Google Cloud SDK.
@@ -113,8 +117,14 @@ done
 # Load rbenv automatically by appending the following to ~/.zshrc:
 [ -e /usr/local/bin/rbenv ] && eval "$(rbenv init - zsh)"
 
+# Linux brew install
 if [ -e /home/linuxbrew/.linuxbrew/bin/brew ]; then
-	eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+# M1 brew install
+if [ -e /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 test -e ~/.iterm2_shell_integration.zsh && \
