@@ -21,11 +21,13 @@ export LC_ALL="en_US.UTF-8"
 export LESS_TERMCAP_md="$ORANGE"
 
 # Don’t clear the screen after quitting a manual page, aws, or journalctl
-export AWS_PAGER=more
+export AWS_PAGER=cat
 export GITPAGER=cat
 export MANPAGER=more
 export PAGER=cat
 export SYSTEMD_PAGER="less -r"
+# https://github.com/Homebrew/brew/pull/13299 (3.5 update)
+export HOMEBREW_UPDATE_REPORT_ALL_FORMULAE=true
 
 # Fix psycopg2 on 10.7.3
 export PGHOST=/tmp
