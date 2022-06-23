@@ -2,8 +2,15 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 # set path to have M1 homebrew before /usr/bin and /usr/local/bin
+# https://medium.com/subjective-developer/set-up-brew-on-m1-mac-e4ea805e5634
 if [ -e /opt/homebrew/bin/brew ]; then
-  export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH
+  export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH
+  # fix M1 MacOS command completion for brew 202206.23MeV as .oh-my-zsh doesn't do this right
+  if type brew &>/dev/null; then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+    autoload -Uz compinit
+    compinit
+  fi
 fi
 
 # Path to your oh-my-zsh installation.
