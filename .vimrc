@@ -108,7 +108,23 @@ filetype plugin on      " enable filetype-specific plugins
 syntax enable
 set number laststatus=2 " set line numbers and status bar
 set clipboard=unnamed   " allow yy, etc. to interact with OS X clipboard
-set number autowrite ignorecase redraw showmode showcmd showmatch hlsearch
-set autoindent smartindent expandtab shiftwidth=2 tabstop=2 wrapmargin=4
+
+set autoindent 
+set autowrite 
+set expandtab 
+set hlsearch
+set incsearch
+set ignorecase 
+set number 
+set redraw 
+set smartcase
+set shiftwidth=2 
+set showcmd 
+set showmatch 
+set showmode 
+set smartindent 
+set tabstop=2 
+set wrapmargin=4
+
 map g 1G 
 map V !}fmt -65
