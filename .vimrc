@@ -106,6 +106,7 @@ highlight ColorColumn ctermbg=235 guibg=#001D2F
 filetype indent on      " enable filetype-specific indenting
 filetype plugin on      " enable filetype-specific plugins
 syntax enable
+set number laststatus=2 " set line numbers and status bar
 set clipboard=unnamed   " allow yy, etc. to interact with OS X clipboard
 set number autowrite ignorecase redraw showmode showcmd showmatch hlsearch
 set autoindent smartindent expandtab shiftwidth=2 tabstop=2 wrapmargin=4
