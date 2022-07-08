@@ -5,6 +5,16 @@
 # https://raw.githubusercontent.com/statropy/zsh-macos/master/.zshrc
 # ~/.zshrc file for zsh non-login shells.
 
+if [ -e /opt/homebrew/bin/brew ]; then
+  export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH
+  # fix M1 MacOS command completion for brew 202206.23MeV as .oh-my-zsh doesn't do this right
+  if type brew &>/dev/null; then
+    FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+    autoload -Uz compinit
+    compinit
+  fi
+fi
+
 setopt autocd              # change directory just by typing its name
 #setopt correct            # auto correct mistakes
 setopt interactivecomments # allow comments in interactive mode
@@ -209,9 +219,9 @@ alias l="ls -GF"
 alias lla="ls -alGF"
 
 #add other alias or other config
-if [ -f ~/.alias ]; then
-    . ~/.aliases
-fi
+for f in ~/.aliases ~/.exports; do
+  [[ -e $f ]] && source $f
+done
 
 # enable auto-suggestions based on the history
 if [ -f /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]; then

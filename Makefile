@@ -16,6 +16,7 @@
 # 202201.07 added git pager config
 # 202202.01 added gitpager to config
 # 202202.27 add support for zsh install; updated docker compose release; update .vimrc+.inputs; add .osx config script
+# 202207.08 added zsh config for Kali linux but default is still ohmyzsh's config
 
 .PHONY : test clean install
 
@@ -49,7 +50,7 @@ endif
 
 
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
-	.functions .inputrc .screenrc .vimrc .zshrc .zshrc-ohmyzsh .zshrc-kali
+	.functions .inputrc .screenrc .vimrc .zshrc .zshrc-ohmyzsh.sh .zshrc-kali.sh
 
 RHEL_PKGS := wget vim lsof bind-utils net-tools yum-utils epel-release
 C6_PKGS := $(RHEL_PKGS) 
@@ -62,7 +63,7 @@ S_PKGS := wget vim lsof bash-completion bind-utils net-tools
 # used for installing from scratch on Ubuntu python3u recipe
 PY_VER := 3.8.2
 # used for installing git from scratch
-GIT_VER := 2.33.0
+GIT_VER := 2.37.0
 GIT_DEV_RPM_PKGS := automake curl-devel gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel wget
 GIT_DEV_DEB_PKGS := build-essential autoconf libghc-zlib-dev libssl-dev libcurl4-gnutls-dev lib-expat1-dev gettext
 
