@@ -49,7 +49,7 @@ endif
 
 
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
-	.functions .inputrc .screenrc .vimrc .zshrc
+	.functions .inputrc .screenrc .vimrc .zshrc .zshrc-ohmyzsh .zshrc-kali
 
 RHEL_PKGS := wget vim lsof bind-utils net-tools yum-utils epel-release
 C6_PKGS := $(RHEL_PKGS) 

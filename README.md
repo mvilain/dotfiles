@@ -33,7 +33,8 @@ my Linux dotfiles and assorted other stuff
 - **striphtml** -- perl script to remove html markup from a file and remap 
   international characters to marked up values
 - **xero** -- perl script to open and trucate a file making it zero length
-- **.zshrc** -- zsh's initial configuration file (uses modified **robbyrussell** theme)
+- **.zshrc.ohmyzsh** -- zsh config file using ohmyzsh and modified **robbyrussell** theme
+- **.zshrc.kali** -- zsh config file using [Kali Linux's prompt](https://statropy.com/blog/kali-linux-zsh-for-macos/)
 
 
 ## [python3.5 on CentOS 7](https://tecadmin.net/install-python-3-5-on-centos/)
