@@ -16,7 +16,7 @@
 # 202201.07 added git pager config
 # 202202.01 added gitpager to config
 # 202202.27 add support for zsh install; updated docker compose release; update .vimrc+.inputs; add .osx config script
-# 202207.08 added zsh config for Kali linux but default is still ohmyzsh's config
+# 202207.09 added zsh config for Kali linux but default is still ohmyzsh's config; added candy.zsh-theme
 
 .PHONY : test clean install
 
@@ -595,5 +595,5 @@ endif
 zsh-config:
 	-git clone https://github.com/ohmyzsh/ohmyzsh.git ${HOME}/.oh-my-zsh
 # 	-/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-	-/bin/cp -v robbyrussell.zsh-theme ${HOME}/.oh-my-zsh/themes/
+	-/bin/cp -v robbyrussell-mv.zsh-theme candy-mv.zsh-theme ${HOME}/.oh-my-zsh/custom/
 	-echo "run 'chsh -s /bin/zsh ${LOGNAME}' ... to change your shell"
