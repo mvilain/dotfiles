@@ -1,5 +1,5 @@
 # revised .oh-my-zsh/themes/candy-mv.zsh-theme (simplified from original)
-# [hh:mm:ss] user@host [] (virtualenv) [master] X
+# [hh:mm:ss] user@host [~] (virtualenv) [master x]
 local ret_status="%(?:%F{white}──►:%F{red}━━►)"
 PROMPT=$'╭─%F{green}%D{[%T]} %F{cyan]}%n@%m %f%F{white}[%2~]%f ${virtualenv_prompt_info} $(git_prompt_info)\
 %F{white}╰${ret_status} %#%f '

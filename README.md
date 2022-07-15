@@ -22,7 +22,8 @@ my Linux dotfiles and assorted other stuff
   * **.osx** -- settings for MacOS from geerlingguy.dotfiles plus my own mods
 - **Makefile** -- targets to install git, ntp, dot files, and various packages 
   (tested on centos, fedora, debian, and ubuntu)
-- **robbyrussell.zsh-theme** -- modified theme to use for zsh (prompt changed to `-> TIME USER@HOST pwd git-status` )
+- **robbyrussell-mv.zsh-theme** -- modified theme (`[hh:mm:ss] user@host ~ virtualenv git:(branch*) rc$` )
+- **candy-mv.zsh-theme** -- modified theme (2-line `[hh:mm:ss] user@host [~] (virtualenv) [master x] $`)
 - **vagrant/** -- directory for vagrant testing of Makefile
   * **Vagrantfile** -- vagrant config to create VB guests to test Makefile in 
     CentOS, Fedora, and Ubuntu environments
