@@ -1,87 +1,80 @@
-#!/usr/bin/perl
-#
-# Usage: zerofile -hs [files]
+#!/usr/bin/which python3
+"""
+truncate files
+V1.0 [2022.14MeV]
+"""
+import argparse
+import os
+import sys
 
-use File::Basename;
-use Getopt::Std;
 
-#-----------------------------------------------------------------------
-# initialize global variables
-#
-$VERSION = "V1.0.1 [2010.10.04MeV]";
-$PROC = &basename($0);
+def parse_arguments():
+    """parse the argument list, build help and usage messages
 
-#-------------------------------------------------------------------
-# get and parse options
-#
-&getopts('hs', \%opts);
+    Command-Line Arguments
+    -h
+    -v
+    FILES
 
-&HELP_MESSAGE() if ($opts{'h'} or $#ARGV < 0);
+    Returns:
+        namespace (ns): namespace with the arguments passed and their values
 
-#
-# walk through files passed by argument, open them trucated, and close them
-#
-$error_found = 0;		# false or normal exit status, 1=error
-for (@ARGV)
-{
-	$file = $_;
-	if (! -e $file)
-	{
-		printf '%s: file "%s" does not exist'."\n", $PROC, $file;
-		$error_found = 1;
-		next;
-	}
-	if (! -f $file)
-	{
-		printf '%s: "%s" not a plain file'."\n", $PROC, $file;
-		$error_found = 1;
-		next;
-	}
+    """
+    parser = argparse.ArgumentParser(
+        description='truncate a file to zero size')
+    # if omitted, the default value is returned, so arg.input is always defined
+    parser.add_argument('files',
+                        action='store',
+                        help='file to truncate',
+                        nargs="+",   # at least one file on command line to truncate
+                        )
+    parser.add_argument('-s', '--silent',
+                        action="store_true",
+                        help='don\'t show files being truncated',
+                        required=False,
+                        )
+    args = parser.parse_args()
+    return args  # namespace containing the argument passed on the command line
 
-	open(FH, ">", $file) || warn "$PROC: can't write \"".$file."\" - $!";
-	close $fh;
-	printf '  >>%s: zeroed %s'."\n", $PROC, $file unless ($opts{'s'});
-}
-exit $error_found;
 
-#=======================================================================
-# SUBROUTINES 
-#=======================================================================
-#----------------------------------------------------------------------
-sub HELP_MESSAGE {
-#----------------------------------------------------------------------
-# global parameter: $PROC, the filename of the script
-#
-# reports help message in either command-line, then quits
-# part of Getopt::Std(getops) and called if --help in argument list
-#
-	local ($f) = @_;
-    printf "Usage: %s [-hs] <FILES>\n",$PROC;
-    print <<_USE_;
-    
-<FILES> is the list of at least 1 plain file (not a directory, link, pipe,
-socket, or special file).  It is set to zero length.
+def main():
+    """ parse command line for files and truncate them
 
-where
+    :return:
+    """
+    prog = os.path.basename(sys.argv[0])
+    print(sys.argv)
+    args = parse_arguments()
 
-  -s	don't file info on truncation
-  -h	this message
+    # walk through files passed by argument, open them truncated, and close them
+    error_found = False
+    for file in args.files:
+        if not os.path.exists(file):
+            print(f'{prog} -- file {file} not found')
+            error_found = True
+            continue
 
-$VERSION
-_USE_
-    exit 2;
-}
+        if not os.path.isfile(file):
+            print(f'{prog} -- file {file} not a file')
+            error_found = True
+            continue
+        # returns PermissionError if x can't be read
+        try:
+            with open(file, 'a') as f:
+                f.truncate(0)
+        except PermissionError:
+            print(f"{prog}: can't write {file}")
+            error_found = True
+            continue
 
-#----------------------------------------------------------------------
-sub VERSION_MESSAGE {
-#----------------------------------------------------------------------
-# uses global variables
-# $PROC - filename of calling program
-# $VERSION - version string to display
-#
-# reports version message in either command-line, then quits
-# part of Getopt::Std(getops) and called if --version in argument list
-#
-	printf "%s %s\n",$PROC,$VERSION;
-	exit;
-}
+        if not args.silent:
+            print(f'  >>{prog}: zeroed {file}')
+
+    if error_found:
+        return 2
+    else:
+        return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
