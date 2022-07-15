@@ -43,7 +43,6 @@ def main():
     :return:
     """
     prog = os.path.basename(sys.argv[0])
-    print(sys.argv)
     args = parse_arguments()
 
     # walk through files passed by argument, open them truncated, and close them
