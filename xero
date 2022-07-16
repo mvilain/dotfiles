@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# xero -shv [file]  -- truncate the file(s) passed on the command line
+#
+# 202207.15MeV initial release
+
+SCRIPT=$(basename $0)
+OPT_S=
+
+usage () {
+    cat <<-USAGE
+
+    ${SCRIPT} -shv [ <FILE1> ] [ <FILE2> ] ...
+
+    Truncate files to zero length
+
+    OPTIONS
+    -s    silence output when trunctating files
+    -h    display this help text and exit
+
+USAGE
+}
+
+trap ctrl_c INT # trap ctrl-c and call ctrl_c()
+
+function ctrl_c() {
+    echo "${SCRIPT} -- aborted"
+    exit 2
+}
+
+while getopts ":hs" OPT; do
+    case $OPT in
+    h)
+        usage
+        exit
+        ;;
+    s)
+        OPT_S=true # any non-blank string is TRUE
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+# $@ should contain list of files
+if [ "$#" -eq 0 ]; then
+  printf "  %s -- no files found\n" ${SCRIPT}
+  usage
+  exit 2
+fi
+
+found_error=0  # False=0
+for f in $@; do
+  if [ ! -e ${f} ]; then
+    printf "  %s -- file '%s' does not exist\n" ${SCRIPT} ${f}
+    found_error=2
+    continue
+  fi
+  if [ ! -w ${f} ]; then
+    printf "  %s -- file '%s' not writable\n" ${SCRIPT} ${f}
+    found_error=2
+    continue
+  fi
+  : > ${f}  # truncate the file
+  [ ! ${OPT_S} ] && printf "  >> %s truncated\n" ${f}
+done
+
+exit ${found_error}

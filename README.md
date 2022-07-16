@@ -6,7 +6,7 @@ my Linux dotfiles and assorted other stuff
 
 - **.aliases** -- various aliases for ls, grep, docker functions
 - **.bash_profile** -- actual script that does everything
-- **.bash_prompt** -- sets prompt to "tod # user $"
+- **.bash_prompt** -- sets prompt `hh:mm:ss [host # ~]$`
 - **.bashrc** -- redirects to .bash_profile
 - **.exports** -- various environment variables like EDITOR so man pages don't blank 
   and SYSTEMD_PAGER to disable paging of journalctl output
@@ -33,8 +33,8 @@ my Linux dotfiles and assorted other stuff
 - **rename.pl** -- perl script to use regex to rename files
 - **striphtml** -- perl script to remove html markup from a file and remap 
   international characters to marked up values
-- **xero** -- perl script to open and trucate a file making it zero length
-- **.zshrc.ohmyzsh** -- zsh config file using ohmyzsh and modified **robbyrussell** theme
+- **xero.py** and **xero** -- Python and bash scripts to open and truncate a file making it zero length
+- **.zshrc.ohmyzsh** -- zsh config file using ohmyzsh and modified **candy-mv** theme
 - **.zshrc.kali** -- zsh config file using [Kali Linux's prompt](https://statropy.com/blog/kali-linux-zsh-for-macos/)
 
 
