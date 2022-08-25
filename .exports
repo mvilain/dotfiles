@@ -29,6 +29,11 @@ export PAGER=cat
 export SYSTEMD_PAGER="less -r"
 # https://github.com/Homebrew/brew/pull/13299 (3.5 update)
 export HOMEBREW_UPDATE_REPORT_ALL_FORMULAE=true
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+
+# Go
+#export GOPATH="/usr/local/go"   # default to ~/go
+export GOROOT="/usr/local/go"
 
 # Fix psycopg2 on 10.7.3
 export PGHOST=/tmp
