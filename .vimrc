@@ -109,22 +109,22 @@ syntax enable
 set number laststatus=2 " set line numbers and status bar
 set clipboard=unnamed   " allow yy, etc. to interact with OS X clipboard
 
-set autoindent 
-set autowrite 
-set expandtab 
+set autoindent
+set autowrite
+set expandtab
 set hlsearch
 set incsearch
-set ignorecase 
-set number 
-set redraw 
+set ignorecase
+set number
+set redraw
 set smartcase
-set shiftwidth=2 
-set showcmd 
-set showmatch 
-set showmode 
-set smartindent 
-set tabstop=2 
+set shiftwidth=2
+set showcmd
+set showmatch
+set showmode
+set smartindent
+set tabstop=2
 set wrapmargin=4
 
-map g 1G 
+map g 1G
 map V !}fmt -65

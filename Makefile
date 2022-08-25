@@ -257,6 +257,10 @@ git-config: git-install
 	git config --global alias.l1 'log -30 --graph --decorate --pretty=oneline --abbrev-commit'
 
 
+go-vim: packages
+	git clone https://github.com/fatih/vim-go.git ~/.vim/pack/plugins/start/vim-go
+	echo "let g:go_version_warning = 0" > ~/.vim/vimrc
+
 # must be run as root or it won't install
 # don't use recommended repository because that's OS-dependent...use script
 docker:
