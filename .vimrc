@@ -125,7 +125,6 @@ set showmode
 set smartindent 
 set tabstop=2 
 set wrapmargin=4
-let g:go_version_warning = 0
 
 map g 1G 
 map V !}fmt -65
