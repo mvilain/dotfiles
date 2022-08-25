@@ -29,7 +29,7 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
-alias ~="cd ~" 		# `cd` might be faster 
+alias ~="cd ~" 		# `cd` might be faster
 alias -- -="cd -"
 
 # Shortcuts
@@ -56,7 +56,12 @@ alias grep="grep --color=auto"
 alias h="history"
 alias j="jobs"
 alias s="subl ."
-alias v="vim"
+if [ -e /Applications/MacVim.app/Contents/MacOS/Vim ]; then
+  alias v="/Applications/MacVim.app/Contents/MacOS/Vim"
+  alias vim="/Applications/MacVim.app/Contents/MacOS/Vim"
+else
+  alias v="vim"
+fi
 alias typo='open -a /Applications/Typora.app'
 
 alias o="open"
