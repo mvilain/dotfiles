@@ -17,12 +17,13 @@
 # 202202.01 added gitpager to config
 # 202202.27 add support for zsh install; updated docker compose release; update .vimrc+.inputs; add .osx config script
 # 202207.09 added zsh config for Kali linux but default is still ohmyzsh's config; added candy.zsh-theme
+# 202209.04 added vim-go and tools; updated docker-compose release
 
 .PHONY : test clean install
 
-DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/tag/2.2.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
+DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/tag/v2.10.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
-# vanilla debian 10 doesn't have curl or 
+# vanilla debian 10 doesn't have curl or
 #         net-tools' ifconfig installed out of the box
 IP := $(shell test -e /usr/bin/curl && curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
 ifeq ($(strip $(IP)),)
@@ -105,7 +106,7 @@ else
 endif
 
 
-clean: 
+clean:
 
 install: files
 
@@ -259,7 +260,12 @@ git-config: git-install
 
 go-vim: packages
 	git clone https://github.com/fatih/vim-go.git ~/.vim/pack/plugins/start/vim-go
+	go install github.com/fatih/vim-go-tutorial@latest
 	echo "let g:go_version_warning = 0" > ~/.vim/vimrc
+	# https://networkbit.ch/golang-golint/
+	go install golang.org/x/lint/golint@latest
+	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 # must be run as root or it won't install
 # don't use recommended repository because that's OS-dependent...use script
