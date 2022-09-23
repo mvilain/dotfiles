@@ -18,6 +18,7 @@
 # 202202.27 add support for zsh install; updated docker compose release; update .vimrc+.inputs; add .osx config script
 # 202207.09 added zsh config for Kali linux but default is still ohmyzsh's config; added candy.zsh-theme
 # 202209.04 added vim-go and tools; updated docker-compose release
+# 202209.22 removed git2u for CentOS 7 target
 
 .PHONY : test clean install
 
@@ -230,10 +231,12 @@ ifeq ($(OS),centos6)
 	-yum remove -y git
 	-yum install  -y git2u-all
 else ifeq ($(OS),centos7)
-	-yum remove -y git
-	-yum install -y https://repo.ius.io/ius-release-el7.rpm \
-		https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-	-yum install -y git2u
+ 	-git --version
+ 	-echo "git 2.x already installed"
+#	-yum remove -y git
+#	-yum install -y https://repo.ius.io/ius-release-el7.rpm \
+#		https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+#	-yum install -y git2u
 endif
 
 
