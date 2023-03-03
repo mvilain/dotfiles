@@ -17,12 +17,11 @@
 # 202202.01 added gitpager to config
 # 202202.27 add support for zsh install; updated docker compose release; update .vimrc+.inputs; add .osx config script
 # 202207.09 added zsh config for Kali linux but default is still ohmyzsh's config; added candy.zsh-theme
-# 202209.04 added vim-go and tools; updated docker-compose release
-# 202209.22 removed git2u for CentOS 7 target
+# 202303.02 added interactive_git_rebase to toolchain
 
 .PHONY : test clean install
 
-DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/tag/v2.10.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
+DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/tag/2.2.3/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose"
 
 # vanilla debian 10 doesn't have curl or
 #         net-tools' ifconfig installed out of the box
@@ -73,7 +72,7 @@ TARGETS :=  install
 
 all: $(TARGETS)
 
-test: 
+test:
 	@echo "/etc/os-release exists? " $(REL)
 	@echo "ID=<$(ID)>   VER=<$(VER)>"
 	@echo 'OS=<$(OS)>'
@@ -158,8 +157,7 @@ ifeq ($(ID),almalinux)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
-	-grub2-mkconfig -o /boot/grub2/grub.cfg
-else ifeq ($(OS),centos6)
+	-grub2-mkconfig -o /boot/grub2/grub.cfgelse ifeq ($(OS),centos6)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /boot/grub/grub.conf
@@ -232,12 +230,10 @@ ifeq ($(OS),centos6)
 	-yum remove -y git
 	-yum install  -y git2u-all
 else ifeq ($(OS),centos7)
- 	-git --version
- 	-echo "git 2.x already installed"
-#	-yum remove -y git
-#	-yum install -y https://repo.ius.io/ius-release-el7.rpm \
-#		https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-#	-yum install -y git2u
+	-yum remove -y git
+	-yum install -y https://repo.ius.io/ius-release-el7.rpm \
+		https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+	-yum install -y git2u
 endif
 
 
@@ -267,12 +263,7 @@ endif
 
 go-vim: packages
 	git clone https://github.com/fatih/vim-go.git ~/.vim/pack/plugins/start/vim-go
-	go install github.com/fatih/vim-go-tutorial@latest
 	echo "let g:go_version_warning = 0" > ~/.vim/vimrc
-	# https://networkbit.ch/golang-golint/
-	go install golang.org/x/lint/golint@latest
-	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 # must be run as root or it won't install
 # don't use recommended repository because that's OS-dependent...use script
@@ -506,7 +497,7 @@ else ifeq ($(OS),centos7)
 
 else ifeq ($(OS),centos8)
 	-yum install -y python3-pip
-	-pip3 install wheel 
+	-pip3 install wheel
 	-pip3 install pip setuptools certifi --upgrade
 # ------------------------------------------------------------------------ DEBIAN distros
 else ifeq ($(OS),suse)
