@@ -260,6 +260,9 @@ git-config: git-install
 	git config --global alias.ll 'log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
 	git config --global alias.mylog 'log --pretty = format:"%h %s [%an]" --graph'
 	git config --global alias.l1 'log -30 --graph --decorate --pretty=oneline --abbrev-commit'
+ifeq (,$(wildcard /usr/local/bin/interactive-rebase-tool))
+	git config --global sequence.editor interactive-rebase-tool
+endif
 
 
 go-vim: packages
