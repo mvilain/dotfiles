@@ -243,8 +243,10 @@ git-config: git-install
 	git config --global user.email "michael@vilain.com"
 	git config --global color.ui true
 	git config --global core.pager ''
-	git config --global pretty.mev1 "%h [%an %as] %s"
-	git config --global pretty.mev2 "%h [%as] %s"
+# https://stackoverflow.com/questions/1441156/git-how-to-save-a-preset-git-log-format
+	git config --global pretty.mev1 "%Cred%h%Creset [%an %Cgreen%as%Creset] %s"
+	git config --global pretty.mev2 "%Cred%h%Creset %Cgreen[%as]%Creset %s"
+	git config --global pretty.mev-long "%Cred%h%Creset -%d %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"
 # 	git config --global --replace-all core.pager "less -F -X"
 	git config --global push.default simple
 	git config --global alias.st status
@@ -256,7 +258,7 @@ git-config: git-install
 	git config --global alias.d diff
 	git config --global alias.dc diff --cached
 	git config --global alias.origin 'remote show origin'
-	git config --global alias.ll 'log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
+	git config --global alias.ll 'log --graph --pretty=mev-long --abbrev-commit'
 	git config --global alias.mylog 'log --pretty=mev1 --graph --date=short --graph'
 	git config --global alias.l1 'log -30 --graph --decorate --pretty=mev2 --abbrev-commit'
 ifeq (,$(wildcard /usr/local/bin/interactive-rebase-tool))
