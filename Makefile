@@ -18,6 +18,7 @@
 # 202202.27 add support for zsh install; updated docker compose release; update .vimrc+.inputs; add .osx config script
 # 202207.09 added zsh config for Kali linux but default is still ohmyzsh's config; added candy.zsh-theme
 # 202303.02 added interactive_git_rebase to toolchain
+# 202303.22 change git l1 output format
 
 .PHONY : test clean install
 
@@ -242,6 +243,8 @@ git-config: git-install
 	git config --global user.email "michael@vilain.com"
 	git config --global color.ui true
 	git config --global core.pager ''
+	git config --global pretty.mev1 "%h [%an %as] %s"
+	git config --global pretty.mev2 "%h [%as] %s"
 # 	git config --global --replace-all core.pager "less -F -X"
 	git config --global push.default simple
 	git config --global alias.st status
@@ -254,8 +257,8 @@ git-config: git-install
 	git config --global alias.dc diff --cached
 	git config --global alias.origin 'remote show origin'
 	git config --global alias.ll 'log --graph --pretty=format:"%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --abbrev-commit'
-	git config --global alias.mylog 'log --pretty = format:"%h %s [%an]" --graph'
-	git config --global alias.l1 'log -30 --graph --decorate --pretty=oneline --abbrev-commit'
+	git config --global alias.mylog 'log --pretty=mev1 --graph --date=short --graph'
+	git config --global alias.l1 'log -30 --graph --decorate --pretty=mev2 --abbrev-commit'
 ifeq (,$(wildcard /usr/local/bin/interactive-rebase-tool))
 	git config --global sequence.editor interactive-rebase-tool
 endif
