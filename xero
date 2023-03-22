@@ -2,8 +2,9 @@
 # xero -shv [file]  -- truncate the file(s) passed on the command line
 #
 # 202207.15MeV initial release
+# 202303.22MeV fixed unquoted variables, spelling, and indention
 
-SCRIPT=$(basename $0)
+SCRIPT=$(basename "$0")
 OPT_S=
 
 usage () {
@@ -14,7 +15,7 @@ usage () {
     Truncate files to zero length
 
     OPTIONS
-    -s    silence output when trunctating files
+    -s    silence output when truncating files
     -h    display this help text and exit
 
 USAGE
@@ -28,38 +29,42 @@ function ctrl_c() {
 }
 
 while getopts ":hs" OPT; do
-    case $OPT in
-    h)
-        usage
-        exit
-        ;;
-    s)
-        OPT_S=true # any non-blank string is TRUE
-        ;;
-    esac
+  case $OPT in
+  h)
+    usage
+    exit
+    ;;
+  s)
+    OPT_S=true # any non-blank string is TRUE
+    ;;
+  *)
+    usage
+    exit
+    ;;    # default
+  esac
 done
 shift $((OPTIND-1))
 # $@ should contain list of files
 if [ "$#" -eq 0 ]; then
-  printf "  %s -- no files found\n" ${SCRIPT}
+  printf "  %s -- no files found\n" "${SCRIPT}"
   usage
   exit 2
 fi
 
 found_error=0  # False=0
-for f in $@; do
-  if [ ! -e ${f} ]; then
-    printf "  %s -- file '%s' does not exist\n" ${SCRIPT} ${f}
+for f in "$@"; do
+  if [ ! -e "${f}" ]; then
+    printf "  %s -- file '%s' does not exist\n" "${SCRIPT}" "${f}"
     found_error=2
     continue
   fi
-  if [ ! -w ${f} ]; then
-    printf "  %s -- file '%s' not writable\n" ${SCRIPT} ${f}
+  if [ ! -w "${f}" ]; then
+    printf "  %s -- file '%s' not writable\n" "${SCRIPT}" "${f}"
     found_error=2
     continue
   fi
-  : > ${f}  # truncate the file
-  [ ! ${OPT_S} ] && printf "  >> %s truncated\n" ${f}
+  : > "${f}"  # truncate the file
+  [ ! "${OPT_S}" ] && printf "  >> %s truncated\n" "${f}"
 done
 
 exit ${found_error}
