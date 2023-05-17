@@ -93,6 +93,12 @@ for mounting.
 
 [https://linuxconfig.org/how-to-install-vmware-tools-on-rhel-8-centos-8]
 
+In RockyLinux 9.2, you must install open-vm-tools
+
+```bash
+sudo dnf install -y open-vm-tools
+```
+
 In CentOS 7.x and 8.2's minimal install, open-vm-tools is already installed and just needs to be started. This also works for Fedora 33.
 
     mkdir /mnt/hgfs
