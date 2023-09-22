@@ -1,4 +1,5 @@
-#!/usr/bin/which bash
+#!/usr/bin/env bash
+
 # Set the default editor
 #if [ -f /usr/local/bin/gvim ]; then
 #    export EDITOR='gvim'

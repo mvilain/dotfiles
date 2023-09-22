@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # write the url from which a file came into its metadata
 # see http://hints.macworld.com/article.php?story=20110102222441243

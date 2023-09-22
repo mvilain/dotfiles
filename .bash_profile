@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Load ~/.bash_prompt, ~/.exports, ~/.aliases, ~/.functions and ~/.extra
 # ~/.extra can be used for settings you don’t want to commit
 # Add `~/bin` to the `$PATH`

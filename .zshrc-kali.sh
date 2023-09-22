@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 # Original source and copyright: Kali Linux and Offensive Security
 # https://www.kali.org/docs/policy/kali-linux-open-source-policy/
 

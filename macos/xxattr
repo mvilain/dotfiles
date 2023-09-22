@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # $1 = list of files to remove ALL extended attributes
 #
 for i in $(ls -l@ $1 | grep '^	' | awk '{print $1}' | sort -u); do

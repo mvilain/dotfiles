@@ -1,4 +1,4 @@
-#!/usr/bin/perl -p0777
+#!/usr/bin/env perl -p0777
 #
 #########################################################
 # striphtml ("striff tummel")

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # https://github.com/wbs75/dotfiles/blob/master/.aliases
 
 # Enable aliases to be sudo’ed

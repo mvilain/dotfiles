@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # speak the time every 5 seconds until control-c
 #
 # http://hints.macworld.com/article.php?story=2011043006554823

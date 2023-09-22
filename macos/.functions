@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # list these with typedef -F or declare -F
 
 # Create a new directory and enter it

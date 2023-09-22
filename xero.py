@@ -1,4 +1,4 @@
-#!/usr/bin/which python3
+#!/usr/bin/env python3
 """
 truncate files
 V1.0 [2022.14MeV]
