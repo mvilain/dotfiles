@@ -19,6 +19,7 @@
 # 202207.09 added zsh config for Kali linux but default is still ohmyzsh's config; added candy.zsh-theme
 # 202303.02 added interactive_git_rebase to toolchain
 # 202303.22 change git l1 output format
+# 202309.21 change zorin to use chrony instead of ntpd
 
 .PHONY : test clean install
 
@@ -312,7 +313,7 @@ else ifeq ($(ID),debian)
 else ifeq ($(ID),suse)
 	echo use "chronyc sources"
 else ifeq ($(ID),zorin)
-	-apt-get install -y ntp ntpdate ntp-doc
+	-apt-get install -y chrony
 endif
 
 ntp-config :
@@ -375,10 +376,10 @@ else ifeq ($(ID),suse)
 	chronyc sources
 
 else ifeq ($(ID),zorin)
-	systemctl enable ntp
-	systemctl start ntp
+	systemctl enable chronyd
+	systemctl start chronyd
 	timedatectl set-timezone America/Los_Angeles
-	ntpq -c pe
+	chronyc sources
 endif
 
 
@@ -610,3 +611,4 @@ zsh-config:
 # 	-/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	-/bin/cp -v robbyrussell-mv.zsh-theme candy-mv.zsh-theme ${HOME}/.oh-my-zsh/custom/
 	-echo "run 'chsh -s /bin/zsh ${LOGNAME}' ... to change your shell"
+
