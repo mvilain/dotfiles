@@ -1,3 +1,4 @@
+#!/usr/bin/which bash
 # Load ~/.bash_prompt, ~/.exports, ~/.aliases, ~/.functions and ~/.extra
 # ~/.extra can be used for settings you don’t want to commit
 # Add `~/bin` to the `$PATH`
@@ -23,9 +24,9 @@ shopt -s cdspell
 
 unset file
 
-# Prefer US English and use UTF-8
+# Prefer US English and use UTF-8 ### [202309.21MeV] fix LANG ###
 export LC_ALL="en_US.UTF-8"
-export LANG="en_US"
+export LANG="en_US.UTF-8"
 
 # Enable some Bash 4 features when possible:
 # * `autocd`, e.g. `**/qux` will enter `./foo/bar/baz/qux`
