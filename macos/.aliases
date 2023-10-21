@@ -1,5 +1,5 @@
 # https://github.com/wbs75/dotfiles/blob/master/.aliases
-# 202310.21 add alias for icloud directory
+# 202310.21 add alias for icloud directory; add lll to show acls
 
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
@@ -13,6 +13,7 @@ else
 fi
 
 alias la="ls -Gla"
+alias lll="ls -ld@eO"
 alias lsd='ls -l | grep "^d"'
 
 # List all files colorized in long format
