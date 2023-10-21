@@ -1,5 +1,5 @@
-#!/usr/bin/env bash
 # https://github.com/wbs75/dotfiles/blob/master/.aliases
+# 202310.21 add alias for icloud directory
 
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
@@ -30,13 +30,14 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
 alias .....="cd ../../../.."
-alias ~="cd ~" 		# `cd` might be faster
+alias ~="cd ~" 		# `cd` might be faster 
 alias -- -="cd -"
 
 # Shortcuts
 alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
+alias di="cd '~/Library/Mobile Documents/com~apple~CloudDocs'"
 alias cdl="cd /usr/local"
 alias cdb="cd /usr/local/bin "
 
@@ -58,8 +59,8 @@ alias h="history"
 alias j="jobs"
 alias s="subl ."
 if [ -e /Applications/MacVim.app/Contents/MacOS/Vim ]; then
-  alias v="/Applications/MacVim.app/Contents/MacOS/Vim"
-  alias vim="/Applications/MacVim.app/Contents/MacOS/Vim"
+  #alias v="/Applications/MacVim.app/Contents/MacOS/Vim"
+  #alias vim="/Applications/MacVim.app/Contents/MacOS/Vim"
 else
   alias v="vim"
 fi
@@ -96,7 +97,6 @@ alias flush="dscacheutil -flushcache"
 #alias cleanasl="echo 'Cleaning ASL files...\c';sudo -S find -d /var/log/asl -name "AUX*" -exec rm -fr {} \;;sudo -S find -d /var/log/asl -name "*\.asl" -exec rm -fr {} \;;sudo -S find /var/log/DiagnosticMessages/ -name "*\.asl";sudo -S ls -@ailO /var/log/asl /var/log/DiagnosticMessages;echo;echo done."
 alias cleanaudit="sudo -S ls /var/audit;echo;echo 'Cleaning audit data...\c';echo;sudo -S find /var/audit -name *\.2* -type f -exec rm -f {} \;;sudo -S ls /var/audit;echo;echo done."
 alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
-alias dfcleanup="for i in `df | awk '/Volumes\/.timemachine/{print $9}'`; do echo $i; sudo umount $i; done"
 alias rootpref="sudo -s ls -@ailOR /private/var/root/Library/Preferences"
 alias skext="sudo kextcache -system-prelinked-kernel && sudo kextcache -system-caches"
 alias rb="sudo shutdown -r +1"
