@@ -1,0 +1,15 @@
+[Unit]
+Description=VMware mount for hgfs
+DefaultDependencies=no
+Before=unmount.target
+ConditionVirtualization=vmware
+After=sys-fs-fuse-connections.mount
+
+[Mount]
+What=vmhgfs-fuse
+Where=/mnt/hgfs
+type=fuse
+Options=default_permissions,allow_other
+
+[Install]
+WantBy=multi-user.target
