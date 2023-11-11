@@ -8,8 +8,8 @@ After=sys-fs-fuse-connections.mount
 [Mount]
 What=vmhgfs-fuse
 Where=/mnt/hgfs
-type=fuse
+Type=fuse
 Options=default_permissions,allow_other
 
 [Install]
-WantBy=multi-user.target
+WantedBy=multi-user.target
