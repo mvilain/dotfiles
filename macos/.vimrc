@@ -108,6 +108,7 @@ filetype plugin on      " enable filetype-specific plugins
 syntax enable
 set number laststatus=2 " set line numbers and status bar
 "set clipboard=unnamed   " allow yy, etc. to interact with OS X clipboard
+set rtp+=/usr/local/opt/fzf
 
 set autoindent
 set autowrite
