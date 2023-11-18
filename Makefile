@@ -160,7 +160,8 @@ ifeq ($(ID),almalinux)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /etc/default/grub2.cfg
-	-grub2-mkconfig -o /boot/grub2/grub.cfg else ifeq ($(OS),centos6)
+	-grub2-mkconfig -o /boot/grub2/grub.cfg
+else ifeq ($(OS),centos6)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /boot/grub/grub.conf
