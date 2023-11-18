@@ -20,6 +20,7 @@
 # 202303.02 added interactive_git_rebase to toolchain
 # 202303.22 change git l1 output format
 # 202309.21 change zorin to use chrony instead of ntpd
+# 202311.18 alama9 update fix grub update
 
 .PHONY : test clean install
 
@@ -158,8 +159,8 @@ update:
 ifeq ($(ID),almalinux)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
-	-sed -i -e 's/ rhgb quiet//' /etc/default/grub
-	-grub2-mkconfig -o /boot/grub2/grub.cfgelse ifeq ($(OS),centos6)
+	-sed -i -e 's/ rhgb quiet//' /etc/default/grub2.cfg
+	-grub2-mkconfig -o /boot/grub2/grub.cfg else ifeq ($(OS),centos6)
 	-yum update -y
 	-sed -i -e 's/#PermitRootLogin/PermitRootLogin/' /etc/ssh/sshd_config
 	-sed -i -e 's/ rhgb quiet//' /boot/grub/grub.conf
