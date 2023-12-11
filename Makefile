@@ -21,6 +21,7 @@
 # 202303.22 change git l1 output format
 # 202309.21 change zorin to use chrony instead of ntpd
 # 202311.18 alama9 update fix grub update
+# 202312.11 add git merge style for git 2.35+
 
 .PHONY : test clean install
 
@@ -245,12 +246,21 @@ git-config: git-install
 	git config --global user.name "Michael Vilain"
 	git config --global user.email "michael@vilain.com"
 	git config --global color.ui true
+
 	git config --global core.pager ''
+# 	git config --global --replace-all core.pager "less -F -X"
+
+# https://stackoverflow.com/questions/71252026/how-do-i-use-zealous-diff3-with-git-and-what-are-the-pros-and-cons
+	git config --global merge.conflictStyle zdiff3
+
 # https://stackoverflow.com/questions/1441156/git-how-to-save-a-preset-git-log-format
 	git config --global pretty.mev1 "%Cred%h%Creset [%an %Cgreen%as%Creset] %s"
 	git config --global pretty.mev2 "%Cred%h%Creset %Cgreen[%as]%Creset %s"
 	git config --global pretty.mev-long "%Cred%h%Creset -%d %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"
-# 	git config --global --replace-all core.pager "less -F -X"
+	git config --global alias.ll 'log --graph --pretty=mev-long --abbrev-commit'
+	git config --global alias.mylog 'log --pretty=mev1 --graph --date=short --graph'
+	git config --global alias.l1 'log -30 --graph --decorate --pretty=mev2 --abbrev-commit'
+
 	git config --global push.default simple
 	git config --global alias.st status
 	git config --global alias.co checkout
@@ -261,9 +271,7 @@ git-config: git-install
 	git config --global alias.d diff
 	git config --global alias.dc diff --cached
 	git config --global alias.origin 'remote show origin'
-	git config --global alias.ll 'log --graph --pretty=mev-long --abbrev-commit'
-	git config --global alias.mylog 'log --pretty=mev1 --graph --date=short --graph'
-	git config --global alias.l1 'log -30 --graph --decorate --pretty=mev2 --abbrev-commit'
+
 ifeq (,$(wildcard /usr/local/bin/interactive-rebase-tool))
 	git config --global sequence.editor interactive-rebase-tool
 endif
