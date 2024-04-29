@@ -19,6 +19,7 @@
 # 202207.09 added zsh config for Kali linux but default is still ohmyzsh's config; added candy.zsh-theme
 # 202303.02 added interactive_git_rebase to toolchain
 # 202303.22 change git l1 output format
+# 202309.18 update zorin 16.3 uses chronyd instead of ntpd
 # 202309.21 change zorin to use chrony instead of ntpd
 # 202311.18 alama9 update fix grub update
 # 202312.11 add git merge style for git 2.35+
@@ -396,6 +397,7 @@ else ifeq ($(ID),suse)
 
 else ifeq ($(ID),zorin)
 	systemctl enable chronyd
+	systemctl status chronyd
 	systemctl start chronyd
 	timedatectl set-timezone America/Los_Angeles
 	chronyc sources
