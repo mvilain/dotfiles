@@ -36,7 +36,7 @@ alias ~="cd ~" 		# `cd` might be faster
 alias -- -="cd -"
 
 alias g="git"
-alias h="history +100"
+alias h='history | tail -100'
 alias j="jobs"
 alias v="vim"
 

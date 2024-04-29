@@ -56,7 +56,7 @@ alias cdb="cd /usr/local/bin "
 alias sparseDVD="hdiutil create -type SPARSE -sectors 9181224 -fs HFS+ SparseDVD; hdiutil attach SparseDVD.sparseimage"
 
 alias grep="grep --color=auto"
-alias h="history"
+alias h='history | tail -100'
 alias j="jobs"
 alias s="subl ."
 if [ -e /Applications/MacVim.app/Contents/MacOS/Vim ]; then
