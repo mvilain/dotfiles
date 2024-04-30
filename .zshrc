@@ -123,8 +123,9 @@ done
 [ -e /usr/local/google-cloud-sdk/path.zsh.inc ] && source /usr/local/google-cloud-sdk/path.zsh.inc
 [ -e /usr/local/google-cloud-sdk/completion.zsh.inc ] && source /usr/local/google-cloud-sdk/completion.zsh.inc
 
-# Load rbenv automatically by appending the following to ~/.zshrc:
 [ -e /usr/local/bin/rbenv ] && eval "$(rbenv init - zsh)"
+[ -e /usr/local/bin/fzf ] && eval "$(fzf --zsh)"
+
 
 # Linux brew install
 if [ -e /home/linuxbrew/.linuxbrew/bin/brew ]; then
