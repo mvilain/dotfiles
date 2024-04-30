@@ -127,10 +127,16 @@ done
 if [ -e /home/linuxbrew/.linuxbrew/bin/brew ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
+if [ -e /home/linuxbrew/.linuxbrew/bin/fzf ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/fzf --zsh)"
+fi
 
 # M1 brew install
 if [ -e /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+if [ -e /opt/homebrew/bin/fzf ]; then
+  eval "$(/opt/homebrew/bin/fzf --zsh)"
 fi
 
 test -e ~/.iterm2_shell_integration.zsh && \
