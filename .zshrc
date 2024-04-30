@@ -123,6 +123,9 @@ done
 # Load rbenv automatically by appending the following to ~/.zshrc:
 [ -e /usr/local/bin/rbenv ] && eval "$(rbenv init - zsh)"
 
+# go installed?
+[ ! $(echo $PATH | grep "/usr/local/go/bin") ] && export PATH=$PATH:/usr/local/go/bin
+
 # Linux brew install
 if [ -e /home/linuxbrew/.linuxbrew/bin/brew ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
