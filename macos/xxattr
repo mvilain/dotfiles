@@ -1,7 +1,0 @@
-#!/usr/bin/env sh
-# $1 = list of files to remove ALL extended attributes
-#
-for i in $(ls -l@ $1 | grep '^	' | awk '{print $1}' | sort -u); do
-	echo Removing $i ... >&2;
-	find . | xargs xattr -d $i 2>/dev/null
-done
