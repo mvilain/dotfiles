@@ -624,7 +624,7 @@ else ifeq ($(ID),debian)
 else ifeq ($(ID),suse)
 	zypper --non-interactive install zsh
 else ifeq ($(ID),zorin)
-	-apt-get install -y zsh-static zsh-syntax-highlighting zshdb vim-syntastic
+	-apt-get install -y zsh-static zsh-syntax-highlighting vim-syntastic
 endif
 
 zsh-config:
