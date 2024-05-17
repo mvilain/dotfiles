@@ -49,11 +49,12 @@ endif
 # centos or ubuntu (no others tested)
 # /etc/os-release doesn't exist on CentOS 6 or MacOS but does on CentOS 7+8, Ubuntu, and Debian
 # uname -s returns "Darwin|Linux"; OSX="Y" or blank if not OSX
+# sw_vers gives different names in older version, so make sure they're all the same for testing
 # make 3.81 only tests for empty/non-empty string
 # returns OS=fedora
 OSX := $(shell uname -s | sed -e 's/Darwin/Y/' -e 's/Linux//')
 ifeq ($(OSX),Y)
-ID := $(shell sw_vers -productName)
+ID := "macos"
 VER := $(shell sw_vers -productVersion)
 OS := $(ID) $(VER)
 
