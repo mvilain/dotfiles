@@ -1,3 +1,4 @@
+#!/usr/bin/env make
 # Makefile for dotfiles environment
 # Maintainer Michael Vilain <michael@vilain.com>
 # 201712.14 added support for CentOS 6.9 + make 3.8.1
@@ -34,16 +35,29 @@ DOCKER_COMPOSE_URL = "https://github.com/docker/compose/releases/tag/2.2.3/docke
 #         net-tools' ifconfig installed out of the box
 IP := $(shell test -e /usr/bin/curl && curl -m 2 -s -f http://169.254.169.254/latest/meta-data/public-ipv4)
 ifeq ($(strip $(IP)),)
+# works on Linux ip addr command
 IP := $(shell ip addr | grep -i "BROADCAST,MULTICAST,UP," -A2 | grep 'inet ' | sed -e 's@/24 .*@@' -e 's/.*inet //')
+# works on MacOS ip addr command
+ifeq ($(strip $(IP)),)
+IP := $(shell ip addr | grep -i "8863<UP,BROADCAST,SMART,RUNNING" -A7 | grep 'inet ' | sed -e 's@/24 .*@@' -e 's/.*inet //')
+endif
 AWS := "n"
 else
 AZ := $(shell curl -m 2 -s -f http://169.254.169.254/latest/meta-data/placement/availability-zone)
 endif
 
 # centos or ubuntu (no others tested)
-# /etc/os-release doesn't exist on CentOS 6 but does on CentOS 7+8, Ubuntu, and Debian
+# /etc/os-release doesn't exist on CentOS 6 or MacOS but does on CentOS 7+8, Ubuntu, and Debian
+# uname -s returns "Darwin|Linux"; OSX="Y" or blank if not OSX
 # make 3.81 only tests for empty/non-empty string
 # returns OS=fedora
+OSX := $(shell uname -s | sed -e 's/Darwin/Y/' -e 's/Linux//')
+ifeq ($(OSX),Y)
+ID := $(shell sw_vers -productName)
+VER := $(shell sw_vers -productVersion)
+OS := $(ID) $(VER)
+
+else ifeq ($(strip $(OSX)),)
 REL := $(shell test -e /etc/os-release && echo "Y")
 ifeq ($(strip $(REL)),)
 OS=$(shell grep -q "CentOS release 6" /etc/redhat-release && echo "centos6")
@@ -55,13 +69,14 @@ ID := $(shell awk '/^ID=/{print $1}' /etc/os-release | sed -e "s/ID=//" -e "s/-l
 VER = $(shell grep "VERSION_ID" /etc/os-release | sed -e 's/VERSION_ID=//' -e 's/"//g')
 OS := $(ID)$(VER)
 endif
+endif
 
 
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
 	.functions .inputrc .screenrc .vimrc .zshrc .zshrc-ohmyzsh.sh .zshrc-kali.sh
 
 RHEL_PKGS := wget vim lsof bind-utils net-tools yum-utils epel-release
-C6_PKGS := $(RHEL_PKGS) 
+C6_PKGS := $(RHEL_PKGS)
 C7_PKGS := $(RHEL_PKGS) bash-completion
 C8_PKGS := $(RHEL_PKGS) bash-completion tar python38
 F_PKGS := $(RHEL_PKGS) dnf-utils
@@ -80,34 +95,33 @@ TARGETS :=  install
 all: $(TARGETS)
 
 test:
-	@echo "/etc/os-release exists? " $(REL)
-	@echo "ID=<$(ID)>   VER=<$(VER)>"
-	@echo 'OS=<$(OS)>'
-	@echo "IP="$(IP)
-	@echo "docker-compose: "$(DOCKER_COMPOSE_URL)
-	@echo "logname:" $(LOGNAME) " sudo_user:" $(SUDO_USER)
+# 	@echo "/etc/os-release exists?  $(REL)"
+	@echo "ID=<$(ID)>  VER=<$(VER)>  OS=<$(OS)>"
+	@echo "IP=$(IP)"
+	@echo "docker-compose: $(DOCKER_COMPOSE_URL)"
+	@echo "logname: $(LOGNAME)  sudo_user: $(SUDO_USER)"
 # ------------------------------------------------------------------------ RHEL distros
 ifeq ($(ID),almalinux)
-	@echo "packages= "$(C8_PKGS)
+	@echo "packages= $(C8_PKGS)"
 else ifeq ($(OS),centos6)
-	@echo "packages= "$(C6_PKGS)
+	@echo "packages= $(C6_PKGS)"
 else ifeq ($(OS),centos7)
-	@echo "packages= "$(C7_PKGS)
+	@echo "packages= $(C7_PKGS)"
 else ifeq ($(OS),centos8)
-	@echo "packages= "$(C8_PKGS)
+	@echo "packages= $(C8_PKGS)"
 else ifeq ($(ID),fedora)
-	@echo "packages= "$(F_PKGS)
+	@echo "packages= $(F_PKGS)"
 else ifeq ($(ID),rocky)
-	@echo "packages= "$(C8_PKGS)
+	@echo "packages= $(C8_PKGS)"
 # ------------------------------------------------------------------------ DEBIAN distros
 else ifeq ($(ID),ubuntu)
-	@echo "packages= "$(U_PKGS)
+	@echo "packages= $(U_PKGS)"
 else ifeq ($(ID),debian)
-	@echo "packages= "$(D_PKGS)
+	@echo "packages= $(D_PKGS)"
 else ifeq ($(ID),"suse")
-	@echo "packages= "$(S_PKGS)
+	@echo "packages= $(S_PKGS)"
 else ifeq ($(ID),"zorin")
-	@echo "packages= "$(D_PKGS)
+	@echo "packages= $(U_PKGS)"
 else
 	@echo "packages="
 endif
