@@ -121,10 +121,10 @@ else ifeq ($(ID),debian)
 	@echo "packages= $(D_PKGS)"
 else ifeq ($(ID),"suse")
 	@echo "packages= $(S_PKGS)"
-else ifeq ($(ID),"zorin")
+else ifeq ($(ID),zorin)
 	@echo "packages= $(U_PKGS)"
-else
-	@echo "packages="
+# else
+# 	@echo "packages="
 endif
 
 
