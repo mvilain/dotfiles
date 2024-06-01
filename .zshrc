@@ -124,6 +124,7 @@ done
 [ -e /usr/local/google-cloud-sdk/completion.zsh.inc ] && source /usr/local/google-cloud-sdk/completion.zsh.inc
 
 [ -e /usr/local/bin/rbenv ] && eval "$(rbenv init - zsh)"
+[ -e /usr/local/bin/rvm ] && source /etc/profile.d/rvm.sh
 [ -e /usr/local/bin/fzf ] && eval "$(fzf --zsh)"
 
 
