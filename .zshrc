@@ -123,10 +123,7 @@ done
 [ -e /usr/local/google-cloud-sdk/path.zsh.inc ] && source /usr/local/google-cloud-sdk/path.zsh.inc
 [ -e /usr/local/google-cloud-sdk/completion.zsh.inc ] && source /usr/local/google-cloud-sdk/completion.zsh.inc
 
-[ -e /usr/local/bin/rbenv ] && eval "$(rbenv init - zsh)"
-[ -e /usr/local/bin/rvm ] && source /etc/profile.d/rvm.sh
 [ -e /usr/local/bin/fzf ] && eval "$(fzf --zsh)"
-
 
 # Linux brew install
 if [ -e /home/linuxbrew/.linuxbrew/bin/brew ]; then
@@ -146,3 +143,9 @@ fi
 
 test -e ~/.iterm2_shell_integration.zsh && \
   source ~/.iterm2_shell_integration.zsh || true
+
+# rvm installed
+[ -e /usr/local/bin/rvm ] && source ~/.rvm/scripts/rvm
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
