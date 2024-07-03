@@ -127,10 +127,15 @@ done
 
 # Linux brew install
 if [ -e /home/linuxbrew/.linuxbrew/bin/brew ]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  if [[ ! "$PATH" =~ "/home/linuxbrew/.linuxbrew/bin" ]]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+  fi
 fi
 if [ -e /home/linuxbrew/.linuxbrew/bin/fzf ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/fzf --zsh)"
+fi
+if [[ ! "$PATH" =~ "$HOME/.local/bin" ]]; then
+  export PATH="$HOME/.local/bin:$PATH"
 fi
 
 # M1 brew install
@@ -147,5 +152,7 @@ test -e ~/.iterm2_shell_integration.zsh && \
 # rvm installed
 [ -e /usr/local/bin/rvm ] && source ~/.rvm/scripts/rvm
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
+if [[ ! "$PATH" =~ "$HOME/.rvm/bin" ]]; then
+  export PATH="$PATH:$HOME/.rvm/bin"
+fi
 
