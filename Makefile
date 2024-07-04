@@ -26,7 +26,7 @@
 # 202312.11 add git merge style for git 2.35+
 # 202402.17 add git config options
 # 202405.16 makefile sections should be indented with at least a tab. 2 spaces won't work
-# 202407.03 removed interactive_rebase_tool from .gitconfig; remove vim-go
+# 202407.03 removed interactive_rebase_tool from .gitconfig; remove vim-go; git merge zdiff3 --> diff3
 
 .PHONY : test clean install
 
@@ -270,7 +270,7 @@ git-config: git-install
 	git config --global core.pager ''
 
 	# https://stackoverflow.com/questions/71252026/how-do-i-use-zealous-diff3-with-git-and-what-are-the-pros-and-cons
-	git config --global merge.conflictStyle zdiff3
+	git config --global merge.conflictStyle diff3
 
 	# https://jvns.ca/blog/2024/02/16/popular-git-config-options
 	git config --global pull.rebase true
