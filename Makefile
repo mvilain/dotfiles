@@ -26,6 +26,7 @@
 # 202312.11 add git merge style for git 2.35+
 # 202402.17 add git config options
 # 202405.16 makefile sections should be indented with at least a tab. 2 spaces won't work
+# 202407.03 removed interactive_rebase_tool from .gitconfig; remove vim-go
 
 .PHONY : test clean install
 
@@ -297,14 +298,6 @@ git-config: git-install
 	git config --global alias.dc diff --cached
 	git config --global alias.origin 'remote show origin'
 
-ifeq (,$(wildcard /usr/local/bin/interactive-rebase-tool))
-	git config --global sequence.editor interactive-rebase-tool
-endif
-
-
-go-vim: packages
-	git clone https://github.com/fatih/vim-go.git ~/.vim/pack/plugins/start/vim-go
-	echo "let g:go_version_warning = 0" > ~/.vim/vimrc
 
 # must be run as root or it won't install
 # don't use recommended repository because that's OS-dependent...use script
