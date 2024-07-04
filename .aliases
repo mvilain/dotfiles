@@ -56,3 +56,14 @@ alias server="open http://localhost:8080/ && python -m SimpleHTTPServer 8080"
 # (useful when executing time-consuming commands)
 alias badge="tput bel"
 
+# non-MacOS systems don't have pbcopy/pbpaste, so simulate them
+# requires xclip or xsel
+if [ -e /usr/bin/xclip ]; then
+  [ ! -e /usr/bin/pbcopy ] && alias pbcopy='xclip -selection clipboard'
+  [ ! -e /usr/bin/pbpaste ] && alias pbpaste='xclip -selection clipboard -o'
+fi
+#if [ -e /usr/bin/xsel ]; then
+#  [ ! -e /usr/bin/pbcopy ] && alias pbcopy='xsel --clipboard --input'
+#  [ ! -e /usr/bin/pbpaste ] && alias pbpaste='xsel --clipboard --output'
+#fi
+
