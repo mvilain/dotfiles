@@ -27,7 +27,7 @@
 # 202402.17 add git config options
 # 202405.16 makefile sections should be indented with at least a tab. 2 spaces won't work
 # 202407.03 removed interactive_rebase_tool from .gitconfig; remove vim-go; git merge zdiff3 --> diff3
-# 202407.07 add github username
+# 202407.07 add github username; change git l1 alias
 
 .PHONY : test clean install
 
@@ -287,7 +287,7 @@ git-config: git-install
 	git config --global pretty.mev-long "%Cred%h%Creset -%d %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"
 	git config --global alias.ll 'log --graph --pretty=mev-long --abbrev-commit'
 	git config --global alias.mylog 'log --pretty=mev1 --graph --date=short --graph'
-	git config --global alias.l1 'log -30 --graph --decorate --pretty=mev2 --abbrev-commit'
+	git config --global alias.l1 'log -30 --decorate --pretty=mev2 --abbrev-commit'
 
 	git config --global push.default simple
 	git config --global alias.st status
