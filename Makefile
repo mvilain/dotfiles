@@ -27,6 +27,7 @@
 # 202402.17 add git config options
 # 202405.16 makefile sections should be indented with at least a tab. 2 spaces won't work
 # 202407.03 removed interactive_rebase_tool from .gitconfig; remove vim-go; git merge zdiff3 --> diff3
+# 202407.07 add github username
 
 .PHONY : test clean install
 
@@ -265,6 +266,7 @@ endif
 git-config: git-install
 	git config --global user.name "Michael Vilain"
 	git config --global user.email "michael@vilain.com"
+	git config --global user.username "mvilain"
 	git config --global color.ui true
 	#git config --global --replace-all core.pager "less -F -X"
 	git config --global core.pager ''
