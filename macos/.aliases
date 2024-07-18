@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # https://github.com/wbs75/dotfiles/blob/master/.aliases
 # 202310.21 add alias for icloud directory; add lll to show acls
 
@@ -112,6 +113,7 @@ alias hideall="defaults write com.apple.Finder AppleShowAllFiles -bool false && 
 alias dbon="sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist"
 alias ebon="sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist" 
 
+alias ipp="dig +short myip.opendns.com @resolver1.opendns.com"
 alias localip="ipconfig getifaddr en1"
 alias remoteip="wget -T 10 -t 1 -4qO- http://ip1.dynupdate.no-ip.com/"
 alias ips="ifconfig -a | perl -nle'/(\d+\.\d+\.\d+\.\d+)/ && print $1'"
