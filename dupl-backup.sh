@@ -5,21 +5,21 @@
 SCRIPT=`basename $0`
 NAME=daily-$(date "+%Y%m%d-%M%d%S")
 NAME=daily-$(date "+%Y%m%d")
-
+CONF=~/.duplicity/.env_variables.conf
 
 EXCL_FILE=exclude-${SCRIPT}
 DUR=7D
 TMPDIR=/mnt/backups/tmp/
 DEST=file:///mnt/backups/zorin/
 
-if [ ! -e ~/.duplicity/.env-variables.conf.gpg ]; then
-  echo "enter zorin-backup gpg password"
-  source "gpg2 -dq ~/.duplicity/.env-variables.conf.gpg |"
-fi
+[ ! -e ${TMPDIR} ] && echo "${TMPDIR} and ${DEST} not found" && exit 1
+
 # these should be in ~/.duplicity/.env-variables
-#ENC_KEY="xxxxxxxx" # zorin-backup
-#GPG_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  # "zorin-backup"
-[ -z "${GPG_KEY}" ] && echo "GPG_KEY not defined" && exit 1
+GPG_KEY=AF387140DA632FC0D7D97E8FA73B71C8020FF318
+ENC_KEY="020ff318" # zorin-backup
+[ -e ${CONF} ] && source ${CONF}
+[ -z "$GPG_KEY" ] && echo "GPG_KEY not defined" && exit 1
+# PASSPHRASE can be underdefined
 
 cat >${EXCL_FILE} <<-EOF
 	/tmp
