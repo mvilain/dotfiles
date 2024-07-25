@@ -17,7 +17,7 @@ DEST=file:///mnt/backups/zorin/
 
 # these should be in ~/.duplicity/.env-variables
 GPG_KEY=473CE91EAC5BEBC3459A429BD26BD6CBD7CA8525
-ENC_KEY=D7CA8525
+ENC_KEY="D7CA8525" # zorin-backup
 [ -e ${CONF} ] && source ${CONF}
 [ -z "$GPG_KEY" ] && echo "GPG_KEY not defined" && exit 1
 # PASSPHRASE can be underdefined
