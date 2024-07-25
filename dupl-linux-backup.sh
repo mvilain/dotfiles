@@ -35,7 +35,7 @@ duplicity \
   --encrypt-sign-key=${ENC_KEY} \
   remove-older-than 90D --force ${DEST}
 
-duplicity backup --verbosity Error \
+duplicity backup --verbosity Error --copy-links \
   --encrypt-sign-key=${GPG_KEY} \
   --tempdir ${TMPDIR} \
   --log-file ${LOG} \
