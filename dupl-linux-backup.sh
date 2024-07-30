@@ -8,9 +8,9 @@ NAME=daily-$(date "+%Y%m%d")
 CONF=~/.duplicity/.env_variables.conf
 
 EXCL_FILE=exclude-${SCRIPT}
-DUR=7D
+DUR=14D
 TMPDIR=/mnt/backups/tmp/
-LOG=/var/log/${SCRIPT}-${NAME}.log
+LOG=/var/log/${NAME}.log
 DEST=file:///mnt/backups/zorin/
 
 [ ! -e ${TMPDIR} ] && echo "${TMPDIR} and ${DEST} not found" && exit 1
@@ -29,31 +29,36 @@ cat >${EXCL_FILE} <<-EOF
 	/swapfile
 EOF
 
-date
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`date`"
 
 duplicity \
   --encrypt-sign-key=${ENC_KEY} \
   remove-older-than 90D --force ${DEST}
 
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`date`"
+
 duplicity backup --verbosity Error --copy-links \
   --encrypt-sign-key=${GPG_KEY} \
   --tempdir ${TMPDIR} \
-  --log-file ${LOG} \
   --full-if-older-than ${DUR} \
   --exclude-other-filesystems --exclude-device-files \
   --exclude-filelist ${EXCL_FILE} \
-  / ${DEST}
+  / ${DEST} | tee ${LOG}
+
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`date`"
 
 duplicity \
   cleanup --force \
   --encrypt-sign-key=${ENC_KEY} \
   ${DEST}
 
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`date`"
+
 duplicity collection-status \
   --encrypt-sign-key=${ENC_KEY} \
   ${DEST}
 
-date
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`date`"
 
 cat ${LOG}
 
