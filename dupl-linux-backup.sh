@@ -1,25 +1,27 @@
 #!/usr/bin/env bash
 # zorin backup to local /media/
-#
+# 2408.05 removed keys to CONF file
 
 SCRIPT=`basename $0`
 NAME=daily-$(date "+%Y%m%d-%M%d%S")
 NAME=daily-$(date "+%Y%m%d")
-CONF=~/.duplicity/.env_variables.conf
+CONF=~/.config/duplicity/.env_variables.conf
+# use duplicity in path otherwise set it to /usr/local/bin
+#DUPL=$(/usr/bin/env duplicity)
+DUPL="${DUPL:-/usr/local/bin/duplicity}"
 
 EXCL_FILE=exclude-${SCRIPT}
 DUR=14D
+EXPIRED=90D
 TMPDIR=/mnt/backups/tmp/
 LOG=/var/log/${NAME}.log
-DEST=file:///mnt/backups/zorin/
+DEST=/mnt/backups/zorin/
 
-[ ! -e ${TMPDIR} ] && echo "${TMPDIR} and ${DEST} not found" && exit 1
+[ ! -e ${TMPDIR} ] && echo "${TMPDIR} not found"
+[ ! -e ${DEST} ] && echo "${DEST} not found" && exit 1
 
-# these should be in ~/.duplicity/.env-variables
-GPG_KEY=473CE91EAC5BEBC3459A429BD26BD6CBD7CA8525
-ENC_KEY="D7CA8525" # zorin-backup
 [ -e ${CONF} ] && source ${CONF}
-[ -z "$GPG_KEY" ] && echo "GPG_KEY not defined" && exit 1
+[ -z "$GPG_KEY" ] && echo "GPG_KEY not defined" && env && exit 1
 # PASSPHRASE can be underdefined
 
 cat >${EXCL_FILE} <<-EOF
@@ -29,37 +31,37 @@ cat >${EXCL_FILE} <<-EOF
 	/swapfile
 EOF
 
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`date`"
+echo "========================================>>>>> `date`"
 
-duplicity \
-  --encrypt-sign-key=${ENC_KEY} \
-  remove-older-than 90D --force ${DEST}
+${DUPL} \
+  --encrypt-sign-key ${GPG_KEY} \
+  remove-older-than ${EXPIRED} --force file://${DEST}
 
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`date`"
+echo "========================================>>>>> `date`"
 
-duplicity backup --verbosity Error --copy-links \
-  --encrypt-sign-key=${GPG_KEY} \
+${DUPL} backup --verbosity Error --copy-links \
+  --encrypt-sign-key ${GPG_KEY} \
   --tempdir ${TMPDIR} \
   --full-if-older-than ${DUR} \
   --exclude-other-filesystems --exclude-device-files \
   --exclude-filelist ${EXCL_FILE} \
-  / ${DEST} | tee ${LOG}
+  / file://${DEST} | tee ${LOG}
 
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`date`"
+echo "========================================>>>>> `date`"
 
-duplicity \
+${DUPL} \
   cleanup --force \
-  --encrypt-sign-key=${ENC_KEY} \
-  ${DEST}
+  --encrypt-sign-key=${GPG_KEY} \
+  file://${DEST}
 
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`date`"
+echo "========================================>>>>> `date`"
 
-duplicity collection-status \
-  --encrypt-sign-key=${ENC_KEY} \
-  ${DEST}
+${DUPL} collection-status \
+  --encrypt-sign-key=${GPG_KEY} \
+  file://${DEST}
 
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`date`"
+echo "========================================>>>>> `date`"
 
-cat ${LOG}
+[ -e ${EXCL_FILE} ] && rm -v ${EXCL_FILE}
 
 exit
