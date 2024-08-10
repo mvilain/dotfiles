@@ -83,7 +83,7 @@ HIST_STAMPS="%Y.%m.%d.%H:%M:%S"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(aws ansible docker docker-compose gh git opentofu python terraform themes vagrant virtualenv)
+plugins=(aws ansible docker docker-compose gh git opentofu python themes vagrant virtualenv)
 
 source $ZSH/oh-my-zsh.sh
 
