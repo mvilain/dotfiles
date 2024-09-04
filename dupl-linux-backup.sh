@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # zorin backup to local /media/
 # 2408.05 removed keys to CONF file
+# 2409.03 use /usr/bin/duplicity for default location
 
 SCRIPT=`basename $0`
 NAME=daily-$(date "+%Y%m%d-%M%d%S")
@@ -8,7 +9,7 @@ NAME=daily-$(date "+%Y%m%d")
 CONF=~/.config/duplicity/.env_variables.conf
 # use duplicity in path otherwise set it to /usr/local/bin
 #DUPL=$(/usr/bin/env duplicity)
-DUPL="${DUPL:-/usr/local/bin/duplicity}"
+DUPL="${DUPL:-/usr/bin/duplicity}"
 
 EXCL_FILE=exclude-${SCRIPT}
 DUR=14D
