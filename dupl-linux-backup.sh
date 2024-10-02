@@ -36,13 +36,13 @@ EOF
 echo "========================================>>>>> `date`"
 
 ${DUPL} \
-  --encrypt-sign-key ${GPG_KEY} \
+#  --encrypt-sign-key ${GPG_KEY} \
   remove-older-than ${EXPIRED} --force file://${DEST}
 
 echo "========================================>>>>> `date`"
 
 ${DUPL} backup --verbosity Error --copy-links \
-  --encrypt-sign-key ${GPG_KEY} \
+#  --encrypt-sign-key ${GPG_KEY} \
   --tempdir ${TMPDIR} \
   --full-if-older-than ${DUR} \
   --exclude-other-filesystems --exclude-device-files \
@@ -53,13 +53,13 @@ echo "========================================>>>>> `date`"
 
 ${DUPL} \
   cleanup --force \
-  --encrypt-sign-key=${GPG_KEY} \
+#  --encrypt-sign-key=${GPG_KEY} \
   file://${DEST}
 
 echo "========================================>>>>> `date`"
 
 ${DUPL} collection-status \
-  --encrypt-sign-key=${GPG_KEY} \
+#  --encrypt-sign-key=${GPG_KEY} \
   file://${DEST}
 
 echo "========================================>>>>> `date`"
