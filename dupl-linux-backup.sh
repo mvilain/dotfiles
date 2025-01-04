@@ -3,6 +3,7 @@
 # 2408.05 removed keys to CONF file
 # 2409.03 use /usr/bin/duplicity for default location
 # 2409.22 change to do full backups for 90days
+# 2501.04 change to do full backups daily; keep 14 days worth
 
 SCRIPT=`basename $0`
 NAME=daily-$(date "+%Y%m%d-%M%d%S")
@@ -13,8 +14,8 @@ CONF=~/.config/duplicity/.env_variables.conf
 DUPL="${DUPL:-/usr/bin/duplicity}"
 
 EXCL_FILE=exclude-${SCRIPT}
-DUR=90D
-EXPIRED=90D
+DUR=1D
+EXPIRED=30D
 TMPDIR=/mnt/backups/tmp/
 LOG=/var/log/${NAME}.log
 DEST=/mnt/backups/zorin/
