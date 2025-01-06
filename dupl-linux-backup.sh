@@ -6,12 +6,11 @@
 # 2501.04 change to do full backups daily; keep 14 days worth
 
 SCRIPT=`basename $0`
-NAME=daily-$(date "+%Y%m%d-%M%d%S")
 NAME=daily-$(date "+%Y%m%d")
 CONF=~/.config/duplicity/.env_variables.conf
 # use duplicity in path otherwise set it to /usr/local/bin
 #DUPL=$(/usr/bin/env duplicity)
-DUPL="${DUPL:-/usr/bin/duplicity}"
+DUPL="${DUPL:-/usr/local/bin/duplicity}"
 
 EXCL_FILE=exclude-${SCRIPT}
 DUR=1D
@@ -37,13 +36,13 @@ EOF
 echo "========================================>>>>> `date`"
 
 ${DUPL} \
-#  --encrypt-sign-key ${GPG_KEY} \
+  --encrypt-sign-key ${GPG_KEY} \
   remove-older-than ${EXPIRED} --force file://${DEST}
 
 echo "========================================>>>>> `date`"
 
 ${DUPL} backup --verbosity Error --copy-links \
-#  --encrypt-sign-key ${GPG_KEY} \
+  --encrypt-sign-key ${GPG_KEY} \
   --tempdir ${TMPDIR} \
   --full-if-older-than ${DUR} \
   --exclude-other-filesystems --exclude-device-files \
@@ -54,17 +53,17 @@ echo "========================================>>>>> `date`"
 
 ${DUPL} \
   cleanup --force \
-#  --encrypt-sign-key=${GPG_KEY} \
+  --encrypt-sign-key=${GPG_KEY} \
   file://${DEST}
 
 echo "========================================>>>>> `date`"
 
 ${DUPL} collection-status \
-#  --encrypt-sign-key=${GPG_KEY} \
+  --encrypt-sign-key=${GPG_KEY} \
   file://${DEST}
 
 echo "========================================>>>>> `date`"
 
 [ -e ${EXCL_FILE} ] && rm -v ${EXCL_FILE}
-
+find /var/log/daily-* -mtime +30 -delete
 exit
