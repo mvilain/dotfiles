@@ -4,17 +4,18 @@
 # 2409.03 use /usr/bin/duplicity for default location
 # 2409.22 change to do full backups for 90days
 # 2501.04 change to do full backups daily; keep 14 days worth
+# 2501.20 change duplicity to installed version via package manager
 
 SCRIPT=`basename $0`
 NAME=daily-$(date "+%Y%m%d")
 CONF=~/.config/duplicity/.env_variables.conf
+DUPL=$(/usr/bin/which duplicity)
 # use duplicity in path otherwise set it to /usr/local/bin
-#DUPL=$(/usr/bin/env duplicity)
-DUPL="${DUPL:-/usr/local/bin/duplicity}"
+#DUPL="${DUPL:-/usr/local/bin/duplicity}"
 
 EXCL_FILE=exclude-${SCRIPT}
-DUR=1D
-EXPIRED=30D
+DUR=7D
+EXPIRED=14D
 TMPDIR=/mnt/backups/tmp/
 LOG=/var/log/${NAME}.log
 DEST=/mnt/backups/zorin/
