@@ -15,7 +15,7 @@ DUPL=$(/usr/bin/which duplicity)
 
 EXCL_FILE=exclude-${SCRIPT}
 DUR=7D
-EXPIRED=14D
+EXPIRED=15D
 TMPDIR=/mnt/backups/tmp/
 LOG=/var/log/${NAME}.log
 DEST=/mnt/backups/zorin/
