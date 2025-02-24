@@ -5,6 +5,7 @@
 # 2409.22 change to do full backups for 90days
 # 2501.04 change to do full backups daily; keep 14 days worth
 # 2501.20 change duplicity to installed version via package manager
+# 2502.23 change to do 1 full ever 2 weeks
 
 SCRIPT=`basename $0`
 NAME=daily-$(date "+%Y%m%d")
@@ -14,7 +15,7 @@ DUPL=$(/usr/bin/which duplicity)
 #DUPL="${DUPL:-/usr/local/bin/duplicity}"
 
 EXCL_FILE=exclude-${SCRIPT}
-DUR=7D
+DUR=14D
 EXPIRED=15D
 TMPDIR=/mnt/backups/tmp/
 LOG=/var/log/${NAME}.log
