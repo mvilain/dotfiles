@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # https://github.com/wbs75/dotfiles/blob/master/.aliases
 # 202310.21 add alias for icloud directory; add lll to show acls
+# 202505.11 added true to if/then/else block; removed MacOS specific stuff
 
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
@@ -35,11 +36,11 @@ alias .....="cd ../../../.."
 alias ~="cd ~" 		# `cd` might be faster 
 alias -- -="cd -"
 
-# Shortcuts
-alias d="cd ~/Documents/Dropbox"
-alias dl="cd ~/Downloads"
-alias dt="cd ~/Desktop"
-alias di="cd '~/Library/Mobile Documents/com~apple~CloudDocs'"
+# MacOS Shortcuts
+#M# alias d="cd ~/Documents/Dropbox"
+#M# alias dl="cd ~/Downloads"
+#M# alias dt="cd ~/Desktop"
+#M# alias di="cd '~/Library/Mobile Documents/com~apple~CloudDocs'"
 alias cdl="cd /usr/local"
 alias cdb="cd /usr/local/bin "
 
@@ -54,65 +55,66 @@ alias cdb="cd /usr/local/bin "
 #alias sparse300="hdiutil create -type SPARSE -size 300g -fs HFS+ growableTo300g"
 #alias sparse500="hdiutil create -type SPARSE -size 500g -fs HFS+ growableTo500g"
 #alias sparse1000="hdiutil create -type SPARSE -size 1000g -fs HFS+ growableTo1000g"
-alias sparseDVD="hdiutil create -type SPARSE -sectors 9181224 -fs HFS+ SparseDVD; hdiutil attach SparseDVD.sparseimage"
+#M# alias sparseDVD="hdiutil create -type SPARSE -sectors 9181224 -fs HFS+ SparseDVD; hdiutil attach SparseDVD.sparseimage"
 
 alias grep="grep --color=auto"
 alias h='history | tail -100'
 alias j="jobs"
-alias s="subl ."
+#M# alias s="subl ."
 if [ -e /Applications/MacVim.app/Contents/MacOS/Vim ]; then
-  #alias v="/Applications/MacVim.app/Contents/MacOS/Vim"
-  #alias vim="/Applications/MacVim.app/Contents/MacOS/Vim"
+  #M# alias v="/Applications/MacVim.app/Contents/MacOS/Vim"
+  #M# alias vim="/Applications/MacVim.app/Contents/MacOS/Vim"
+  true
 else
   alias v="vim"
 fi
-alias typo='open -a /Applications/Typora.app'
+#M# alias typo='open -a /Applications/Typora.app'
 
-alias o="open"
-alias oo="open ."
+#M# alias o="open"
+#M# alias oo="open ."
 
-alias bompkg="cd /private/var/db/receipts && lsbom -p MUGsf "
+#M# alias bompkg="cd /private/var/db/receipts && lsbom -p MUGsf "
 alias fs="stat -f \"%z bytes\""
-alias pcmds="systemsetup -printCommands"
+#M# alias pcmds="systemsetup -printCommands"
 alias urlencode='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1]);"'
 alias undopush="git push -f origin HEAD^:master"
 alias a2='ssh vilain@ftp.vilain.com -p 7822'
 alias a2sftp='sftp -P 7822 vilain@ftp.vilain.com'
-alias ftp_load='sudo launchctl load -wF /Library/LaunchDaemons/ftp.plist'
-alias ftp_unload='sudo launchctl unload -wF /Library/LaunchDaemons/ftp.plist'
-alias ftp_start='sudo launchctl load -wF /Library/LaunchDaemons/ftp.plist && sudo launchctl start com.apple.ftpd'
-alias ftp_stop='sudo launchctl stop com.apple.ftpd && sudo launchctl unload -wF /Library/LaunchDaemons/ftp.plist'
+#M# alias ftp_load='sudo launchctl load -wF /Library/LaunchDaemons/ftp.plist'
+#M# alias ftp_unload='sudo launchctl unload -wF /Library/LaunchDaemons/ftp.plist'
+#M# alias ftp_start='sudo launchctl load -wF /Library/LaunchDaemons/ftp.plist && sudo launchctl start com.apple.ftpd'
+#M# alias ftp_stop='sudo launchctl stop com.apple.ftpd && sudo launchctl unload -wF /Library/LaunchDaemons/ftp.plist'
 alias free='top -l 1 -s 0 | grep PhysMem'
 alias wget='wget --no-check-certificate'
 
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
 #alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup;gem update --system; npm update npm -g; npm update -g'
-alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup'
+#M# alias update='sudo softwareupdate -i -a; brew update; brew upgrade; brew cleanup'
 
 # Clean up LaunchServices to remove duplicates in the “Open With” menu
-alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+#M# alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
 
 alias c="tr -d '\n' | pbcopy"
-alias asa="sudo rm -rf  ~/Library/Saved\ Application\ State/*"
+#M# alias asa="sudo rm -rf  ~/Library/Saved\ Application\ State/*"
 #alias cleanup="find . -name '*.DS_Store' -type f -ls -delete"
-alias flush="dscacheutil -flushcache"
+#M# alias flush="dscacheutil -flushcache"
 #alias cleanasl="echo 'Cleaning ASL files...\c';sudo -S find -d /var/log/asl -name "AUX*" -exec rm -fr {} \;;sudo -S find -d /var/log/asl -name "*\.asl" -exec rm -fr {} \;;sudo -S find /var/log/DiagnosticMessages/ -name "*\.asl";sudo -S ls -@ailO /var/log/asl /var/log/DiagnosticMessages;echo;echo done."
-alias cleanaudit="sudo -S ls /var/audit;echo;echo 'Cleaning audit data...\c';echo;sudo -S find /var/audit -name *\.2* -type f -exec rm -f {} \;;sudo -S ls /var/audit;echo;echo done."
-alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
-alias rootpref="sudo -s ls -@ailOR /private/var/root/Library/Preferences"
-alias skext="sudo kextcache -system-prelinked-kernel && sudo kextcache -system-caches"
+#M# alias cleanaudit="sudo -S ls /var/audit;echo;echo 'Cleaning audit data...\c';echo;sudo -S find /var/audit -name *\.2* -type f -exec rm -f {} \;;sudo -S ls /var/audit;echo;echo done."
+#M# alias lscleanup="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user && killall Finder"
+#M# alias rootpref="sudo -s ls -@ailOR /private/var/root/Library/Preferences"
+#M# alias skext="sudo kextcache -system-prelinked-kernel && sudo kextcache -system-caches"
 alias rb="sudo shutdown -r +1"
 
-alias spotoff="sudo mdutil -a -i off"
-alias spoton="sudo mdutil -a -i on"
+#M# alias spotoff="sudo mdutil -a -i off"
+#M# alias spoton="sudo mdutil -a -i on"
 
-alias showall="defaults write com.apple.Finder AppleShowAllFiles -bool true && killall Finder"
-alias hideall="defaults write com.apple.Finder AppleShowAllFiles -bool false && killall Finder"
+#M# alias showall="defaults write com.apple.Finder AppleShowAllFiles -bool true && killall Finder"
+#M# alias hideall="defaults write com.apple.Finder AppleShowAllFiles -bool false && killall Finder"
 
 # enable or disable Bonjour
-alias dbon="sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist"
-alias ebon="sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist" 
+#M# alias dbon="sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist"
+#M# alias ebon="sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.mDNSResponder.plist" 
 
 alias ipp="dig +short myip.opendns.com @resolver1.opendns.com"
 alias localip="ipconfig getifaddr en1"
@@ -124,7 +126,7 @@ alias httpdump="sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E \"Host\: .*|GET
 alias server="open http://localhost:8080/ && python -m SimpleHTTPServer 8080"
 
 # PlistBuddy alias, because sometimes `defaults` just doesn’t cut it
-alias plistbuddy="/usr/libexec/PlistBuddy"
+#M# alias plistbuddy="/usr/libexec/PlistBuddy"
 
 # Ring the terminal bell, and put a badge on Terminal.app’s Dock icon
 # (useful when executing time-consuming commands)
@@ -136,13 +138,13 @@ for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do
 done
 
 # Stuff I never really use but cannot delete either because of http://xkcd.com/530/
-alias stfu="osascript -e 'set volume output muted true'"
-alias pumpitup="osascript -e 'set volume 7'"
-alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
+#M# alias stfu="osascript -e 'set volume output muted true'"
+#M# alias pumpitup="osascript -e 'set volume 7'"
+#M# alias hax="growlnotify -a 'Activity Monitor' 'System error' -m 'WTF R U DOIN'"
 
-alias varnishon='iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 6081;iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 6081 -j REDIRECT --to-ports 80'
-alias varnishoff='iptables -t nat -D PREROUTING -i eth0 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 6081;iptables -t nat -D PREROUTING -i eth0 -p tcp -m tcp --dport 6081 -j REDIRECT --to-ports 80'
-alias varnishstatus='iptables -L -t nat |grep -q 6081; if [ "test$?" = "test0" ]; then echo "Varnish On"; else echo "Varnish Off"; fi'
-alias itb='pushd ~/Music/iTunes; zip "iTunes Library.`date "+%y-%m-%d-%H00"`.zip" *.{itl,xml} ; find . -name "iTunes Library*.zip" -mtime +2 -delete; popd'
+#M# alias varnishon='iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 6081;iptables -t nat -A PREROUTING -i eth0 -p tcp -m tcp --dport 6081 -j REDIRECT --to-ports 80'
+#M# alias varnishoff='iptables -t nat -D PREROUTING -i eth0 -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 6081;iptables -t nat -D PREROUTING -i eth0 -p tcp -m tcp --dport 6081 -j REDIRECT --to-ports 80'
+#M# alias varnishstatus='iptables -L -t nat |grep -q 6081; if [ "test$?" = "test0" ]; then echo "Varnish On"; else echo "Varnish Off"; fi'
+#M# alias itb='pushd ~/Music/iTunes; zip "iTunes Library.`date "+%y-%m-%d-%H00"`.zip" *.{itl,xml} ; find . -name "iTunes Library*.zip" -mtime +2 -delete; popd'
 
-alias dumpsnapshots='for i in `tmutil listlocalsnapshotdates / | grep 20`; do tmutil deletelocalsnapshots $i; done'
+#M# alias dumpsnapshots='for i in `tmutil listlocalsnapshotdates / | grep 20`; do tmutil deletelocalsnapshots $i; done'

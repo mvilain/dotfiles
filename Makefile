@@ -28,6 +28,7 @@
 # 202405.16 makefile sections should be indented with at least a tab. 2 spaces won't work
 # 202407.03 removed interactive_rebase_tool from .gitconfig; remove vim-go; git merge zdiff3 --> diff3
 # 202407.07 add github username; change git l1 alias
+# 202505.11 add ngrep to required packages
 
 .PHONY : test clean install
 
@@ -78,14 +79,14 @@ endif
 DOTFILES := .aliases .bash_profile .bash_prompt .bashrc .exports .exrc .forward \
 	.functions .inputrc .screenrc .vimrc .zshrc .zshrc-ohmyzsh.sh .zshrc-kali.sh
 
-RHEL_PKGS := wget vim lsof bind-utils net-tools yum-utils epel-release
+RHEL_PKGS := wget vim lsof bind-utils net-tools yum-utils epel-release ngrep
 C6_PKGS := $(RHEL_PKGS)
 C7_PKGS := $(RHEL_PKGS) bash-completion
 C8_PKGS := $(RHEL_PKGS) bash-completion tar python38
 F_PKGS := $(RHEL_PKGS) dnf-utils
-U_PKGS := curl vim lsof bash-completion dnsutils
+U_PKGS := curl vim lsof bash-completion dnsutils ngrep
 D_PKGS := $(U_PKGS) sudo rsync net-tools open-vm-tools
-S_PKGS := wget vim lsof bash-completion bind-utils net-tools
+S_PKGS := wget vim lsof bash-completion bind-utils net-tools ngrep
 # used for installing from scratch on Ubuntu python3u recipe
 PY_VER := 3.8.2
 # used for installing git from scratch
@@ -543,7 +544,7 @@ else ifeq ($(OS),suse)
 
 endif
 
-# ubuntu 17.10+, fedora 27, debian 10, opensuse-leap, and zorin have python3
+# ubuntu 17.10+, fedora 27, debian 10+, opensuse-leap, and zorin have python3
 python3u:
 ifeq ($(ID),ubuntu)
 	-apt-get install gcc libssl-dev make build-essential libssl-dev zlib1g-dev libbz2-dev libsqlite3-dev
