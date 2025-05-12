@@ -28,7 +28,7 @@
 # 202405.16 makefile sections should be indented with at least a tab. 2 spaces won't work
 # 202407.03 removed interactive_rebase_tool from .gitconfig; remove vim-go; git merge zdiff3 --> diff3
 # 202407.07 add github username; change git l1 alias
-# 202505.11 add ngrep to required packages
+# 202505.12 add ngrep to required packages; remove open-vm-tools
 
 .PHONY : test clean install
 
@@ -85,7 +85,7 @@ C7_PKGS := $(RHEL_PKGS) bash-completion
 C8_PKGS := $(RHEL_PKGS) bash-completion tar python38
 F_PKGS := $(RHEL_PKGS) dnf-utils
 U_PKGS := curl vim lsof bash-completion dnsutils ngrep
-D_PKGS := $(U_PKGS) sudo rsync net-tools open-vm-tools
+D_PKGS := $(U_PKGS) sudo rsync net-tools 
 S_PKGS := wget vim lsof bash-completion bind-utils net-tools ngrep
 # used for installing from scratch on Ubuntu python3u recipe
 PY_VER := 3.8.2
