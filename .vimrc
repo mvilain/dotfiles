@@ -116,7 +116,7 @@ set hlsearch
 set incsearch
 set ignorecase
 set number
-set redraw
+"set redraw
 set smartcase
 set shiftwidth=2
 set showcmd
