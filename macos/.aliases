@@ -39,7 +39,7 @@ alias -- -="cd -"
 alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
-alias di="cd '~/Library/Mobile Documents/com~apple~CloudDocs'"
+alias di="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs"
 alias cdl="cd /usr/local"
 alias cdb="cd /usr/local/bin "
 
@@ -83,6 +83,7 @@ alias ftp_unload='sudo launchctl unload -wF /Library/LaunchDaemons/ftp.plist'
 alias ftp_start='sudo launchctl load -wF /Library/LaunchDaemons/ftp.plist && sudo launchctl start com.apple.ftpd'
 alias ftp_stop='sudo launchctl stop com.apple.ftpd && sudo launchctl unload -wF /Library/LaunchDaemons/ftp.plist'
 alias free='top -l 1 -s 0 | grep PhysMem'
+alias wget='wget --no-check-certificate'
 
 
 # Get OS X Software Updates, and update installed Ruby gems, Homebrew, npm, and their installed packages
