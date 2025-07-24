@@ -3,6 +3,8 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 # set path to have M1 homebrew before /usr/bin and /usr/local/bin
 # https://medium.com/subjective-developer/set-up-brew-on-m1-mac-e4ea805e5634
+#  23-Jul-2025 10:44PM added nvm stuff
+
 if [ -e /opt/homebrew/bin/brew ]; then
   export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH
   # fix M1 MacOS command completion for brew 202206.23MeV as .oh-my-zsh doesn't do this right
@@ -156,3 +158,7 @@ if [[ ! "$PATH" =~ "$HOME/.rvm/bin" ]]; then
   export PATH="$PATH:$HOME/.rvm/bin"
 fi
 
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
